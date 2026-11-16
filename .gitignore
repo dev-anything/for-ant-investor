@@ -1,0 +1,31 @@
+# 비밀 값 (API 키, Supabase 키, Gmail 앱 비밀번호) — 절대 올리지 않음
+.env
+.env.*
+!.env.example
+
+# API 응답 원본, 포털 화면 저장본 (키 포함 가능)
+api_check_results/
+ref/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / Next.js / Vercel
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Supabase CLI 로컬 파일
+supabase/.temp/
+supabase/.branches/
+
+# 기타
+.DS_Store
+Thumbs.db
+*.log
