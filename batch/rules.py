@@ -16,17 +16,18 @@ from __future__ import annotations
 from fractions import Fraction
 
 # ---------------------------------------------------------------- 기준값 (한곳에서 관리)
-RULE_VERSION = "2026-11-15-draft"
+RULE_VERSION = "2026-11-17"
 
 REVENUE_GROWTH_MIN = 20      # 필터 2: 매출 증가율 ≥ 20%
 OP_MARGIN_MIN = 10           # 필터 10: 영업이익률 ≥ 10%
-DEBT_RATIO_MAX_WIDE = 100    # 필터 13: 부채비율 ≤ 100%
+DEBT_RATIO_MAX_WIDE = 100    # 필터 13: 부채비율 ≤ 100% (65.6%가 걸리지만 계산상 의미가 있어 예외로 유지, 2026-11-17)
 DEBT_RATIO_MAX_NARROW = 50   # 필터 14: 부채비율 ≤ 50%
 DEBT_JUMP_RATIO = Fraction(5, 4)  # 문장 7: 올해 ≥ 전년 × 1.25
 DEBT_JUMP_POINTS = 10             # 문장 7: 그리고 오른 폭 ≥ 10%p
 
 # 리포트카드 눈금 (F-05) — 검증 통계용. 화면도 같은 값을 쓴다.
-GAUGES = {"debt_ratio": (0, 300), "operating_margin": (-20, 30), "revenue_growth": (-30, 50)}
+# 2026-11-17 수집 뒤 조정: 영업이익률 −20~30 → −50~40, 매출 증가율 −30~50 → −40~70 (범위 밖 10% 이하)
+GAUGES = {"debt_ratio": (0, 300), "operating_margin": (-50, 40), "revenue_growth": (-40, 70)}
 FLAT_SHARE = Fraction(3, 100)  # 두 번의 변화가 둘 다 눈금 폭의 3% 이내면 "비슷한 수준"
 
 FILTER_IDS = tuple(range(1, 21))
