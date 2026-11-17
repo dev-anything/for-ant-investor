@@ -75,7 +75,7 @@ for-ant-investor/
 │  ├─ 공공데이터_활용_계획서.md  # 제출본 (2026-10-16)
 │  ├─ 개발기능.md            # 기능 설계·API 조사·결정 기록 (가장 중요)
 │  ├─ 진행기록.md            # 진행 기록 표, 정리 전 다음 할 일 원문
-│  ├─ DATABASE.md           # 테이블 구조 (2026-11-16 초안, Supabase 미생성)
+│  ├─ DATABASE.md           # 테이블 구조 (2026-11-16 초안, 2026-11-17 Supabase 생성 완료)
 │  ├─ 제안.md                # 추가 기능 후보 N-1~N-8
 │  ├─ FS.md, PRD.md          # 빈 파일, 용도 미정
 │  └─ 금융위원회_기업재무정보_활용자가이드.docx  # 금융위 API 명세 (참고)
@@ -83,6 +83,7 @@ for-ant-investor/
 │  ├─ api_check.py          # 금융위 API 연결 확인 (load_key, call 재사용 가능). DART 수집 스크립트는 아직 없음
 │  ├─ dart_audit_check.py   # DART 감사의견 API 응답 모양 확인, 종목코드 인자로 일부만 실행 가능
 │  └─ supabase_check.py     # Supabase 연결 확인 (키 값은 출력 안 함)
+├─ supabase/migrations/    # DB 마이그레이션 (2026-11-17 initial_schema)
 ├─ ref/                     # 포털 화면 저장본 (키 포함 가능, git 제외)
 └─ api_check_results/       # API 응답 원본 (키는 ***로 가림, git 제외)
 ```
@@ -161,13 +162,13 @@ for-ant-investor/
 
 - **F-01~F-16 전부 설계 완료** (F-06은 F-05에 통합, 번호는 다시 매기지 않음). 설계 중인 기능은 없다. **웹앱 코드는 아직 없다.**
 - 다음은 사용자가 요청하면 **F-01부터 구현**한다.
-- GitHub 저장소 `dev-anything/for-ant-investor`(공개)와 Supabase 프로젝트 `for-ant-investor`(서울)는 준비됐다. `.env` 연결 확인 정상. **테이블은 아직 없다.**
+- GitHub 저장소 `dev-anything/for-ant-investor`(공개)와 Supabase 프로젝트 `for-ant-investor`(서울)는 준비됐다. `.env` 연결 확인 정상. **테이블 15개·뷰 4개를 2026-11-17에 만들었다** (마이그레이션 `supabase/migrations/`). 데이터는 아직 없다.
 - 기능별 남은 확인 항목 (구현 전 확인·수집 뒤 검증·화면 배치 때 재검토)은 `docs/개발기능.md` 각 기능의 "할 일"에 있다.
 - 채택 전 후보 N-1·N-2·N-5·N-7·N-8은 `docs/제안.md`에 있다. 진행 기록은 `docs/진행기록.md`에 있다.
 
 ## 다음 할 일
 
-1. **테이블 설계**: 초안과 사용자 결정 5건 반영 (`docs/DATABASE.md`, 2026-11-16). 9장 남은 검토 2건 → 마이그레이션 (Supabase, 아직 안 만듦)
+1. **업종 이름표 넣기**: `ksic_classes` 98행 (배치 아님, 포털 원래 표기는 `ref/분류내용해설/`에서 확인)
 2. **DART 수집 스크립트** (분당 약 350회, 매월 5일 배치). 재시도 횟수·간격도 정한다.
 3. **GitHub Secrets·Vercel 환경변수** 설정 (배치·배포 때)
 4. **감사의견 남은 확인** (F-13, 수집 뒤): 적정 외 값(한정·부적정·의견거절) 표기, 전년 행과 짝짓는 방식 (구분 필드 없음)

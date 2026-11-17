@@ -1,6 +1,6 @@
 # DATABASE — 재무 레이더 테이블 구조 (초안)
 
-> 2026-11-16 초안 (기능 설계 에이전트). **Supabase에는 아직 만들지 않았다.** 사용자 검토 뒤 마이그레이션으로 만든다.
+> 2026-11-16 초안 (기능 설계 에이전트). **2026-11-17 Supabase에 생성 완료** (마이그레이션 `supabase/migrations/20261117000000_initial_schema.sql`). 테이블 15개·뷰 4개 모두 지금은 비어 있다. 구현하며 정한 세부는 10장.
 > 근거: `docs/개발기능.md` F-01~F-16, 공통 사항 DART·주식시세정보·KRX 절. 기능 설계가 바뀌면 이 문서도 같이 고친다.
 
 - 프로젝트: Supabase `for-ant-investor` (서울 `ap-northeast-2`, PostgreSQL 17)
@@ -370,3 +370,13 @@
 ## 9. 남은 검토할 점
 
 1. **감사의견 `적정의견` 외 값의 표기** (한정의견·부적정의견·의견거절 등). 수집 뒤 값 종류를 세어 확인 (`data_issues`에 처음 보는 값 기록).
+
+## 10. 구현하며 정한 세부 (2026-11-17)
+
+1. **FK:** `stocks.corp_code`와 `dart_fetch_status.corp_code`는 FK를 걸지 않는다 (KRX 매칭만 된 회사는 기업개황 행이 아직 없을 수 있고, 기업개황이 `013`이면 `companies` 행이 없다). `financials`·`company_summary`·`dividend_rows`·`dividends`·`audit_opinions`는 `companies`를 참조하며 `on delete cascade`.
+2. **값 종류 제약(CHECK):** `ksic_classes.level`, `financials.fs_div`, `dividends.dps_status`·`yield_status`, `company_summary.capital_impairment`·`financial_reason`, `batch_runs.job`·`status`, `dart_fetch_status.api`·`status`, `notifications.kind`는 CHECK로 값을 제한한다. `data_issues.kind`는 종류가 늘 수 있어 제약을 걸지 않는다.
+3. **사용자 열 권한:** `user_settings`는 사용자가 `email_opt_in`만 바꿀 수 있다 (`unsubscribe_token` 변경 불가). `notifications`는 사용자가 `read_at`만 바꿀 수 있고, 삽입·삭제는 서버용 키만 한다. `watchlist`는 본인 행의 읽기·추가·삭제만 한다.
+4. **배치 운영 테이블:** `batch_runs`, `dart_fetch_status`, `data_issues`는 `anon`·`authenticated` 권한을 회수했다. Supabase 보안 점검의 "RLS 켰는데 정책 없음" INFO 3건은 의도한 것이다.
+5. **뷰 세부:** `v_company_years`에 `is_display_year`(`years`의 뒤 3개 = Y1~Y3)와 `is_latest` 열을 둔다. 부채비율·영업이익률·매출 증가율은 금융회사이면 null, 자본 ≤ 0이면 부채비율 null, 매출 ≤ 0이면 영업이익률 null, 전년 매출 ≤ 0이면 증가율 null. 값은 반올림하지 않고 화면에서 반올림한다. `v_industry_medians`는 `v_search_targets`의 최신 연도 값으로 계산한다.
+6. **확장:** `pg_trgm`은 `extensions` 스키마에 둔다.
+7. **확인:** 표본 1건을 넣고 뷰 4개 결과를 본 뒤 되돌렸다 (`search_name` `삼성 전자`→`삼성전자`, 부채비율 25, 증가율 20, PER 100, PBR 5 정상). 지금 테이블은 전부 비어 있다.
