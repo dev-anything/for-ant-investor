@@ -8,55 +8,18 @@
 
 from __future__ import annotations
 
-import json
-import urllib.parse
 from datetime import date
 
-from batch.common import Supabase, http, load_env, log, now_iso
+from batch.common import Supabase, data_go_latest, load_env, log, now_iso
 
 KRX_URL = "https://apis.data.go.kr/1160100/GetKrxListedInfoService_V2/getItemInfo_V2"
 DROP_LIMIT = 0.05
 
 
-def krx_call(key: str, params: dict) -> dict:
-    query = urllib.parse.urlencode({"serviceKey": key, "pageNo": "1", "resultType": "json", **params})
-    status, raw = http("GET", f"{KRX_URL}?{query}", secrets=(key,))
-    text = raw.decode("utf-8", "replace")
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError:  # 인증 오류 등은 XML로 온다
-        raise RuntimeError(f"KRX 응답이 JSON이 아님 (HTTP {status}): {text[:200].replace(key, '***')}")
-    header = data["response"]["header"]
-    if header.get("resultCode") != "00":
-        raise RuntimeError(f"KRX resultCode {header.get('resultCode')}: {header.get('resultMsg')}")
-    return data["response"]["body"]
-
-
-def items_of(body: dict) -> list[dict]:
-    items = (body.get("items") or {}).get("item") or []
-    return [items] if isinstance(items, dict) else items
-
-
-def fetch_latest(key: str) -> tuple[str, list[dict]]:
-    first = items_of(krx_call(key, {"numOfRows": "1"}))
-    if not first:
-        raise RuntimeError("KRX 최신 기준일을 찾지 못함")
-    bas_dt = first[0]["basDt"]
-    items, page = [], 1
-    while True:
-        body = krx_call(key, {"basDt": bas_dt, "numOfRows": "5000", "pageNo": str(page)})
-        got = items_of(body)
-        items.extend(got)
-        if not got or len(items) >= int(body.get("totalCount") or 0):
-            break
-        page += 1
-    return bas_dt, items
-
-
 def main() -> int:
     key = load_env("DATA_GO_KR_SERVICE_KEY")
     db = Supabase()
-    bas_dt_raw, items = fetch_latest(key)
+    bas_dt_raw, items, _ = data_go_latest(KRX_URL, key)
     bas_dt = date(int(bas_dt_raw[:4]), int(bas_dt_raw[4:6]), int(bas_dt_raw[6:])).isoformat()
     run_id = db.start_run("krx_list", bas_dt)
     log(f"KRX 기준일 {bas_dt}, 받은 종목 {len(items)}개")

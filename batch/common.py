@@ -77,6 +77,46 @@ def http(method: str, url: str, *, headers: dict | None = None, body: bytes | No
     raise RuntimeError(mask(f"요청 실패 ({last}): {method} {url.split('?')[0]}", *secrets))
 
 
+# ---------------------------------------------------------------- 공공데이터포털 (금융위원회)
+
+def data_go_call(url: str, key: str, params: dict) -> dict:
+    """공공데이터포털 GET → response.body. resultCode가 00이 아니면 오류."""
+    query = urllib.parse.urlencode({"serviceKey": key, "pageNo": "1", "resultType": "json", **params})
+    status, raw = http("GET", f"{url}?{query}", secrets=(key,))
+    text = raw.decode("utf-8", "replace")
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:  # 인증 오류 등은 XML로 온다
+        raise RuntimeError(mask(f"응답이 JSON이 아님 (HTTP {status}): {text[:200]}", key))
+    header = data["response"]["header"]
+    if header.get("resultCode") != "00":
+        raise RuntimeError(f"resultCode {header.get('resultCode')}: {header.get('resultMsg')}")
+    return data["response"]["body"]
+
+
+def data_go_items(body: dict) -> list[dict]:
+    items = (body.get("items") or {}).get("item") or []
+    return [items] if isinstance(items, dict) else items
+
+
+def data_go_latest(url: str, key: str) -> tuple[str, list[dict], int]:
+    """numOfRows=1로 최신 basDt를 구하고 그 날짜 전체를 받는다 → (basDt, items, totalCount)."""
+    first = data_go_items(data_go_call(url, key, {"numOfRows": "1"}))
+    if not first:
+        raise RuntimeError("최신 기준일을 찾지 못함")
+    bas_dt = first[0]["basDt"]
+    items, page, total = [], 1, 0
+    while True:
+        body = data_go_call(url, key, {"basDt": bas_dt, "numOfRows": "5000", "pageNo": str(page)})
+        got = data_go_items(body)
+        total = int(body.get("totalCount") or 0)
+        items.extend(got)
+        if not got or len(items) >= total:
+            break
+        page += 1
+    return bas_dt, items, total
+
+
 # ---------------------------------------------------------------- Supabase REST
 
 class Supabase:

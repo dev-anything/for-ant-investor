@@ -83,7 +83,8 @@ for-ant-investor/
 │  ├─ api_check.py          # 금융위 API 연결 확인 (load_key, call 재사용 가능). DART 수집은 `batch/dart_collect.py`
 │  ├─ dart_audit_check.py   # DART 감사의견 API 응답 모양 확인, 종목코드 인자로 일부만 실행 가능
 │  └─ supabase_check.py     # Supabase 연결 확인 (키 값은 출력 안 함)
-├─ batch/                   # 배치 (표준 라이브러리만). common.py(공통), krx_list.py(KRX 목록), dart_collect.py(DART 수집)
+├─ batch/                   # 배치 (표준 라이브러리만). common.py(공통), krx_list.py(KRX 목록), dart_collect.py(DART 수집), rules.py(필터·문장 판정 순수 함수), recompute.py(기준값 재계산), stock_price.py(시세)
+├─ .github/workflows/daily.yml  # 매일 KRX 목록 + 시세 (GitHub Actions, Secrets 등록 전)
 ├─ supabase/migrations/    # DB 마이그레이션 (2026-11-17 initial_schema)
 ├─ ref/                     # 포털 화면 저장본 (키 포함 가능, git 제외)
 └─ api_check_results/       # API 응답 원본 (키는 ***로 가림, git 제외)
@@ -93,7 +94,7 @@ for-ant-investor/
 
 - Ubuntu 24.04 개인 서버 (2026-11-16 Windows PC에서 이전), Python 3. 확인 스크립트는 표준 라이브러리만 쓴다.
 - 실행은 프로젝트 루트에서: `python3 scripts/api_check.py`, `python3 scripts/supabase_check.py` (Ubuntu에는 `python` 명령이 없다).
-- 배치 (프로젝트 루트): `python3 -m batch.krx_list`, `python3 -m batch.dart_collect --mode initial|monthly` (옵션 `--only 종목코드…`, `--limit N`, `--force`).
+- 배치 (프로젝트 루트): `python3 -m batch.krx_list`, `python3 -m batch.dart_collect --mode initial|monthly` (옵션 `--only 종목코드…`, `--limit N`, `--force`), `python3 -m batch.stock_price` (옵션 `--force`), `python3 -m batch.recompute` (옵션 `--only 종목코드…`, `--dry-run`).
 - **웹앱·배치 스택 (2026-11-15 확정, 근거는 `docs/개발기능.md` "개발 스택"):**
   - 프론트 Next.js (React) + Tailwind, 백엔드 Next.js API Route만 (별도 서버 없음), TypeScript
   - 배치 Python. 처음 수집·재무·배당은 **개인 서버에서 직접 실행**, 매일 시세 배치는 GitHub Actions 예약 실행
@@ -155,7 +156,7 @@ for-ant-investor/
 - **금융회사 판별: 매출액 계정 없음 OR (업종 코드 64~66 AND 업종 코드 ≠ 64992)** (2026-11-16, 64992는 지주회사 예외). 금융회사는 영업이익·순이익만 보여주고 리포트카드 지표는 표시하지 않는다 (F-02).
 - **업종 코드는 한국표준산업분류 제11차로 본다** (2026-11-16). `induty_code` 앞 두 자리를 중분류로 쓴다 (F-08). 결산월은 `acc_mt`.
 - **배당 `alotMatter` (F-14):** 사업보고서만 쓴다 (반기보고서 당기 칸은 반년 누적). 행은 `se`·`stock_knd`로 고른다. 무배당도 `000`에 오고 값만 `-`다. 그 해 보통주 주당 현금배당금이 `-` 또는 0이면 현금배당 없음 (2026-11-14).
-- **감사의견 `accnutAdtorNmNdAdtOpinion.json` (F-13):** `crtfc_key`·`corp_code`·`bsns_year`(2015년 이후)·`reprt_code` 모두 필수. 2026-11-16 실제 호출로 확인: `adt_opinion`은 짧은 값(표본 `적정의견`, 자유 문장 아님), 한 호출에 3개년·연도마다 2행, `bsns_year`는 기수 라벨. 한 연도 2행 중 하나라도 전년과 다르면 알린다 (2026-11-16 결정). 적정 외 값 표기는 미확인 (`docs/개발기능.md` F-13).
+- **감사의견 `accnutAdtorNmNdAdtOpinion.json` (F-13):** `crtfc_key`·`corp_code`·`bsns_year`(2015년 이후)·`reprt_code` 모두 필수. 2026-11-16 실제 호출로 확인: `adt_opinion`은 짧은 값(표본 `적정의견`, 자유 문장 아님), 한 호출에 3개년·연도마다 2행, `bsns_year`는 기수 라벨. 한 연도 2행 중 하나라도 전년과 다르면 알린다 (2026-11-16 결정). 적정 외 값은 2026-11-17 처음 수집으로 확인 (`의견거절`·`한정의견`, 부적정 없음, `docs/개발기능.md` F-13).
 - **이용 한도:** 개인 일 20,000건, 분당 1,000회 이상이면 제한될 수 있다 → 배치는 **분당 약 350회**.
 - **갱신 주기 (2026-11-16):** 재무·배당은 매월 5일 (주말·공휴일이면 다음 평일, 개인 서버). 기업개황은 매월 신규 상장분 + 해마다 4월 전체. KRX 목록은 매일 (GitHub Actions). 목록에서 빠진 회사는 데이터를 보관하고, 하루 5% 넘게 줄면 그날은 반영하지 않는다.
 - 테스트용 표본: 삼성전자 `crno=1301110006246`, 종목코드 `005930`, DART `corp_code=00126380`.
@@ -164,19 +165,17 @@ for-ant-investor/
 
 - **F-01~F-16 전부 설계 완료** (F-06은 F-05에 통합, 번호는 다시 매기지 않음). 설계 중인 기능은 없다. **웹앱 코드는 아직 없다.**
 - 다음은 사용자가 요청하면 **F-01부터 구현**한다.
-- GitHub 저장소 `dev-anything/for-ant-investor`(공개)와 Supabase 프로젝트 `for-ant-investor`(서울)는 준비됐다. `.env` 연결 확인 정상. **테이블 15개·뷰 4개를 2026-11-17에 만들었다** (마이그레이션 `supabase/migrations/`). `ksic_classes` 98행·`stocks` 2,768행 적재, DART 시험 5종목 수집 확인 (2026-11-17). 전체 처음 수집은 아직 안 했다. KRX 목록 배치와 DART 수집 배치는 구현 완료.
+- GitHub 저장소 `dev-anything/for-ant-investor`(공개)와 Supabase 프로젝트 `for-ant-investor`(서울)는 준비됐다. `.env` 연결 확인 정상. **테이블 15개·뷰 4개를 2026-11-17에 만들었다** (마이그레이션 `supabase/migrations/`). `ksic_classes` 98행·`stocks` 2,768행 적재, DART 처음 수집 전체 완료 (2026-11-17, 약 2시간): `companies` 2,573, 재무 있음 2,533, `financials` 18,315행, DB 38MB. KRX 목록 배치와 DART 수집 배치는 구현 완료. **2026-11-17 추가:** 기준값 재계산 배치(`batch/rules.py`·`batch/recompute.py`, 필터 20개·문장 8개, rule_version `2026-11-15-draft`)와 시세 배치(`batch/stock_price.py`, 기준일 2026-11-16, 2,878행)·GitHub Actions 워크플로(`.github/workflows/daily.yml`, 화~토 14:30 KST, Secrets 3개 미등록)를 구현·실행했다. 검증 결과는 `docs/개발기능.md` F-03·F-05·F-09.
 - 기능별 남은 확인 항목 (구현 전 확인·수집 뒤 검증·화면 배치 때 재검토)은 `docs/개발기능.md` 각 기능의 "할 일"에 있다.
 - 채택 전 후보 N-1·N-2·N-5·N-7·N-8은 `docs/제안.md`에 있다. 진행 기록은 `docs/진행기록.md`에 있다.
 
 ## 다음 할 일
 
-1. **DART 처음 수집 전체 실행** (약 12,900회, 약 37분). 사용자 확인 후 실행한다.
-2. **기준값 재계산 배치** (`company_summary`의 필터 20개·문장 8개)
-3. **시세 배치** (`stock_prices`), 그다음 GitHub Actions (KRX 목록 + 시세 매일)
-4. **GitHub Secrets·Vercel 환경변수** 설정 (배치·배포 때)
-5. **감사의견 남은 확인** (F-13, 수집 뒤): 적정 외 값(한정·부적정·의견거절) 표기, 전년 행과 짝짓는 방식 (구분 필드 없음)
-6. **Gmail 하루 발송 한도** 확인 (F-11·F-13), 구현 전 redirect URL·SMTP 설정
-7. **OpenRouter 무료 모델·하루 50회** 재확인 (F-10, 시연 전)
-8. **개발가이드 대조**: 배당·감사의견 외 3개 API, DART 자본금 0 여부, 12월 결산이 아닌 회사의 분기 보고서 모양
-9. **수집 뒤 검증** (`docs/개발기능.md` 검증 방법): 숫자 기준값, 금융회사 판별, 중복·겹치는 연도 목록, 업종별 회사 수, 12월 결산 아닌 회사 수 등
-10. **화면 배치 때 재검토**: 알림 띠·버튼 위치(F-16), 스크리너·업종 둘러보기 진입 방식(F-07·F-15), 눈금 그리는 방식(F-05·F-09)
+1. ~~**기준값 재계산 배치**~~ 완료 (2026-11-17, `company_summary`의 필터 20개·문장 8개)
+2. ~~**시세 배치**~~ 완료 (2026-11-17, `stock_prices`) · ~~GitHub Actions (KRX 목록 + 시세 매일)~~ 워크플로 작성 완료, Secrets 등록은 3번
+3. **GitHub Secrets·Vercel 환경변수** 설정 (배치·배포 때)
+4. **Gmail 하루 발송 한도** 확인 (F-11·F-13), 구현 전 redirect URL·SMTP 설정
+5. **OpenRouter 무료 모델·하루 50회** 재확인 (F-10, 시연 전)
+6. **개발가이드 대조**: 배당·감사의견 외 3개 API, DART 자본금 0 여부, 12월 결산이 아닌 회사의 분기 보고서 모양
+7. **수집 뒤 검증** (`docs/개발기능.md` 검증 방법): 숫자 기준값, 금융회사 판별, 중복·겹치는 연도 목록, 업종별 회사 수, 12월 결산 아닌 회사 수, overlap_year 377개 회사 규칙 재검토, 스팩 판별('기업인수목적' 포함 여부), 감사의견 2행 초과 회사(116건) 묶는 방법 등, **기준값 조정 결정** (필터 13 기준, 영업이익률·매출 증가율 눈금 범위, 매출 증가율 "비슷한 수준" 기준 — 1차 결과는 `docs/개발기능.md`, 조정은 사용자가 정함)
+8. **화면 배치 때 재검토**: 알림 띠·버튼 위치(F-16), 스크리너·업종 둘러보기 진입 방식(F-07·F-15), 눈금 그리는 방식(F-05·F-09)

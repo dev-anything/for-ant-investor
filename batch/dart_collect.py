@@ -14,8 +14,9 @@
 - 013은 같은 배치 끝에서 한 번 더 부르고, 그래도 013이면 "데이터 없음"(dart_fetch_status 013).
 - initial은 이어 하기 가능: 이미 주요계정을 받은 회사(fs 000)는 건너뛴다 (--force로 다시).
 - 분당 약 350회. 한도 초과(020)·키 오류면 바로 멈춘다.
-- company_summary는 기본 판정(연결/별도, 연도, 금융회사, 자본잠식)만 채운다.
-  필터(matched_filters)·문장(insights)은 기준값 재계산 배치(recompute)에서 채운다.
+- company_summary는 여기서 기본 판정(연결/별도, 연도, 금융회사, 자본잠식)을 채우고,
+  배치 끝에 재무를 새로 저장한 회사만 batch.recompute로 필터·문장을 다시 계산한다
+  (배당까지 받은 뒤라야 필터 20이 맞다).
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ import zipfile
 from datetime import date
 
 from batch.common import Dart, DartStop, Supabase, log, now_iso
+from batch.recompute import recompute
 
 REPRT = "11011"  # 사업보고서
 RULE_VERSION = "base-2026-11-17"  # 필터·문장 없이 기본 판정만
@@ -429,6 +431,7 @@ class Collector:
             return need_retry
         rcept = next(iter(newer.values()))["source_rcept_no"] if newer else None
         self.save_fs(corp, rows)
+        self.saved.add(corp)
         self.set_status(corp, "fs", "000", year, rcept)
         self.stats["new_reports"] += 1
         if self.fetch_dividend(corp, year) == "013":
@@ -441,6 +444,7 @@ class Collector:
     def run(self, only: list[str] | None, limit: int | None) -> int:
         job = "dart_initial" if self.mode == "initial" else "dart_monthly"
         self.run_id = self.db.start_run(job)
+        self.saved: set[str] = set()
         note, result = None, "ok"
         try:
             self.sync_corp_codes()
@@ -510,6 +514,11 @@ class Collector:
                         self.stats["errors"] += 1
                         log(f"  오류 {t['itms_nm']}({t['short_code']}): {e}")
                     self.flush_issues()
+
+            if self.saved:
+                log(f"필터·문장 재계산 {len(self.saved)}개 회사")
+                rs = recompute(self.db, sorted(self.saved))
+                self.stats["recomputed"] = rs["companies"]
         except DartStop as e:
             result, note = "failed", f"DART 중단: {e}"
             log(note)

@@ -1,0 +1,36 @@
+# 매일 KRX 상장종목 목록 + 주식시세 (docs/개발기능.md F-04·F-09, docs/DATABASE.md 7장)
+# 데이터는 기준일 다음 영업일 오후 1시 이후 갱신 → 화~토 14:30 KST (05:30 UTC)에 실행.
+# 이미 받은 기준일이면 시세 배치가 건너뛴다. 필요한 Secrets: DATA_GO_KR_SERVICE_KEY,
+# SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (키는 로그에 남기지 않는다).
+name: daily-krx-price
+
+on:
+  schedule:
+    - cron: "30 5 * * 2-6"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-krx-price
+  cancel-in-progress: false
+
+jobs:
+  batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATA_GO_KR_SERVICE_KEY: ${{ secrets.DATA_GO_KR_SERVICE_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: KRX 상장종목 목록
+        run: python3 -m batch.krx_list
+      - name: 주식시세
+        if: always()
+        run: python3 -m batch.stock_price
