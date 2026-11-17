@@ -276,7 +276,7 @@
 | --- | --- | --- |
 | `id` | bigint identity PK | |
 | `batch_run_id` | bigint → `batch_runs` | |
-| `kind` | text | `dup_account`(값이 다른 중복 계정) / `overlap_year`(겹치는 연도 값 다름) / `dup_dividend` / `dividend_non_numeric` / `unknown_ksic`(11차에 없는 업종 코드) / `financial_mismatch`(금융회사 두 기준 불일치) / `capital_zero` |
+| `kind` | text | `dup_account`(값이 다른 중복 계정) / `overlap_year`(겹치는 연도 값 다름) / `dup_dividend` / `dividend_non_numeric` / `unknown_ksic`(11차에 없는 업종 코드) / `financial_mismatch`(금융회사 두 기준 불일치) / `capital_zero` / `audit_label`(기수 라벨을 못 읽음) / `audit_opinion_value`(적정의견 외 값) / `collect_error`(회사 하나 처리 실패, 배치는 계속) |
 | `corp_code` | text null | |
 | `fiscal_year` | smallint null | |
 | `detail` | jsonb | 계정명, 두 값, 보고서 번호 등 |
@@ -381,3 +381,8 @@
 5. **뷰 세부:** `v_company_years`에 `is_display_year`(`years`의 뒤 3개 = Y1~Y3)와 `is_latest` 열을 둔다. 부채비율·영업이익률·매출 증가율은 금융회사이면 null, 자본 ≤ 0이면 부채비율 null, 매출 ≤ 0이면 영업이익률 null, 전년 매출 ≤ 0이면 증가율 null. 값은 반올림하지 않고 화면에서 반올림한다. `v_industry_medians`는 `v_search_targets`의 최신 연도 값으로 계산한다.
 6. **확장:** `pg_trgm`은 `extensions` 스키마에 둔다.
 7. **확인:** 표본 1건을 넣고 뷰 4개 결과를 본 뒤 되돌렸다 (`search_name` `삼성 전자`→`삼성전자`, 부채비율 25, 증가율 20, PER 100, PBR 5 정상). 지금 테이블은 전부 비어 있다.
+8. **`stocks` 기본값:** `first_bas_dt`·`last_bas_dt`는 기본값 `current_date`. PostgREST upsert는 기존 행을 갱신할 때도 삽입 행의 NOT NULL을 검사하기 때문 (마이그레이션 `stocks_bas_dt_defaults`, 2026-11-17).
+9. **`company_summary` 단계:** 지금은 기본 판정만 채운다 (`fs_div`·`years`·`is_financial`·`financial_reason`·`capital_impairment`), `rule_version` = `base-2026-11-17`. `matched_filters`·`insights`는 기준값 재계산 배치에서 채운다.
+10. **자본잠식 판정:** 자본총계 ≤ 0 → `full`, 자본금 0·없음 → `unknown` (+ `data_issues.capital_zero`), 자본총계 < 자본금 → `partial`, 그 밖 → `none`.
+11. **계정 → 열:** 매출액 → `revenue`, 영업이익·영업이익(손실) → `operating_income`, 당기순이익·당기순이익(손실) → `net_income`, 자산총계·부채총계·자본총계·자본금 → 같은 이름 열, 나머지 → `other_accounts`.
+12. **수집 뒤 검증 사례:** 삼성바이오로직스의 2023·2024 값이 보고서마다 달랐다 (2025 보고서에서 재작성, 2024 매출 4.55조 → 3.50조). `overlap_year`로 기록됨. 2023 매출 증가율(-2.1%)은 기준이 섞인 값이라 규칙을 다시 본다.

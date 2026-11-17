@@ -78,6 +78,36 @@ def to_num(v) -> float | None:
         return None
 
 
+def period_number(label: str | None) -> int | None:
+    """기수 라벨에서 기 번호: '제 59 기 (당) 기' → 59, '2023년\\n(제27기)' → 27."""
+    s = re.sub(r"\s", "", label or "")
+    m = re.search(r"제?(\d{1,3})(?:\([당전]+\))?기", s)
+    return int(m.group(1)) if m else None
+
+
+def audit_fiscal_year(label: str, bsns_year: int, top: int | None) -> int | None:
+    """감사의견 응답의 bsns_year(기수 라벨)를 사업연도로 바꾼다. 형식이 회사마다 달라 차례로 본다.
+    1) 당기·전기·전전기 표기  2) 연도 표기('2024년', '~'25.12.31')  3) 기 번호(가장 큰 번호 = 당기)."""
+    s = re.sub(r"\s", "", label or "")
+    if "전전" in s:
+        return bsns_year - 2
+    if "(전)" in s or "전기" in s:
+        return bsns_year - 1
+    if "(당)" in s or "당기" in s or "당반기" in s:
+        return bsns_year
+    ok = {bsns_year, bsns_year - 1, bsns_year - 2}
+    m = re.search(r"~'?(\d{2})\.\d{2}\.\d{2}", s)
+    if m and 2000 + int(m.group(1)) in ok:
+        return 2000 + int(m.group(1))
+    m = re.search(r"(20\d{2})(?:년|연도)", s)
+    if m and int(m.group(1)) in ok:
+        return int(m.group(1))
+    n = period_number(label)
+    if n is not None and top is not None and 0 <= top - n <= 2:
+        return bsns_year - (top - n)
+    return None
+
+
 class Collector:
     def __init__(self, mode: str, force: bool) -> None:
         self.mode, self.force = mode, force
@@ -321,14 +351,17 @@ class Collector:
                             message=None if st == "013" else f"{st} {body.get('message')}")
             return st
         rows, counter, rcept = [], {}, None
-        for r in body.get("list", []):
+        items = body.get("list", [])
+        nums = [n for n in (period_number(r.get("bsns_year")) for r in items) if n is not None]
+        top = max(nums) if nums else None
+        for r in items:
             rcept = rcept or r.get("rcept_no")
             label = r.get("bsns_year") or ""
-            m = re.search(r"\((당기|전기|전전기)\)", label)
-            if not m:
-                self.issue("audit_label", corp, year, label=label)
-                continue
-            fy = year - {"당기": 0, "전기": 1, "전전기": 2}[m.group(1)]
+            fy = audit_fiscal_year(label, year, top)
+            if fy is None:
+                if (r.get("adtor") or "-").strip() != "-" or r.get("adt_opinion"):
+                    self.issue("audit_label", corp, year, label=label)
+                continue  # 라벨·감사인·의견이 모두 빈 행은 버린다
             counter[fy] = counter.get(fy, 0) + 1
             rows.append({"corp_code": corp, "fiscal_year": fy, "row_no": counter[fy],
                          "period_label": label, "adtor": r.get("adtor"), "adt_opinion": r.get("adt_opinion"),
@@ -419,6 +452,20 @@ class Collector:
                 self.status.setdefault(r["corp_code"], {})[r["api"]] = r
             log(f"대상 {len(targets)}개 회사, 모드 {self.mode}")
 
+            if getattr(self, "audit_only", False):
+                for n, t in enumerate(targets, 1):
+                    fs = self.status.get(t["corp_code"], {}).get("fs", {})
+                    if fs.get("status") == "000":
+                        try:
+                            self.fetch_audit(t["corp_code"], fs["last_bsns_year"])
+                        except DartStop:
+                            raise
+                        except Exception as e:
+                            self.stats["errors"] += 1
+                            log(f"  오류 {t['itms_nm']}({t['short_code']}): {e}")
+                        self.stats["companies"] += 1
+                        self.flush_issues()
+                return 0
             retry_list = []
             for n, t in enumerate(targets, 1):
                 corp = t["corp_code"]
@@ -480,8 +527,12 @@ def main() -> int:
     ap.add_argument("--only", nargs="*", help="종목코드 (A 없이), 예: 005930 0220W0")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--force", action="store_true", help="이미 받은 회사도 다시")
+    ap.add_argument("--audit-only", action="store_true",
+                    help="감사의견만 다시 받기 (저장된 최신 사업보고서 연도로)")
     a = ap.parse_args()
-    return Collector(a.mode, a.force).run(a.only, a.limit)
+    c = Collector(a.mode, a.force)
+    c.audit_only = a.audit_only
+    return c.run(a.only, a.limit)
 
 
 if __name__ == "__main__":

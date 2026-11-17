@@ -63,7 +63,9 @@ def http(method: str, url: str, *, headers: dict | None = None, body: bytes | No
                 return res.status, res.read()
         except urllib.error.HTTPError as e:
             data = e.read()
-            if e.code < 500:
+            # Supabase 게이트웨이가 가끔 400 "Project not specified"를 준다 (일시 오류, 2026-11-17 확인)
+            transient = e.code == 400 and b"Project not specified" in data
+            if e.code < 500 and not transient:
                 return e.code, data
             last = f"HTTP {e.code}"
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
