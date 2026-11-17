@@ -1,4 +1,4 @@
--- 재무 레이더 첫 스키마 (docs/DATABASE.md 2026-11-16 초안 + 8장 결정 반영)
+-- 재무 레이더 첫 스키마 (docs/history/DATABASE.md 2026-11-16 초안 + 8장 결정 반영)
 -- 테이블 15개 + 뷰 4개 + RLS. 데이터 넣기(ksic_classes 등)는 별도 작업.
 
 create extension if not exists pg_trgm with schema extensions;

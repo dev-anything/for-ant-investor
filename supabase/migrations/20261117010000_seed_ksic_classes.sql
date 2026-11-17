@@ -1,6 +1,6 @@
 -- 업종 이름표: 한국표준산업분류 제11차 대분류 21개 + 중분류 77개 (공공누리 제3유형, 이름은 바꾸지 않음)
 -- 대분류 이름은 통계분류포털 표기 그대로 (예: '제 조 업'), 화면에서만 공백 정리.
--- 출처: 국가데이터처 통계분류포털 kssc.mods.go.kr, docs/개발기능.md "한국표준산업분류 (업종 이름표)"
+-- 출처: 국가데이터처 통계분류포털 kssc.mods.go.kr, docs/history/개발기능.md "한국표준산업분류 (업종 이름표)"
 insert into public.ksic_classes (code, level, name, section_code, sort_order) values
 ('A', 'section', '농업, 임업 및 어업', null, 1),
 ('01', 'division', '농업', 'A', 1),

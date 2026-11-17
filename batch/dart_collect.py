@@ -6,7 +6,7 @@
   python3 -m batch.dart_collect --mode initial --only 005930 000660   # 일부 종목만 (시험용)
   python3 -m batch.dart_collect --mode initial --limit 20
 
-규칙 (docs/개발기능.md F-04, docs/DATABASE.md):
+규칙 (docs/history/개발기능.md F-04, docs/history/DATABASE.md):
 - 대상: 검색 대상(v_search_targets) 중 외국회사 제외, corp_code가 있는 종목.
 - 처음 수집: 최신 사업보고서(작년 → 없으면 재작년) 3개년 + 한 해 전 사업보고서 → 4개년.
   겹치는 연도는 최신 보고서 값만 저장, 값이 다르면 data_issues(overlap_year).

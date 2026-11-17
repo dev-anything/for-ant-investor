@@ -1,4 +1,4 @@
-# 매일 KRX 상장종목 목록 + 주식시세 (docs/개발기능.md F-04·F-09, docs/DATABASE.md 7장)
+# 매일 KRX 상장종목 목록 + 주식시세 (docs/history/개발기능.md F-04·F-09, docs/history/DATABASE.md 7장)
 # 데이터는 기준일 다음 영업일 오후 1시 이후 갱신 → 화~토 14:30 KST (05:30 UTC)에 실행.
 # 이미 받은 기준일이면 시세 배치가 건너뛴다. 필요한 Secrets: DATA_GO_KR_SERVICE_KEY,
 # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (키는 로그에 남기지 않는다).
