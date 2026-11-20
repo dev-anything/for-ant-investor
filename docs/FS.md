@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
-| 갱신일 | 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영) |
+| 갱신일 | 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치 |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
 | 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 상세.** 2차·확장은 화면·API·DB 함수 **목록만** (9장). 착수할 때 이 문서에 상세를 채운다. 단, F-17·F-18은 정해진 구현 내용(데이터 접근 모듈·캐시·환경변수·컴포넌트·테스트할 순수 함수)을 9-1-1에 간단히 적어 둔다 |
@@ -31,7 +31,7 @@
 | --- | --- |
 | 데이터 흐름 | 웹앱은 **Supabase만** 읽는다. 공공 API(KRX·시세·DART)는 부르지 않는다 (배치 담당). **예외 (2차):** F-17 DART 공시검색 `list.json`, F-18 네이버 뉴스 검색(HUB)은 서버에서 직접 부르고 Next.js 캐시에만 둔다. DB에 저장하지 않는다 (PRD 5-8) |
 | 첫 화면 | 페이지의 첫 데이터는 **서버 컴포넌트에서 직접 조회**한다 |
-| 브라우저에서 바뀌는 것 | 검색 자동완성, 스크리너 결과 변경, (2차) 업종 목록 정렬·페이지, 챗봇만 **API Route** |
+| 브라우저에서 바뀌는 것 | 검색 자동완성, 스크리너 결과 변경, 챗봇만 **API Route**. (2차) 업종 목록·지표 비교 목록의 정렬·페이지는 URL 쿼리 링크 + 서버 다시 그리기 (`/news`와 같음, API Route 없음) |
 | 복잡한 조회 | 순위·정렬·페이지가 얽힌 조회는 **DB 함수(RPC)** 로 DB에서 처리 (5장) |
 | 판정 위치 | 필터·문장·금융회사·자본잠식 판정은 **배치가 저장한 값**을 읽는다. 웹앱은 다시 판정하지 않는다. 웹앱이 계산하는 것은 화면 표시용(화살표·눈금 위치·숫자 포맷)뿐 |
 | 문구 | 사용자에게 보이는 문구는 **`lib/copy.ts` 한 파일**에 모은다. 컴포넌트에 문구를 직접 쓰지 않는다 |
@@ -134,6 +134,9 @@ export function db() {
 | 종목 화면 첫 로드 | 서버 컴포넌트 → supabase-js 조회 3개 | 4-1 |
 | 스크리너 첫 로드 | 서버 컴포넌트 → RPC `screener_search` | 5-2 |
 | 스크리너 필터·정렬·페이지·개수 변경 | API Route `GET /api/screener` → RPC `screener_search` | 5-2 |
+| (2차) 업종 목록·업종 회사 목록·지표 비교 목록 (정렬·페이지 포함) | 서버 컴포넌트 → RPC `industry_tree`·`industry_companies`·`industry_metrics`. 정렬·페이지는 URL 쿼리(`?sort=&dir=&page=&size=`) 링크로 서버가 다시 그림. API Route 없음 | 9-1 |
+| (2차) 챗봇 | API Route `POST /api/chat` → OpenRouter (`fetch` 직접) | 9-1 |
+| (확장) 사용자 테이블 (`watchlist`·`user_settings`·`notifications`) | 로그인 세션 클라이언트 (`@supabase/ssr`, publishable 키 + RLS). 공개 데이터는 계속 서버용 키 클라이언트 | 9-2 |
 | (2차) 종목 화면 공시·기사 칸, 첫 화면 기사, `/news` | 서버 컴포넌트(`Suspense`) → 외부 API (DART `list.json`, 네이버 HUB) + Next.js 캐시. API Route 없음 | 9-1-1 |
 
 ### 4-1. 종목 화면 조회 (`lib/data/stock.ts`)
@@ -350,7 +353,7 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 | `TrendArrow` | 서버 | 화살표 + 말 ("↘ 3년째 감소"). 한 가지 색. "비슷한 수준"이면 툴팁 |
 | `DataTable` | 서버/클라이언트 | 열 정의 + 행. 열 제목 정렬 버튼(`aria-sort`). 넓으면 표 안에서만 가로 스크롤 |
 | `PageSizeSelect` | 클라이언트 | 10/20/50 |
-| `Pagination` | 클라이언트 | 페이지 번호 (이전·다음 + 앞뒤 몇 개) |
+| `Pagination` | 클라이언트 | 페이지 번호 (이전·다음 + 앞뒤 몇 개). (2차) 링크 모드: `href`로 URL 쿼리만 바꿔 서버가 다시 그림 (`/news`, 업종 목록). `DataTable` 정렬 버튼·`PageSizeSelect`도 같은 링크 모드를 지원 |
 | `Notice` | 서버 | 안내 상자. `variant: 'box' \| 'line'` (완전 자본잠식 = box, 부분 = line). 색 없이 테두리·굵기로 구분 |
 | `EmptyState` / `ErrorState` | 서버 | 빈 결과 / 오류 문구 (PRD 10장 20번 기본안) |
 | `Skeleton` | 서버 | 로딩 자리 (`loading.tsx`에서 사용) |
@@ -545,14 +548,14 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 
 | 기능 | 화면·컴포넌트 | API Route | DB 함수·조회 |
 | --- | --- | --- | --- |
-| F-08 업종 비교 | `Gauge`에 업종 가운데 값 표시 추가, "같은 업종 회사 보기" 버튼, `/industries/[division]/compare` (지표 3개 열 목록) | `GET /api/industries/[division]/compare?sort&dir&page&size` | `v_industry_medians` 조회, RPC `industry_metrics(division, sort, dir, page, size)` |
+| F-08 업종 비교 | `Gauge`에 업종 가운데 값 표시 추가, "같은 업종 회사 보기" 버튼, `/industries/[division]/compare` (지표 3개 열 목록) | — (URL 쿼리 `?sort=&dir=&page=&size=` + 서버 다시 그리기. `DataTable`·`PageSizeSelect`·`Pagination` 링크 모드) | `v_industry_medians` 조회 (먼저 속도 측정, 느리면 materialized view + 배치 갱신, PRD 5-4), 서버 컴포넌트에서 RPC `industry_metrics(division, sort, dir, page, size)`. 정렬 값이 null인 회사는 오름·내림 모두 맨 뒤 |
 | F-09 주가 수준 | `ValuationSection` (PER·PBR `Gauge` + 기준일 두 개) | — | `v_valuation`, `v_industry_medians` |
 | F-14 배당 | `DividendCard` (표 + 고정 설명) | — | `dividends` (화면 연도) |
 | F-17 최근 공시 | `StockFeedSection`(두 칸 틀) 오른쪽 `DisclosureList` (서버, `Suspense`) | — | 외부 DART `list.json` (`lib/data/disclosures.ts`, 캐시 1시간). DB 없음. 환경변수 `DART_OPENAPI_KEY`. 9-1-1 |
 | F-18 경제 기사 | 첫 화면 `HomeNews`, `/news` 화면, `StockFeedSection` 왼쪽 `StockNews`, 공통 `NewsList`·`NaverAttribution`·`ShortNameNotice` (모두 서버, `Suspense`) | — | 외부 네이버 HUB (`lib/data/news.ts`, 캐시 30분/1시간). DB 없음. 환경변수 `NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`. 9-1-1 |
-| F-15 업종 둘러보기 | 상단 메뉴 3번째, 첫 화면 바로가기, `/industries` (대분류 펼침 목록), `/industries/[division]` (회사 목록), 종목 화면 업종 이름 링크 | `GET /api/industries/[division]/companies?sort&dir&page&size` | RPC `industry_tree()` (대분류·중분류·회사 수), RPC `industry_companies(division, sort, dir, page, size)` |
-| F-16 읽는 순서 | `ReadingTour` (driver.js, 클라이언트), 알림 띠, "읽는 순서" 버튼. 단계 대상은 `data-tour="sales|profit|debt|valuation|dividend"` 속성으로 찾고 없으면 건너뜀. `localStorage` 키 1개 (try/catch) | — | 없음 |
-| F-10 챗봇 | `ChatFilterInput` (스크리너 맨 위), 예시 3개는 AI 없이 바로 적용 | `POST /api/chat` `{ text }` → `{ filters, unsupported, conflict?, notCondition }` (서버에서 OpenRouter 호출, 출력 검증, 시간 제한) | 없음. 환경변수 `OPENROUTER_API_KEY`. **`/api/chat`은 `lib/data/news.ts`를 쓰지 않는다** (기사 데이터를 AI에 넣지 않음, PRD F-10·F-18) |
+| F-15 업종 둘러보기 | 상단 메뉴 3번째, 첫 화면 바로가기, `/industries` (대분류 펼침 목록, HTML `<details>`로 JS 없이), `/industries/[division]` (회사 목록), 종목 화면 업종 이름 링크 | — (F-08과 같은 링크 방식) | 서버 컴포넌트에서 RPC `industry_tree()` (대분류·중분류·회사 수), RPC `industry_companies(division, sort, dir, page, size)` |
+| F-16 읽는 순서 | `ReadingTour` (driver.js, 클라이언트), 알림 띠, "읽는 순서" 버튼. 단계 대상은 `data-tour="sales|profit|debt|valuation|dividend"` 속성으로 찾고 없으면 건너뜀. `localStorage` 키 1개 (try/catch). 기사·공시 칸(F-17·F-18)은 단계에 넣지 않는다 (2026-11-20) | — | 없음 |
+| F-10 챗봇 | `ChatFilterInput` (스크리너 맨 위), 예시 3개는 AI 없이 바로 적용 | `POST /api/chat` `{ text }` → `{ filters, unsupported, conflict?, notCondition }` (서버에서 OpenRouter를 SDK 없이 `fetch`로 호출, 출력 검증, 시간 제한 5초). **한도 보호:** `normalizeChatInput`(앞뒤 공백·연속 공백·대소문자 정리) 결과를 키로 AI 결과 1일 캐시 → 같은 문장은 재호출 안 함. 하루 호출 수가 상한(`CHAT_DAILY_LIMIT = 40`, PRD 10장 33번)을 넘으면 AI를 부르지 않고 규칙 6 | 하루 호출 수 테이블 (서버용 키만, RLS 정책 없음, 마이그레이션 **적용 전 사용자 확인**, PRD 5-7). 환경변수 `OPENROUTER_API_KEY`. **`/api/chat`은 `lib/data/news.ts`를 쓰지 않는다** (기사 데이터를 AI에 넣지 않음, PRD F-10·F-18) |
 
 - 표의 순서는 개발 순서와 같다: F-08 → F-09 → F-14 → **F-17 → F-18** → F-15 → F-16 → F-10 (PRD 2-1).
 
@@ -604,9 +607,9 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 
 | 기능 | 화면·컴포넌트 | API Route | DB·기타 |
 | --- | --- | --- | --- |
-| F-11 로그인 | `LoginDialog` (모달), 상단 로그인·마이페이지·로그아웃, `/auth/callback` (원래 화면으로 복귀) | Supabase Auth (매직링크) | `@supabase/ssr` 쿠키 세션, publishable 키(`NEXT_PUBLIC_`), Supabase SMTP = Gmail, redirect URL 설정 |
-| F-12 추적·마이페이지 | 종목 화면 `WatchButton`, `/mypage` (추적 카드·알림 목록·설정·계정) | `POST/DELETE /api/watchlist`, `PATCH /api/settings`, `POST /api/account/delete` | `watchlist`·`user_settings` (RLS, 20개 트리거), 첫 로그인 때 `user_settings` 행 생성 |
-| F-13 알림 | 마이페이지 알림 목록·읽지 않은 개수, 상단 메뉴 개수 표시, `/unsubscribe?token=` | `PATCH /api/notifications/[id]/read`, `GET /api/unsubscribe?token=` (서버용 키) | **배치 추가:** 알림 생성(DART 월 배치·KRX 배치), 하루치 메일 묶음 발송(Gmail SMTP) |
+| F-11 로그인 | `LoginDialog` (모달), 상단 로그인·마이페이지·로그아웃, `/auth/callback` (세션 생성 → `watch` 처리(F-12) → `next`로 이동). `next`는 `/`로 시작하는 사이트 안 상대 경로만 허용, `//`·외부 주소는 `/` (`safeNextPath`) | Supabase Auth (매직링크) | `@supabase/ssr` 쿠키 세션, publishable 키(`NEXT_PUBLIC_`), Supabase SMTP = Gmail, redirect URL 설정. `user_settings` 행은 `auth.users` insert 트리거가 생성(`unsubscribe_token` 무작위) — 마이그레이션 **적용 전 사용자 확인** |
+| F-12 추적·마이페이지 | 종목 화면 `WatchButton`, `/mypage` (추적 카드·알림 목록·설정·계정). 로그인 전 "추적하기" → 매직링크 돌아갈 주소에 `?next=/stocks/{code}&watch={code}` → `/auth/callback`이 `watch`가 검색 대상 종목코드인지 검사 후 `watchlist`에 넣고 종목 화면으로 (20개 상한이면 넣지 않고 종목 화면에 상한 문구) | `POST/DELETE /api/watchlist`, `PATCH /api/settings`, `POST /api/account/delete` (서버용 키로 `auth.admin.deleteUser` → cascade) | `watchlist`·`user_settings` (로그인 세션 클라이언트 + RLS, 20개 트리거) |
+| F-13 알림 | 마이페이지 알림 목록·읽지 않은 개수, 상단 메뉴 개수 표시, `/unsubscribe?token=` **확인 화면** + [수신 거부] 버튼 → 완료 문구 (GET으로는 끄지 않음, 문구 PRD 10장 34번, `List-Unsubscribe` 헤더 안 씀) | `PATCH /api/notifications/[id]/read`, `POST /api/unsubscribe` `{ token }` (서버용 키) | **배치 추가:** 알림 생성 — `new_results`·`audit_change`는 DART 월 배치(개인 서버), `delisted`는 KRX 일 배치(GitHub Actions). 메일 발송 — `daily.yml` 마지막 단계 `batch/notify_mail.py`가 `emailed_at is null` 알림을 사용자별 한 통으로 (Gmail SMTP, 계정·앱 비밀번호는 GitHub Secrets) |
 
 ---
 
@@ -623,6 +626,8 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 | `insights.test.ts` | 8개 문장 템플릿, 3개 자르기, 모르는 id 무시 |
 | `params.test.ts` | 잘못된 `f`(0, 21, 문자, 4개, 부딪힘, 13+14)·`size`·`page`·`sort` 바로잡기, `toQuery` 왕복 |
 | `news-text.test.ts` (2차) | `cleanNewsTitle`: `<b>` 제거, `&quot;`·`&amp;`·`&#39;` 디코딩, 태그가 아닌 `<` 글자 유지. `newsDomain`: `www.` 떼기, `originallink` 빈 값 → `link`. `formatPubDate` 한국 시간 변환. `isShortName` 경계 (한글 2·3글자, 영문 3·4글자, 영문+한글 섞임). `parseNewsPage` 범위 |
+| `chat.test.ts` (2차) | `normalizeChatInput`: 앞뒤 공백, 연속 공백, 대소문자 → 같은 캐시 키 |
+| `auth.test.ts` (확장) | `safeNextPath`: `/stocks/005930` 통과, `//evil.com`·`https://…`·빈 값·`/`로 시작 안 함 → `/`. `watch` 코드 형식 검사 (검색 대상 여부는 DB 조회라 수동 확인) |
 | `disclosure.test.ts` (2차) | 지분공시 빼기, 순서 유지, 5개 자르기, 5개 미만, `dartViewerUrl`, `formatRceptDt` |
 | `rules-sync.test.ts` | `../batch/rules.py`를 텍스트로 읽어 `CONFLICTS`·`FINANCIAL_BLOCKED`·`GAUGES`·`FLAT_SHARE`(3/100)를 정규식으로 뽑아 TS 상수와 같은지 비교 (배치와 웹앱 기준이 어긋나는 것을 막음) |
 
