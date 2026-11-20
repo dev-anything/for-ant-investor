@@ -3,9 +3,10 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
+| 갱신일 | 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영) |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
-| 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 상세.** 2차·확장은 화면·API·DB 함수 **목록만** (9장). 착수할 때 이 문서에 상세를 채운다 |
+| 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 상세.** 2차·확장은 화면·API·DB 함수 **목록만** (9장). 착수할 때 이 문서에 상세를 채운다. 단, F-17·F-18은 정해진 구현 내용(데이터 접근 모듈·캐시·환경변수·컴포넌트·테스트할 순수 함수)을 9-1-1에 간단히 적어 둔다 |
 
 ## 목차
 
@@ -28,7 +29,7 @@
 
 | 원칙 | 내용 |
 | --- | --- |
-| 데이터 흐름 | 웹앱은 **Supabase만** 읽는다. 공공 API(KRX·시세·DART)는 부르지 않는다 (배치 담당) |
+| 데이터 흐름 | 웹앱은 **Supabase만** 읽는다. 공공 API(KRX·시세·DART)는 부르지 않는다 (배치 담당). **예외 (2차):** F-17 DART 공시검색 `list.json`, F-18 네이버 뉴스 검색(HUB)은 서버에서 직접 부르고 Next.js 캐시에만 둔다. DB에 저장하지 않는다 (PRD 5-8) |
 | 첫 화면 | 페이지의 첫 데이터는 **서버 컴포넌트에서 직접 조회**한다 |
 | 브라우저에서 바뀌는 것 | 검색 자동완성, 스크리너 결과 변경, (2차) 업종 목록 정렬·페이지, 챗봇만 **API Route** |
 | 복잡한 조회 | 순위·정렬·페이지가 얽힌 조회는 **DB 함수(RPC)** 로 DB에서 처리 (5장) |
@@ -53,6 +54,7 @@ for-ant-investor/
 │  │  ├─ not-found.tsx
 │  │  ├─ stocks/[code]/page.tsx     # 종목 화면 (F-02·F-05, 2차에 F-08·F-09·F-14·F-16)
 │  │  ├─ screener/page.tsx          # 스크리너 (F-07, 2차에 F-10)
+│  │  ├─ news/page.tsx              # (2차) 경제 기사 목록 (F-18, 상단 메뉴에 없음)
 │  │  └─ api/
 │  │     ├─ search/route.ts         # GET 연관검색어 (F-01)
 │  │     └─ screener/route.ts       # GET 스크리너 결과 (F-07)
@@ -60,7 +62,9 @@ for-ant-investor/
 │  ├─ lib/
 │  │  ├─ supabase/server.ts         # 서버용 클라이언트 (server-only)
 │  │  ├─ supabase/types.ts          # DB 타입 (생성 파일)
-│  │  ├─ data/                      # 서버 조회 함수 (stock.ts, screener.ts, search.ts)
+│  │  ├─ data/                      # 서버 조회 함수 (stock.ts, screener.ts, search.ts, 2차 disclosures.ts·news.ts)
+│  │  ├─ news-text.ts               # (2차) 기사 제목 정리·도메인·짧은 종목명 판정 (F-18)
+│  │  ├─ disclosure.ts              # (2차) 공시 거르기·원문 링크 (F-17)
 │  │  ├─ copy.ts                    # 화면 문구 전부
 │  │  ├─ filters.ts                 # 필터 20개 상수·충돌 규칙 (F-03)
 │  │  ├─ insights.ts                # insights → 문장
@@ -90,7 +94,7 @@ for-ant-investor/
 | `SUPABASE_URL` | 루트 `.env` / Vercel | `lib/supabase/server.ts` |
 | `SUPABASE_SERVICE_ROLE_KEY` | 루트 `.env` / Vercel | `lib/supabase/server.ts` (서버만) |
 
-- MVP는 이 두 개만 쓴다. (2차 `OPENROUTER_API_KEY`, 확장 publishable 키는 9장)
+- MVP는 이 두 개만 쓴다. (2차 `OPENROUTER_API_KEY`·`DART_OPENAPI_KEY`(F-17)·`NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`(F-18), 확장 publishable 키는 9장)
 - **로컬:** 키는 루트 `.env`에 있다. `web/next.config.ts`에서 `@next/env`의 `loadEnvConfig(path.resolve(__dirname, '..'))`로 루트 `.env`를 불러온다. **`.env` 파일을 열거나 출력하지 않는다.** `web/.env.local`을 따로 만들지 않는다.
 - **배포:** Vercel 프로젝트 환경변수에 같은 이름으로 넣는다 (사용자가 직접).
 
@@ -118,6 +122,7 @@ export function db() {
 - 데이터는 하루 1번(시세·목록), 한 달 1번(재무) 바뀐다.
 - 종목 화면·스크리너 첫 화면: `export const revalidate = 3600` (1시간).
 - API Route 응답: `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`.
+- (2차) 외부 API 호출 캐시: F-17 공시 **1시간**, F-18 일반 기사 **30분**·종목 기사 **1시간** (9-1-1). 캐시 외에 저장하지 않는다.
 
 ---
 
@@ -129,6 +134,7 @@ export function db() {
 | 종목 화면 첫 로드 | 서버 컴포넌트 → supabase-js 조회 3개 | 4-1 |
 | 스크리너 첫 로드 | 서버 컴포넌트 → RPC `screener_search` | 5-2 |
 | 스크리너 필터·정렬·페이지·개수 변경 | API Route `GET /api/screener` → RPC `screener_search` | 5-2 |
+| (2차) 종목 화면 공시·기사 칸, 첫 화면 기사, `/news` | 서버 컴포넌트(`Suspense`) → 외부 API (DART `list.json`, 네이버 HUB) + Next.js 캐시. API Route 없음 | 9-1-1 |
 
 ### 4-1. 종목 화면 조회 (`lib/data/stock.ts`)
 
@@ -337,7 +343,7 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 
 | 컴포넌트 | 종류 | 역할 |
 | --- | --- | --- |
-| `AppHeader` | 서버 | 서비스 이름(→ `/`), 상단 메뉴 "종목 검색"(`/`)·"조건으로 찾기"(`/screener`). 현재 메뉴 `aria-current`. (2차 "업종으로 둘러보기", 확장 로그인 자리) |
+| `AppHeader` | 서버 | 서비스 이름(→ `/`), 상단 메뉴 "종목 검색"(`/`)·"조건으로 찾기"(`/screener`). 현재 메뉴 `aria-current`. (2차 "업종으로 둘러보기", 확장 로그인 자리). `/news`(F-18)는 메뉴에 넣지 않는다 |
 | `SiteFooter` | 서버 | 투자 책임 고지 한 줄 + 출처 두 줄 (PRD 3-2, 10장 1번) |
 | `Tooltip` | 클라이언트 | 트리거(`button`, `aria-describedby`) + 말풍선. 마우스 올림·포커스·탭으로 열림, Esc·바깥 클릭으로 닫힘. 작은 화면에서도 화면 밖으로 안 나가게 |
 | `Gauge` | 서버 | 가로 막대 + 점(이 회사) + 기준선(있으면, 툴팁) + (2차) 업종 가운데 값 표시. `gaugePosition` 사용. 범위 밖이면 점을 끝에 두고 값을 글자로. `role="img"` + `aria-label`("부채비율 87.3%, 범위 0~300%") |
@@ -369,6 +375,7 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
         │ (외국회사) … (000000) 지원하지 않음│
         └──────────────────────────────────┘
         어떤 회사를 찾을지 모르겠다면 → 조건으로 찾기
+        (2차: 경제 기사 5개 + 기사 더 보기 → /news, F-18)
 ─ SiteFooter ─
 ```
 
@@ -412,7 +419,7 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 [실적]  기준: 연결재무제표 · 2023~2025 사업연도                     ← ResultsCharts
  ┌매출액┐ ┌영업이익┐ ┌순이익ⓘ┐
 ─────────────────────────────────────────────
-(2차: 주가 수준 / 배당)
+(2차: 주가 수준 / 배당 / [최근 기사 | 최근 공시] 두 칸)
 ─ SiteFooter ─
 ```
 
@@ -541,9 +548,57 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 | F-08 업종 비교 | `Gauge`에 업종 가운데 값 표시 추가, "같은 업종 회사 보기" 버튼, `/industries/[division]/compare` (지표 3개 열 목록) | `GET /api/industries/[division]/compare?sort&dir&page&size` | `v_industry_medians` 조회, RPC `industry_metrics(division, sort, dir, page, size)` |
 | F-09 주가 수준 | `ValuationSection` (PER·PBR `Gauge` + 기준일 두 개) | — | `v_valuation`, `v_industry_medians` |
 | F-14 배당 | `DividendCard` (표 + 고정 설명) | — | `dividends` (화면 연도) |
+| F-17 최근 공시 | `StockFeedSection`(두 칸 틀) 오른쪽 `DisclosureList` (서버, `Suspense`) | — | 외부 DART `list.json` (`lib/data/disclosures.ts`, 캐시 1시간). DB 없음. 환경변수 `DART_OPENAPI_KEY`. 9-1-1 |
+| F-18 경제 기사 | 첫 화면 `HomeNews`, `/news` 화면, `StockFeedSection` 왼쪽 `StockNews`, 공통 `NewsList`·`NaverAttribution`·`ShortNameNotice` (모두 서버, `Suspense`) | — | 외부 네이버 HUB (`lib/data/news.ts`, 캐시 30분/1시간). DB 없음. 환경변수 `NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`. 9-1-1 |
 | F-15 업종 둘러보기 | 상단 메뉴 3번째, 첫 화면 바로가기, `/industries` (대분류 펼침 목록), `/industries/[division]` (회사 목록), 종목 화면 업종 이름 링크 | `GET /api/industries/[division]/companies?sort&dir&page&size` | RPC `industry_tree()` (대분류·중분류·회사 수), RPC `industry_companies(division, sort, dir, page, size)` |
 | F-16 읽는 순서 | `ReadingTour` (driver.js, 클라이언트), 알림 띠, "읽는 순서" 버튼. 단계 대상은 `data-tour="sales|profit|debt|valuation|dividend"` 속성으로 찾고 없으면 건너뜀. `localStorage` 키 1개 (try/catch) | — | 없음 |
-| F-10 챗봇 | `ChatFilterInput` (스크리너 맨 위), 예시 3개는 AI 없이 바로 적용 | `POST /api/chat` `{ text }` → `{ filters, unsupported, conflict?, notCondition }` (서버에서 OpenRouter 호출, 출력 검증, 시간 제한) | 없음. 환경변수 `OPENROUTER_API_KEY` |
+| F-10 챗봇 | `ChatFilterInput` (스크리너 맨 위), 예시 3개는 AI 없이 바로 적용 | `POST /api/chat` `{ text }` → `{ filters, unsupported, conflict?, notCondition }` (서버에서 OpenRouter 호출, 출력 검증, 시간 제한) | 없음. 환경변수 `OPENROUTER_API_KEY`. **`/api/chat`은 `lib/data/news.ts`를 쓰지 않는다** (기사 데이터를 AI에 넣지 않음, PRD F-10·F-18) |
+
+- 표의 순서는 개발 순서와 같다: F-08 → F-09 → F-14 → **F-17 → F-18** → F-15 → F-16 → F-10 (PRD 2-1).
+
+#### 9-1-1. F-17·F-18 정해진 구현 내용
+
+규칙·문구는 PRD 4장 F-17·F-18, 외부 API 명세는 PRD 5-8, 문구 기본안은 PRD 10장 21~32번. 착수 때 8장 깊이로 채운다.
+
+**데이터 접근 (`server-only`, 둘 다 throw하지 않고 결과 상태를 돌려준다)**
+
+| 모듈 | 함수 | 동작 |
+| --- | --- | --- |
+| `lib/data/disclosures.ts` | `getRecentDisclosures(corpCode)` | `list.json` GET (`corp_code`, `sort=date`, `sort_mth=desc`, `page_count`는 지분공시를 거르고 5개가 남을 만큼 — PRD 11장 19번 확인 뒤 정함). `status` `000` → 거른 5개, `013` → 빈 목록, 그 밖·시간 초과 → `{ status: 'error' }` |
+| `lib/data/news.ts` | `searchNews({ query, display, start, sort })` | HUB GET, 헤더 `X-NCP-APIGW-API-KEY-ID`·`X-NCP-APIGW-API-KEY`. 키가 없으면 호출하지 않고 `{ status: 'error' }` (로그에는 변수 이름만). **받은 순서·개수 그대로** 매핑만 한다 |
+| 〃 | `getHomeNews()` / `getNewsPage(page)` / `getStockNews(name)` | 일반 기사 5개 / `/news` 한 페이지 (`start = (page−1)×10+1`, PRD 10장 29번) / 종목명 검색 `sort=date` 5개 |
+
+- 캐시: `fetch`의 `next: { revalidate }` 또는 구현 시점 Next.js 캐시 방식으로 — 공시 3600초, 일반 기사 1800초, 종목 기사 3600초. 캐시 외에 DB·파일에 저장하지 않는다 (네이버 약관).
+- 시간 제한: 요청마다 5초 (`AbortSignal.timeout`, 기본안). 넘으면 실패 문구.
+- 로그: DART 요청 URL에는 `crtfc_key`가 들어가므로 **요청 URL 원문을 로그에 남기지 않는다.** 상태 코드·DART `status`만 남긴다.
+- 브라우저에서 DART·네이버를 부르지 않는다. API Route도 만들지 않는다 (`/news` 페이지 넘김은 URL `?page=`로 서버가 다시 그림).
+
+**컴포넌트 (모두 서버)**
+
+| 컴포넌트 | 역할 |
+| --- | --- |
+| `StockFeedSection` | 종목 화면 배당 카드 아래 두 칸 틀. `grid` PC 2열(왼쪽 기사·오른쪽 공시), 좁은 화면 1열. 칸마다 `<Suspense fallback={<Skeleton/>}>` |
+| `DisclosureList` | `getRecentDisclosures` → 줄 `{report_nm} · {flr_nm} · {YYYY-MM-DD}`, `<a target="_blank" rel="noopener noreferrer">` DART 원문, "공시 더 보기" 링크. 실패·0건 문구 |
+| `NewsList` | 기사 줄 목록 (세 곳 공통). 제목은 `cleanNewsTitle` 결과를 **텍스트 노드로만** 렌더링 (`dangerouslySetInnerHTML` 금지). 줄 사이에 다른 요소를 넣지 않는다 |
+| `NaverAttribution` | 네이버 로고(BI 가이드 파일) + 네이버 링크. 기사 영역마다 하나 |
+| `HomeNews` / `StockNews` | 안내 문구 + `NaverAttribution` + `NewsList`. `StockNews`는 `isShortName(name)`이면 `ShortNameNotice`(안내 + 네이버 뉴스 검색 링크)만 |
+| `app/news/page.tsx` | `parseNewsPage(searchParams)` → `getNewsPage` → `NewsList` + `Pagination`. `revalidate = 1800` |
+
+- `SiteFooter` 출처 첫 줄의 네이버 추가는 사용자 확인 뒤 (PRD 3-2, 10장 25번). 문구는 `lib/copy.ts`에 (`copy.news.*`, `copy.disclosure.*`).
+- 재무 데이터 없음 화면에도 `StockFeedSection`을 둔다 (PRD 10장 26번 기본안). 외국회사 화면에는 두지 않는다.
+
+**순수 함수 (Vitest 대상)**
+
+| 모듈 | 함수 | 규칙 |
+| --- | --- | --- |
+| `lib/news-text.ts` | `cleanNewsTitle(raw)` | 태그(`<b>`, `</b>` 등) 제거 → HTML 엔티티 디코딩(이름·숫자 엔티티). 그 밖의 글자는 바꾸지 않음 |
+| 〃 | `newsDomain(originallink, link)` | `originallink` 호스트에서 앞 `www.`만 뗌. 없거나 잘못된 주소면 `link` 호스트 |
+| 〃 | `formatPubDate(pubDate)` | RFC 822 형식 → 한국 시간 `YYYY-MM-DD HH:mm` (형식은 PRD 11장 16번 실제 응답으로 확인) |
+| 〃 | `isShortName(name)` | 한글 2글자 이하, 또는 영문·숫자만 3글자 이하 → true (PRD 10장 24번, 기준 상수로) |
+| 〃 | `parseNewsPage(searchParams)` | 1~100 정수(`start` ≤ 1000), 잘못된 값은 1 |
+| `lib/disclosure.ts` | `excludeOwnershipDisclosures(items)` / `takeRecent(items, 5)` | 지분공시 빼기 (기준은 PRD 11장 19번 확인 뒤 상수로), 순서 유지 앞 5개 |
+| 〃 | `dartViewerUrl(rceptNo)` | `https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rceptNo}` |
+| `lib/format.ts` | `formatRceptDt('20261120')` | `2026-11-20` |
 
 ### 9-2. 확장
 
@@ -567,6 +622,8 @@ URL: `/screener?f=1,13&sort=name&dir=asc&page=1&size=10`
 | `filters.test.ts` | `toggleFilter`: 추가·해제·4번째·부딪힘 10쌍 양방향·13↔14 교체. `evidenceColumns` 중복 제거·순서. `fillYears` |
 | `insights.test.ts` | 8개 문장 템플릿, 3개 자르기, 모르는 id 무시 |
 | `params.test.ts` | 잘못된 `f`(0, 21, 문자, 4개, 부딪힘, 13+14)·`size`·`page`·`sort` 바로잡기, `toQuery` 왕복 |
+| `news-text.test.ts` (2차) | `cleanNewsTitle`: `<b>` 제거, `&quot;`·`&amp;`·`&#39;` 디코딩, 태그가 아닌 `<` 글자 유지. `newsDomain`: `www.` 떼기, `originallink` 빈 값 → `link`. `formatPubDate` 한국 시간 변환. `isShortName` 경계 (한글 2·3글자, 영문 3·4글자, 영문+한글 섞임). `parseNewsPage` 범위 |
+| `disclosure.test.ts` (2차) | 지분공시 빼기, 순서 유지, 5개 자르기, 5개 미만, `dartViewerUrl`, `formatRceptDt` |
 | `rules-sync.test.ts` | `../batch/rules.py`를 텍스트로 읽어 `CONFLICTS`·`FINANCIAL_BLOCKED`·`GAUGES`·`FLAT_SHARE`(3/100)를 정규식으로 뽑아 TS 상수와 같은지 비교 (배치와 웹앱 기준이 어긋나는 것을 막음) |
 
 - DB 함수는 마이그레이션 적용 뒤 SQL로 직접 확인한다: `search_stocks('삼성 전자')`, `search_stocks('0059')`, `search_stocks('0220w0')`, `screener_search('{1,13}', 'name', 'asc', 1, 10)`의 `total_count`가 `select count(*) … matched_filters @> '{1,13}'`(검색 대상·외국회사 제외)와 같은지.
