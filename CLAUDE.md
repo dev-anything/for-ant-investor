@@ -47,6 +47,7 @@
 - 화면은 **PC 우선 반응형**으로 만든다 (2026-11-17, 계획서의 모바일 우선에서 변경).
 - PRD 10장 "구현 때 결정할 항목" 32개(21~32번은 2026-11-20 F-17·F-18 추가)와 FS 12장 문구 기본안은 기본안대로 진행하고, 바꾸려면 사용자에게 묻는다.
 - **구현 방식 (FS, 2026-11-17 사용자 확정):** 첫 화면은 서버 컴포넌트에서 직접 조회하고, 브라우저에서 바뀌는 것(검색 자동완성·스크리너 결과·챗봇)만 API Route로 만든다. 복잡한 조회는 DB 함수(RPC) `search_stocks`·`screener_search`를 마이그레이션으로 추가한다 (**적용 전 사용자 확인**). UI는 Tailwind만 (컴포넌트 라이브러리 없음), 지금은 무채색 단순 구성이고 디자인은 마지막에 한 번에 한다. 테스트는 순수 함수 단위 테스트(Vitest) + 수용 기준 수동 확인.
+- **코드 스타일은 `.claude/rules/`를 따른다** (2026-11-20 사용자 확정): 이름은 영어·주석은 한국어, 경로는 항상 `@/`, `any` 금지, 문구는 `lib/copy.ts` 등. 코드를 쓰기 전에 해당 규칙 파일을 읽는다. 스타일이 바뀌면 규칙 파일을 고친다.
 - 웹앱 폴더는 `web/` (Vercel Root Directory). 로컬 키는 `next.config`에서 루트 `.env`를 `loadEnvConfig`로 불러온다.
 - 사용자가 "설계만", "문서에 정리"라고 하면 코드를 만들지 않고 문서만 고친다.
 - API 주소·파라미터·응답 필드는 **추측하지 않는다.** 활용가이드나 포털 End Point를 그대로 쓰고, 실제 응답으로 확인한 뒤 문서에 기록한다. (과거에 KRX 주소를 추측해서 403이 난 적이 있다.)
@@ -102,6 +103,7 @@ for-ant-investor/
 │  └─ supabase_check.py     # Supabase 연결 확인 (키 값은 출력 안 함)
 ├─ batch/                   # 배치 (표준 라이브러리만). common.py(공통), krx_list.py(KRX 목록), dart_collect.py(DART 수집), rules.py(필터·문장 판정 순수 함수), recompute.py(기준값 재계산), stock_price.py(시세)
 ├─ .github/workflows/daily.yml  # 매일 KRX 목록 + 시세 (GitHub Actions, Secrets 등록 전)
+├─ .claude/rules/          # 코드 작성 스타일 규칙 (2026-11-20): typescript.md(web/), testing.md(web/tests), python-batch.md(batch/·scripts/). 파일마다 paths로 적용 범위 지정
 ├─ supabase/migrations/    # DB 마이그레이션 (2026-11-17 initial_schema)
 ├─ ref/                     # 포털 화면 저장본 (키 포함 가능, git 제외)
 └─ api_check_results/       # API 응답 원본 (키는 ***로 가림, git 제외)
