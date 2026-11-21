@@ -25,7 +25,7 @@
 - [x] 7b. F-08 `industry.ts`·`Gauge` 가운데 값·`ReportCard` 변경
 - [ ] 7c. F-08 링크 모드(`SortHeaderLink`·`DataTable`·`Pagination`·`PageSizeSelect`)·`params.ts` 목록 함수·`/industries/[division]/compare`
 - [x] 8. F-09 `ValuationSection`
-- [ ] 9. F-14 `dividend.ts`·`DividendCard`
+- [x] 9. F-14 `dividend.ts`·`DividendCard`
 - [ ] 10a. F-17 사전 확인 (DART `list.json` 실제 응답, PRD 11장 19·20번)
 - [ ] 10b. F-17 `disclosures.ts`·`disclosure.ts`·`DisclosureList`·`StockFeedSection`
 - [ ] 11a. F-18 `news-text.ts`(+테스트)·`news.ts` (키 없으면 꺼짐)

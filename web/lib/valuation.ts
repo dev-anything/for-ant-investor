@@ -32,6 +32,7 @@ export interface ValuationRow {
   valueText: string | null;
   notice: string | null;
   // 눈금 아래 가운데 값 줄에 쓴다. 값이 없으면 그리지 않는다 (FS 9-2 규칙과 같음)
+  // compare의 relation(높아/낮아/같아)은 F-09에서 쓰지 않는다 (FS 6-8·9-3, 12장 동작 기본안 1번). 화면은 kind·median·n만 본다
   compare: IndustryCompare;
   lineTip: string | null;
 }

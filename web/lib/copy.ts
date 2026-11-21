@@ -74,6 +74,33 @@ export const copy = {
     // PBR 1배 선 툴팁 (PRD 4장 F-09 표)
     pbrLineTip: '시가총액과 회사 자본이 같아지는 지점이야. 좋고 나쁨을 가르는 기준은 아니야.',
   },
+  // 배당 카드 (PRD 4장 F-14, FS 9-4). 표 칸·툴팁·고정 설명은 PRD 표 그대로
+  dividend: {
+    // 카드 제목 (PRD 4장 F-14 표)
+    title: '배당 (보통주 기준)',
+    // 제목 오른쪽 기준 표시 (PRD 4장 F-14 표)
+    basis: (year: number) => `${year}년 사업보고서 기준`,
+    // 표 행 이름과 툴팁 (PRD 4장 F-14 표)
+    rowDps: '주당 배당금',
+    rowDpsTip: '한 주를 가진 사람이 받은 현금배당이야.',
+    rowYield: '배당수익률',
+    rowYieldTip: '주당 배당금이 주가의 몇 %인지 나타낸 값이야.',
+    // 칸 문구 (PRD 4장 F-14 표)
+    none: '없음',
+    // 확인 필요 칸 (PRD 10장 14번 기본안)
+    check: '확인 필요',
+    notDisclosed: '공시 없음',
+    notDisclosedTip: '회사가 이 해 배당수익률을 공시하지 않았어.',
+    // 카드 본문 대신 쓰는 문장 (PRD 4장 F-14 표)
+    allNone: '최근 3년 동안 현금배당이 없었어.',
+    noData: '이 회사의 배당 정보가 없어.',
+    // 표 아래 고정 설명 두 줄 (PRD 4장 F-14 화면). "배당 기준일"에만 툴팁을 붙인다
+    note: '배당수익률은 회사가 사업보고서에 적은 값이야.',
+    noteRecordDatePrefix: '그해 ',
+    noteRecordDate: '배당 기준일',
+    noteRecordDateTip: '이날 주식을 가진 사람이 배당을 받아.',
+    noteRecordDateSuffix: ' 무렵 주가로 계산해서 지금 주가로 따진 값과는 달라.',
+  },
   // 실적 그래프 (PRD 4장 F-02, 3-1·3-8). 툴팁 "정식 이름은 당기순이익"은 PRD 확정 문구
   results: {
     title: '실적',

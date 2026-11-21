@@ -4,9 +4,11 @@ import { cache } from 'react';
 import { EmptyState } from '@/components/EmptyState';
 import { ReportCard } from '@/components/ReportCard';
 import { ResultsCharts } from '@/components/ResultsCharts';
+import { DividendCard } from '@/components/DividendCard';
 import { ValuationSection } from '@/components/ValuationSection';
 import { StockHeader } from '@/components/StockHeader';
 import { getStockPage } from '@/lib/data/stock';
+import { getDisplayYears } from '@/lib/chart-data';
 import { copy } from '@/lib/copy';
 
 // FS 3-3: 종목 화면 1시간 캐시
@@ -45,6 +47,10 @@ export default async function StockPage({ params }: StockPageProps) {
             isFinancial={page.summary.isFinancial}
           />
           <ValuationSection valuation={page.valuation} industry={page.industry} />
+          <DividendCard
+            dividends={page.dividends}
+            displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
+          />
         </>
       )}
     </div>

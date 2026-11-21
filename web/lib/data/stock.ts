@@ -1,7 +1,8 @@
-// 종목 화면 조회 (FS 4-1, MVP 1·2·3번, 2차 F-08 업종·F-09 주가). 배당(6번)은 F-14 단계에서 붙인다.
+// 종목 화면 조회 (FS 4-1, MVP 1·2·3번, 2차 F-08 업종·F-09 주가·F-14 배당 6번).
 // DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다 (TypeScript 규칙 C1).
 import 'server-only';
 import { db } from '@/lib/supabase/server';
+import type { DividendRow, DpsStatus, YieldStatus } from '@/lib/dividend';
 import type { Insight } from '@/lib/insights';
 import type { IndustryMedian } from '@/lib/industry';
 import type { StockValuation } from '@/lib/valuation';
@@ -68,6 +69,8 @@ export interface StockPage {
   industry: StockIndustry | null;
   // ok가 아니면 null. ok여도 v_valuation 행이 없으면 null = 시세 없음 (PRD 10장 13번)
   valuation: StockValuation | null;
+  // ok가 아니면 []. ok여도 행이 없으면 [] (카드가 "배당 정보가 없어"를 그린다). 화면 연도 행만 담는다 (FS 4-1 6번, PRD 4장 F-14)
+  dividends: DividendRow[];
 }
 
 /**
@@ -81,24 +84,57 @@ export async function getStockPage(shortCode: string): Promise<StockPage | null>
   const { info: stock, corpCode } = lookup;
 
   if (stock.isForeign) {
-    return { stock, status: 'foreign', summary: null, years: [], industry: null, valuation: null };
+    return { stock, status: 'foreign', summary: null, years: [], industry: null, valuation: null, dividends: [] };
   }
   // corp_code가 없으면 재무 조회 자체를 건너뛴다 (FS 4-1 2번)
   if (corpCode === null) {
-    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null };
+    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null, dividends: [] };
   }
 
-  // 업종 가운데 값·주가는 재무 조회와 함께 병렬로 읽는다 (FS 4-1 4·5번)
-  const [summary, years, industry, valuation] = await Promise.all([
-    findSummary(corpCode),
-    findYears(corpCode),
+  // 재무 요약·연도를 먼저 읽는다. 4~6번(업종·주가·배당)은 status가 ok일 때만 조회한다 (FS 4-1)
+  const [summary, years] = await Promise.all([findSummary(corpCode), findYears(corpCode)]);
+  if (!summary) {
+    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null, dividends: [] };
+  }
+  const [industry, valuation, dividendRows] = await Promise.all([
     findIndustry(stock),
     findValuation(stock.srtnCd),
+    findDividends(corpCode),
   ]);
-  if (!summary) {
-    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null };
-  }
-  return { stock, status: 'ok', summary, years, industry, valuation };
+  // FS 4-1 6번: 연도 조건 없이 받았으니 화면 연도(is_display_year) 행만 남긴다
+  const displayYears = new Set(years.filter((row) => row.isDisplayYear).map((row) => row.fiscalYear));
+  const dividends = dividendRows.filter((row) => displayYears.has(row.fiscalYear));
+  return { stock, status: 'ok', summary, years, industry, valuation, dividends };
+}
+
+// FS 4-1 6번 (PRD 4장 F-14): 회사당 몇 행뿐이라 연도 조건 없이 받는다
+async function findDividends(corpCode: string): Promise<DividendRow[]> {
+  const { data, error } = await db()
+    .from('dividends')
+    .select('fiscal_year,dps_status,dps,yield_status,dividend_yield,source_bsns_year')
+    .eq('corp_code', corpCode)
+    .order('fiscal_year', { ascending: true });
+  if (error) throw new Error(`DB 조회 오류(dividends): ${error.message}`);
+
+  return (data ?? []).map((row) => ({
+    fiscalYear: required(row.fiscal_year, 'fiscal_year'),
+    dpsStatus: toDpsStatus(row.dps_status),
+    dps: row.dps,
+    yieldStatus: toYieldStatus(row.yield_status),
+    dividendYield: row.dividend_yield,
+    sourceBsnsYear: required(row.source_bsns_year, 'source_bsns_year'),
+  }));
+}
+
+// DB check 제약과 맞춤. 모르는 값은 "확인 필요"로 둔다 (화면에 추측 값을 내지 않게)
+function toDpsStatus(value: string): DpsStatus {
+  if (value === 'paid' || value === 'none') return value;
+  return 'check';
+}
+
+function toYieldStatus(value: string): YieldStatus {
+  if (value === 'value' || value === 'not_disclosed' || value === 'none') return value;
+  return 'check';
 }
 
 // FS 4-1 5번: 업종 코드·이름이 없으면 조회하지 않는다. 뷰 행이 없으면 업종은 있고 회사 수 0으로 본다 (비교 안 함)
@@ -138,11 +174,12 @@ async function findValuation(srtnCd: string): Promise<StockValuation | null> {
     .eq('srtn_cd', srtnCd)
     .maybeSingle();
   if (error) throw new Error(`DB 조회 오류(v_valuation): ${error.message}`);
-  if (!data) return null;
+  // 기준일이나 순이익·자본 연도가 비면 주가 수준을 계산할 수 없어 "주가 정보가 없어"로 보낸다 (throw하지 않음, PRD 10장 13번)
+  if (!data || data.bas_dt === null || data.latest_year === null) return null;
 
   return {
-    basDt: required(data.bas_dt, 'bas_dt'),
-    latestYear: required(data.latest_year, 'latest_year'),
+    basDt: data.bas_dt,
+    latestYear: data.latest_year,
     per: data.per,
     pbr: data.pbr,
   };

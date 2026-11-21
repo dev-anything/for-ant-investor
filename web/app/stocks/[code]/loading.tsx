@@ -11,6 +11,9 @@ export default function StockLoading() {
       <div className="mt-6 space-y-4">
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-64 w-full" />
+        {/* FS 9-1: 주가 수준·배당 자리 */}
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full" />
       </div>
     </div>
   );

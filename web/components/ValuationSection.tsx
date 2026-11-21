@@ -24,18 +24,19 @@ export function ValuationSection({
         </h2>
         {valuation && <p className="text-xs text-neutral-600">{valuationBasisText(valuation)}</p>}
       </div>
-      <p className="mt-1 text-xs text-neutral-600">{copy.valuation.commonShareNote}</p>
-
       {valuation === null ? (
         <p className="mt-4 text-sm text-neutral-700">{copy.valuation.noPrice}</p>
       ) : (
-        <div className="mt-4 rounded border border-neutral-300 px-4">
-          {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
-          {industry === null && <p className="py-4 text-sm text-neutral-700">{copy.industry.noIndustry}</p>}
-          {rows.map((row) => (
-            <ValuationItem key={row.key} row={row} />
-          ))}
-        </div>
+        <>
+          <p className="mt-1 text-xs text-neutral-600">{copy.valuation.commonShareNote}</p>
+          <div className="mt-4 rounded border border-neutral-300 px-4">
+            {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
+            {industry === null && <p className="py-4 text-sm text-neutral-700">{copy.industry.noIndustry}</p>}
+            {rows.map((row) => (
+              <ValuationItem key={row.key} row={row} />
+            ))}
+          </div>
+        </>
       )}
     </section>
   );
