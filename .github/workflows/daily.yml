@@ -2,6 +2,7 @@
 # 데이터는 기준일 다음 영업일 오후 1시 이후 갱신 → 화~토 14:30 KST (05:30 UTC)에 실행.
 # 이미 받은 기준일이면 시세 배치가 건너뛴다. 필요한 Secrets: DATA_GO_KR_SERVICE_KEY,
 # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (키는 로그에 남기지 않는다).
+# 마지막 단계 알림 메일(F-13)은 GMAIL_ADDRESS·GMAIL_APP_PASSWORD·SITE_URL Secrets를 쓴다. 없으면 메일 없이 끝난다.
 name: daily-krx-price
 
 on:
@@ -34,3 +35,10 @@ jobs:
       - name: 주식시세
         if: always()
         run: python3 -m batch.stock_price
+      - name: 추적 종목 알림 메일 (F-13)
+        if: always()
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: python3 -m batch.notify_mail

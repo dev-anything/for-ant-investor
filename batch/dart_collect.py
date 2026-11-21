@@ -29,6 +29,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import date
 
+from batch import notify_io
 from batch.common import Dart, DartStop, Supabase, log, now_iso
 from batch.recompute import recompute
 
@@ -470,6 +471,11 @@ class Collector:
                         self.stats["companies"] += 1
                         self.flush_issues()
                 return 0
+            notify_snap: dict = {}  # F-13: 저장 전 추적 회사 상태. 실패하면 알림만 건너뛰고 수집은 계속
+            try:
+                notify_snap = notify_io.snapshot_before(self.db)
+            except Exception as e:
+                log(f"알림 기준 상태 읽기 실패 (수집은 계속): {type(e).__name__}")
             retry_list = []
             for n, t in enumerate(targets, 1):
                 corp = t["corp_code"]
@@ -519,6 +525,10 @@ class Collector:
                 log(f"필터·문장 재계산 {len(self.saved)}개 회사")
                 rs = recompute(self.db, sorted(self.saved))
                 self.stats["recomputed"] = rs["companies"]
+            try:  # F-13: 재계산 뒤 새 실적·감사의견 알림 (알림 실패가 수집 결과를 되돌리지 않게 로그만)
+                self.stats["notified"] = notify_io.after_collect(self.db, notify_snap)
+            except Exception as e:
+                log(f"알림 생성 실패 (수집은 완료): {type(e).__name__}")
         except DartStop as e:
             result, note = "failed", f"DART 중단: {e}"
             log(note)

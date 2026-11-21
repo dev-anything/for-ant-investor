@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import date
 
+from batch import notify_io
 from batch.common import Supabase, data_go_latest, load_env, log, now_iso
 
 KRX_URL = "https://apis.data.go.kr/1160100/GetKrxListedInfoService_V2/getItemInfo_V2"
@@ -24,7 +25,7 @@ def main() -> int:
     run_id = db.start_run("krx_list", bas_dt)
     log(f"KRX 기준일 {bas_dt}, 받은 종목 {len(items)}개")
 
-    existing = {r["srtn_cd"]: r for r in db.select("stocks", {"select": "srtn_cd,is_listed"})}
+    existing = {r["srtn_cd"]: r for r in db.select("stocks", {"select": "srtn_cd,is_listed,itms_nm"})}
     prev_listed = sum(1 for r in existing.values() if r["is_listed"])
     now_codes = {i["srtnCd"] for i in items}
     stats = {"received": len(items), "prev_listed": prev_listed}
@@ -51,9 +52,12 @@ def main() -> int:
         part = gone[i:i + 100]
         db.update("stocks", {"srtn_cd": f"in.({','.join(part)})"},
                   {"is_listed": False, "delisted_bas_dt": bas_dt, "updated_at": ts})
-    # TODO(F-13): 빠진 종목을 추적 중인 사용자에게 "목록에서 빠짐" 알림
-
     stats.update(new=len(new_rows), updated=len(old_rows), delisted=len(gone))
+    try:  # F-13: 빠진 종목을 추적 중인 사용자에게 알림 (목록 반영은 끝났으니 알림 실패는 로그만)
+        stats["notified"] = notify_io.delisted_alerts(
+            db, [(c, existing[c]["itms_nm"]) for c in gone], bas_dt)
+    except Exception as e:
+        log(f"알림 생성 실패 (목록 반영은 완료): {type(e).__name__}")
     log(f"신규 {len(new_rows)}, 갱신 {len(old_rows)}, 목록에서 빠짐 {len(gone)}")
     db.finish_run(run_id, "ok", stats)
     return 0
