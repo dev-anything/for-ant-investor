@@ -1,0 +1,17 @@
+import { Skeleton } from '@/components/Skeleton';
+
+// FS 8-2: 머리·카드·그래프 자리 스켈레톤
+export default function StockLoading() {
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-2 border-b border-neutral-200 pb-4">
+        <Skeleton className="h-7 w-48" />
+        <Skeleton className="h-4 w-80" />
+      </div>
+      <div className="mt-6 space-y-4">
+        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    </div>
+  );
+}

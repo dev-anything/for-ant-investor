@@ -26,6 +26,8 @@
 | 2026-11-21 | FS 4-2 `Origin` 검사를 고정 주소 비교 대신 `Origin` 호스트 = `Host` 헤더 비교로 구현 | 접속 주소가 LAN·Tailscale·localhost로 여럿 |
 | 2026-11-21 | 마이그레이션을 기능 단계별 파일로 나눔 (FS 5장은 파일 하나) | 단계별 승인·적용 이력 |
 | 2026-11-21 | 감사의견 2행 초과 회사는 F-13 `audit_changed`에서 판단 보류 | PRD 11장 3번 미정 |
+| 2026-11-21 | `/stocks/없는코드`는 404 화면 문구가 나오지만 HTTP 상태는 200 | FS 8-2가 `loading.tsx`(스켈레톤)와 `notFound()`를 둘 다 정함. Next.js 스트리밍 특성상 `loading.tsx`가 있으면 상태 코드를 404로 못 바꿈. FS대로 둘 다 유지 |
+| 2026-11-21 | Tailwind는 표준 `@tailwindcss/postcss` 방식, `next.config.ts`의 `loadEnvConfig`에 `forceReload` 인자 추가 | 빌드 워커가 루트 `.env`를 못 읽는 문제 |
 
 ## 방화벽 (R1)
 
