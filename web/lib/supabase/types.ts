@@ -15,6 +15,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_usage_daily: {
+        Row: {
+          calls: number
+          day: string
+        }
+        Insert: {
+          calls?: number
+          day: string
+        }
+        Update: {
+          calls?: number
+          day?: string
+        }
+        Relationships: []
+      }
       audit_opinions: {
         Row: {
           adt_opinion: string | null
@@ -757,6 +772,15 @@ export type Database = {
       }
     }
     Functions: {
+      chat_usage_take: { Args: { p_limit: number }; Returns: boolean }
+      notification_recipients: {
+        Args: never
+        Returns: {
+          email: string
+          unsubscribe_token: string
+          user_id: string
+        }[]
+      }
       industry_companies: {
         Args: {
           p_dir: string
