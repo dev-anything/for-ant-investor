@@ -1,4 +1,5 @@
 // 스크리너 결과 조회 (FS 5-2 `screener_search`, FS 8-3). DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다.
+import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { db } from '@/lib/supabase/server';
 import { modeYear } from '@/lib/reference-year';
