@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { CONFLICTS, FILTERS, FINANCIAL_BLOCKED } from '@/lib/filters';
-import { GAUGES } from '@/lib/gauge';
+import { GAUGES, type GaugeKey } from '@/lib/gauge';
 import { FLAT_SHARE_PERCENT } from '@/lib/trend';
 
 const rulesSource = readFileSync(
@@ -74,7 +74,10 @@ describe('batch/rules.py와 웹앱 기준 대조', () => {
 
   it('눈금 범위가 세 지표 모두 같다', () => {
     const py = readPyGauges();
-    for (const key of Object.keys(GAUGES) as (keyof typeof GAUGES)[]) {
+    // 배치는 F-05 지표 3개만 가진다. PER·PBR 눈금은 웹앱 전용이라 비교하지 않는다 (F-09)
+    const reportKeys = Object.keys(py) as GaugeKey[];
+    expect(reportKeys.sort()).toEqual(['debt_ratio', 'operating_margin', 'revenue_growth']);
+    for (const key of reportKeys) {
       expect(py[key], key).toEqual([GAUGES[key].min, GAUGES[key].max]);
     }
   });

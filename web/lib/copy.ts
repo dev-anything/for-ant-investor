@@ -45,6 +45,35 @@ export const copy = {
       same: '같은 업종 가운데 값과 같아',
     },
   },
+  // 주가 수준 PER·PBR (PRD 4장 F-09, FS 9-3). 평가 표현 없이 값과 계산식만 쓴다
+  valuation: {
+    // 영역 제목 (PRD 4장 F-09 표)
+    title: '주가 수준',
+    // 보통주 표시 (PRD 4장 F-09 표)
+    commonShareNote: '보통주 시가총액 기준',
+    // 기준일 (PRD 4장 F-09 표): 제목 오른쪽에 붙는다
+    basis: (basDt: string, latestYear: number) => `주가 ${basDt} 기준 · 순이익·자본 ${latestYear}년 기준`,
+    // 시세 없는 종목 (PRD 10장 13번 기본안)
+    noPrice: '주가 정보가 없어.',
+    // 지표별 제목·이름·툴팁 (PRD 4장 F-09 표)
+    metric: {
+      per: {
+        title: '주가가 버는 돈의 몇 배인가 (PER)',
+        name: 'PER',
+        tip: '시가총액을 1년 순이익으로 나눈 값이야. 10배면 지금 시가총액이 1년 순이익의 10배라는 뜻이야. 계산: 시가총액 ÷ 순이익',
+        // 순이익이 0 이하면 PER을 계산하지 않는다 (PRD 4장 F-09 표)
+        noValue: '순이익이 적자여서 PER을 계산하지 않아.',
+      },
+      pbr: {
+        title: '주가가 회사 자기 돈(자본)의 몇 배인가 (PBR)',
+        name: 'PBR',
+        tip: '시가총액을 자본(자산에서 빚을 뺀 회사 몫)으로 나눈 값이야. 계산: 시가총액 ÷ 자본총계',
+        noValue: '자본총계가 0 이하라서 PBR을 계산하지 않아.',
+      },
+    },
+    // PBR 1배 선 툴팁 (PRD 4장 F-09 표)
+    pbrLineTip: '시가총액과 회사 자본이 같아지는 지점이야. 좋고 나쁨을 가르는 기준은 아니야.',
+  },
   // 실적 그래프 (PRD 4장 F-02, 3-1·3-8). 툴팁 "정식 이름은 당기순이익"은 PRD 확정 문구
   results: {
     title: '실적',
@@ -86,7 +115,7 @@ export const copy = {
     // 눈금 관련 작은 문구 (Gauge)
     gauge: {
       // 눈금 aria-label용 범위: `범위 0~300%` (FS 7장 예시와 글자 단위로 같게)
-      range: (min: number, max: number) => `범위 ${min}~${max}%`,
+      range: (min: number, max: number, suffix = '%') => `범위 ${min}~${max}${suffix}`,
       // 눈금 aria-label: `부채비율 87.3%, 범위 0~300%` (FS 7장)
       ariaLabel: (name: string, valueText: string, range: string) => `${name} ${valueText}, ${range}`,
       // 눈금 범위 밖 값일 때 aria-label 끝에 붙인다 (Gauge가 clamped일 때 사용)

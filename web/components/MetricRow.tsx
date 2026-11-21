@@ -48,7 +48,14 @@ export function MetricRow({
       ) : latest === null ? (
         <p className="mt-3 text-sm text-neutral-700">{copy.reportCard.unavailable[gauge]}</p>
       ) : (
-        <Gauge gauge={gauge} name={name} value={latest} valueText={latestText} median={median} />
+        <Gauge
+          gauge={gauge}
+          name={name}
+          value={latest}
+          valueText={latestText}
+          median={median}
+          lineTip={copy.reportCard.lineTip[gauge]}
+        />
       )}
       {belowGauge}
       {compare.kind === 'too_few' && latest !== null && (

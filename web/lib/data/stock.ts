@@ -1,9 +1,10 @@
-// 종목 화면 조회 (FS 4-1, MVP 1·2·3번). 2차 추가 조회(주가·업종·배당)는 해당 단계에서 붙인다.
+// 종목 화면 조회 (FS 4-1, MVP 1·2·3번, 2차 F-08 업종·F-09 주가). 배당(6번)은 F-14 단계에서 붙인다.
 // DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다 (TypeScript 규칙 C1).
 import 'server-only';
 import { db } from '@/lib/supabase/server';
 import type { Insight } from '@/lib/insights';
 import type { IndustryMedian } from '@/lib/industry';
+import type { StockValuation } from '@/lib/valuation';
 
 export type StockStatus = 'ok' | 'no_financials' | 'foreign';
 
@@ -65,6 +66,8 @@ export interface StockPage {
   years: YearRow[];
   // ok가 아니면 null. ok여도 업종 코드·이름이 없으면 null (PRD 4장 F-08 "업종 정보가 없어.")
   industry: StockIndustry | null;
+  // ok가 아니면 null. ok여도 v_valuation 행이 없으면 null = 시세 없음 (PRD 10장 13번)
+  valuation: StockValuation | null;
 }
 
 /**
@@ -78,23 +81,24 @@ export async function getStockPage(shortCode: string): Promise<StockPage | null>
   const { info: stock, corpCode } = lookup;
 
   if (stock.isForeign) {
-    return { stock, status: 'foreign', summary: null, years: [], industry: null };
+    return { stock, status: 'foreign', summary: null, years: [], industry: null, valuation: null };
   }
   // corp_code가 없으면 재무 조회 자체를 건너뛴다 (FS 4-1 2번)
   if (corpCode === null) {
-    return { stock, status: 'no_financials', summary: null, years: [], industry: null };
+    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null };
   }
 
-  // 업종 가운데 값은 재무 조회와 함께 병렬로 읽는다 (FS 4-1 5번)
-  const [summary, years, industry] = await Promise.all([
+  // 업종 가운데 값·주가는 재무 조회와 함께 병렬로 읽는다 (FS 4-1 4·5번)
+  const [summary, years, industry, valuation] = await Promise.all([
     findSummary(corpCode),
     findYears(corpCode),
     findIndustry(stock),
+    findValuation(stock.srtnCd),
   ]);
   if (!summary) {
-    return { stock, status: 'no_financials', summary: null, years: [], industry: null };
+    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null };
   }
-  return { stock, status: 'ok', summary, years, industry };
+  return { stock, status: 'ok', summary, years, industry, valuation };
 }
 
 // FS 4-1 5번: 업종 코드·이름이 없으면 조회하지 않는다. 뷰 행이 없으면 업종은 있고 회사 수 0으로 본다 (비교 안 함)
@@ -123,6 +127,24 @@ async function findIndustry(stock: StockInfo): Promise<StockIndustry | null> {
       per: data ? { value: data.per_median, n: data.per_n ?? 0 } : empty,
       pbr: data ? { value: data.pbr_median, n: data.pbr_n ?? 0 } : empty,
     },
+  };
+}
+
+// FS 4-1 4번: 주가 수준 (PRD 4장 F-09). 시세 행이 없으면 null
+async function findValuation(srtnCd: string): Promise<StockValuation | null> {
+  const { data, error } = await db()
+    .from('v_valuation')
+    .select('bas_dt,latest_year,per,pbr')
+    .eq('srtn_cd', srtnCd)
+    .maybeSingle();
+  if (error) throw new Error(`DB 조회 오류(v_valuation): ${error.message}`);
+  if (!data) return null;
+
+  return {
+    basDt: required(data.bas_dt, 'bas_dt'),
+    latestYear: required(data.latest_year, 'latest_year'),
+    per: data.per,
+    pbr: data.pbr,
   };
 }
 

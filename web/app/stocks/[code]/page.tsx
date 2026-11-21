@@ -4,6 +4,7 @@ import { cache } from 'react';
 import { EmptyState } from '@/components/EmptyState';
 import { ReportCard } from '@/components/ReportCard';
 import { ResultsCharts } from '@/components/ResultsCharts';
+import { ValuationSection } from '@/components/ValuationSection';
 import { StockHeader } from '@/components/StockHeader';
 import { getStockPage } from '@/lib/data/stock';
 import { copy } from '@/lib/copy';
@@ -43,6 +44,7 @@ export default async function StockPage({ params }: StockPageProps) {
             fsDiv={page.summary.fsDiv}
             isFinancial={page.summary.isFinancial}
           />
+          <ValuationSection valuation={page.valuation} industry={page.industry} />
         </>
       )}
     </div>
