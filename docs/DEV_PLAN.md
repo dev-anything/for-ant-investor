@@ -15,7 +15,7 @@
 - [x] 2a. F-02 `getStockPage`·`/stocks/[code]` 뼈대·`StockHeader`·데이터 없음·외국회사·404·로딩·오류
 - [x] 2b. F-02 `ResultsCharts` (Recharts)
 - [x] 3a. F-05 순수 모듈 `trend.ts`·`gauge.ts`·`insights.ts` + 테스트
-- [ ] 3b. F-05 `Tooltip`·`Gauge`·`TrendArrow`·`Notice`·`ReportCard`
+- [x] 3b. F-05 `Tooltip`·`Gauge`·`TrendArrow`·`Notice`·`ReportCard`
 - [ ] 4. F-03 `filters.ts` + 테스트 + `rules-sync.test.ts`
 - [ ] 5a. F-07 마이그레이션 SQL `screener_search` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
 - [ ] 5b. F-07 `params.ts`(+테스트)·`/api/screener`

@@ -49,6 +49,45 @@ export const copy = {
   },
   // 리포트카드 (PRD 4장 F-05). 화살표 옆 말과 "눈여겨볼 변화" 문장 8개는 PRD 그대로 쓴다
   reportCard: {
+    // 카드 제목 (화면 문구 미정, 기본안: PRD 4장 F-05 이름)
+    title: '재무 리포트카드',
+    // PRD 4장 F-05 구성 2번 "눈여겨볼 변화"
+    insightTitle: '눈여겨볼 변화',
+    // 지표 3개: 질문형 제목 + 지표 이름 (PRD 4장 F-05 표)
+    metric: {
+      debt_ratio: { question: '빚이 얼마나 있나', name: '부채비율' },
+      operating_margin: { question: '팔아서 얼마나 남기나', name: '영업이익률' },
+      revenue_growth: { question: '매출이 얼마나 늘었나', name: '매출 증가율' },
+    },
+    // 눈금 기준선 툴팁 (PRD 4장 F-05 표)
+    lineTip: {
+      debt_ratio: '빚과 자기 돈(자본)이 같아지는 지점이야. 좋고 나쁨을 가르는 기준은 아니야.',
+      operating_margin: '이 선보다 아래면 영업적자야.',
+      revenue_growth: '이 선보다 아래면 매출이 전년보다 줄었어.',
+    },
+    // 눈금 관련 작은 문구 (Gauge)
+    gauge: {
+      // 눈금 끝 표시: `범위 0%~300%`
+      range: (min: string, max: string) => `범위 ${min}~${max}`,
+      // 눈금 aria-label: `부채비율 87.3%, 범위 0%~300%` (FS 7장)
+      ariaLabel: (name: string, valueText: string, range: string) => `${name} ${valueText}, ${range}`,
+      outOfRange: '눈금 범위를 벗어난 값',
+    },
+    // 툴팁 열기 버튼 (보이지 않는 글자, 스크린 리더용)
+    tipButtonLabel: '설명 보기',
+    // 값 계산 불가 칸 (PRD 4장 F-05 "계산할 수 없어")
+    noCalc: '계산할 수 없어',
+    // 눈금 대신 쓰는 사유 문장 (PRD 4장 F-05 표, FS 8-2). 부채비율은 자본잠식 상자가 맡는다
+    unavailable: {
+      debt_ratio: '자본총계가 0 이하라서 부채비율을 계산할 수 없어.',
+      operating_margin: '매출액이 없어서 영업이익률을 계산할 수 없어.',
+      revenue_growth: '계산할 수 없어.',
+    },
+    // 자본잠식 안내 (PRD 4장 F-05 표)
+    capital: {
+      full: '자본총계가 0 이하야 (완전 자본잠식). 회사가 가진 자산보다 빚이 더 많은 상태야.',
+      partial: '자본총계가 자본금보다 적어 (부분 자본잠식).',
+    },
     // 방향 화살표 옆 말 (lib/trend.ts)
     trend: {
       flat: '비슷한 수준',
@@ -57,6 +96,8 @@ export const copy = {
       mixed: '오르내림',
       risingYear: '전년보다 증가',
       fallingYear: '전년보다 감소',
+      // "비슷한 수준" 툴팁 (PRD 4장 F-05)
+      flatTip: '3년 동안 변화가 아주 작아서 거의 그대로야.',
     },
     // 문장 템플릿 (lib/insights.ts). id는 PRD 4장 F-05 표 번호
     insight: {

@@ -21,6 +21,9 @@ export interface Trend {
   label: string;
 }
 
+// 방향 판정에 쓰는 최근 연도 수 (PRD 4장 F-05 "3년"). 화면 표는 3개년 기준이다
+export const TREND_WINDOW = 3;
+
 // 비슷한 수준 판정 폭 (눈금 폭 × 3%)
 export function flatTolerance(key: GaugeKey): number {
   const { min, max } = GAUGES[key];
@@ -33,7 +36,7 @@ export function flatTolerance(key: GaugeKey): number {
  * 같은 값이 끼어서 PRD 표의 어떤 모양에도 안 맞으면 null이다 (PRD 4장 F-05에 규칙 없음, 보고 필요).
  */
 export function getTrend(values: (number | null)[], key: GaugeKey): Trend | null {
-  const present = values.filter((v): v is number => v !== null).slice(-3);
+  const present = values.filter((v): v is number => v !== null).slice(-TREND_WINDOW);
   if (present.length <= 1) return null;
 
   const tol = flatTolerance(key);
@@ -47,7 +50,7 @@ export function getTrend(values: (number | null)[], key: GaugeKey): Trend | null
       : { arrow: TREND_ARROW.down, label: text.fallingYear };
   }
 
-  // 3개: "비슷한 수준"을 먼저 본다 (두 변화가 모두 폭 이내)
+  // TREND_WINDOW(3)개: "비슷한 수준"을 먼저 본다 (두 변화가 모두 폭 이내)
   const [a, b, c] = present;
   if (Math.abs(b - a) <= tol && Math.abs(c - b) <= tol) {
     return { arrow: TREND_ARROW.flat, label: text.flat };
