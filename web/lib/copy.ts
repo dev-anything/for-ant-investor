@@ -441,7 +441,11 @@ export const copy = {
     growthUp: (year: number, metric: string, percent: string) => `${year}년 ${metric} 전년보다 ${percent} 증가`,
     growthDown: (year: number, metric: string, percent: string) => `${year}년 ${metric} 전년보다 ${percent} 감소`,
     growthFlat: (year: number, metric: string) => `${year}년 ${metric} 전년과 같아`,
-    // FS 9-12 알림 설정 칸 (알림 목록 칸은 18a에서 추가)
+    // FS 12장 13번: 알림 칸 이름, 읽지 않은 알림 표시, FS 12장 12번: 알림 0개
+    notificationsTitle: '알림',
+    newBadge: '새 알림',
+    noNotification: '아직 알림이 없어.',
+    // FS 9-12 알림 설정 칸
     settingsTitle: '알림 설정',
     emailOptIn: '알림 메일 받기',
     // FS 12장 10번: 추적·메일 설정 변경 실패 (같은 문구를 쓴다)
@@ -451,8 +455,17 @@ export const copy = {
     deleteButton: '탈퇴하기',
     deleteSubmit: '탈퇴',
     deleteCancel: '취소',
-    // FS 기본안 없음 (PRD 10장 미정) → FS 12장 10번과 같은 문구로 임시 사용. 화면 확인 때 확정
-    deleteFailed: '지금은 바꿀 수 없어. 잠시 뒤 다시 해 줘.',
+    // 계정 칸은 존댓말 (PRD 3-1). 문구 미정 → 기본안, 화면 확인 때 확정
+    deleteFailed: '지금은 탈퇴할 수 없습니다. 잠시 뒤 다시 시도해 주세요.',
+  },
+  // 알림 메일 수신 거부 화면 (PRD F-13, PRD 10장 34번, 존댓말 예외). 실패 문구는 기본안(미정)
+  unsubscribe: {
+    pageTitle: '알림 메일 수신 거부 · 재무 레이더',
+    invalid: '링크가 올바르지 않습니다.',
+    confirm: '알림 메일을 더 받지 않으시겠어요?',
+    submit: '수신 거부',
+    done: '알림 메일 수신을 껐습니다.',
+    failed: '지금은 처리할 수 없습니다. 잠시 뒤 다시 시도해 주세요.',
   },
   footer: {
     // PRD 10장 1번: 투자 책임 고지 기본안 (화면 하단 한 줄, 존댓말)

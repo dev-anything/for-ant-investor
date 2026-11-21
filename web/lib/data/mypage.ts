@@ -12,6 +12,7 @@ import {
   type YearRow,
 } from '@/lib/data/stock';
 import type { Insight } from '@/lib/insights';
+import { NOTIFICATION_LIST_LIMIT } from '@/lib/notify';
 
 // 추적 카드 한 장에 필요한 재무 요약 (company_summary 중 카드가 읽는 열)
 export interface WatchSummary {
@@ -34,9 +35,21 @@ export interface WatchEntry {
   years: YearRow[];
 }
 
+// 알림 한 줄 (PRD F-13). 본문은 배치가 만든 텍스트다
+export interface NotificationEntry {
+  id: number;
+  body: string;
+  createdAt: string;
+  unread: boolean;
+  // 종목 화면 주소의 짧은 코드. 검색 대상이 아니면(목록에서 빠짐 등) null → 링크 없음
+  shortCode: string | null;
+}
+
 export interface MypageData {
   // watchlist 최근 등록순 (PRD F-12)
   watches: WatchEntry[];
+  // 알림 최근 50개, 최근순 (FS 12장 동작 기본안 5번)
+  notifications: NotificationEntry[];
   // 알림 메일 수신 설정. 설정 행이 없으면 꺼짐 (PRD F-12 기본 꺼짐)
   emailOptIn: boolean;
 }
@@ -48,8 +61,13 @@ interface WatchRow {
 
 // 조회 순서 (FS 9-12): 사용자 행 ①⑤ 병렬 → 공개 종목 ② → 재무 ③ (②의 corp_code 필요)
 export async function getMypage(supabase: SessionClient): Promise<MypageData> {
-  const [watchRows, emailOptIn] = await Promise.all([findWatchRows(supabase), findEmailOptIn(supabase)]);
-  if (watchRows.length === 0) return { watches: [], emailOptIn };
+  const [watchRows, emailOptIn, notificationRows] = await Promise.all([
+    findWatchRows(supabase),
+    findEmailOptIn(supabase),
+    findNotificationRows(supabase),
+  ]);
+  const notifications = await attachShortCodes(notificationRows);
+  if (watchRows.length === 0) return { watches: [], notifications, emailOptIn };
 
   const stocks = await findStocks(watchRows.map((row) => row.srtnCd));
   const corpCodes = uniqueCorpCodes(stocks);
@@ -72,7 +90,56 @@ export async function getMypage(supabase: SessionClient): Promise<MypageData> {
       years: corpCode === null ? [] : (yearsByCorp.get(corpCode) ?? []),
     };
   });
-  return { watches, emailOptIn };
+  return { watches, notifications, emailOptIn };
+}
+
+// 알림 행 (세션, RLS로 본인 행만). 최근순 최대 50개
+interface NotificationRow {
+  id: number;
+  srtnCd: string;
+  body: string;
+  createdAt: string;
+  unread: boolean;
+}
+
+async function findNotificationRows(supabase: SessionClient): Promise<NotificationRow[]> {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('id,srtn_cd,body,created_at,read_at')
+    .order('created_at', { ascending: false })
+    .limit(NOTIFICATION_LIST_LIMIT);
+  if (error) throw new Error(`DB 조회 오류(notifications): ${error.message}`);
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    srtnCd: row.srtn_cd,
+    body: row.body,
+    createdAt: row.created_at,
+    unread: row.read_at === null,
+  }));
+}
+
+// 알림 줄의 종목 링크용 짧은 코드 (서버용 키, 공개 데이터). 검색 대상만 종목 화면이 있다 (FS 9-13 링크)
+async function attachShortCodes(rows: NotificationRow[]): Promise<NotificationEntry[]> {
+  const srtnCds = [...new Set(rows.map((row) => row.srtnCd))];
+  const shortCodes = new Map<string, string>();
+  if (srtnCds.length > 0) {
+    const { data, error } = await db()
+      .from('v_search_targets')
+      .select('srtn_cd,short_code')
+      .in('srtn_cd', srtnCds);
+    if (error) throw new Error(`DB 조회 오류(v_search_targets): ${error.message}`);
+    for (const row of data ?? []) {
+      // 뷰 열은 null일 수 있어 둘 다 확인한다
+      if (row.srtn_cd !== null && row.short_code !== null) shortCodes.set(row.srtn_cd, row.short_code);
+    }
+  }
+  return rows.map((row) => ({
+    id: row.id,
+    body: row.body,
+    createdAt: row.createdAt,
+    unread: row.unread,
+    shortCode: shortCodes.get(row.srtnCd) ?? null,
+  }));
 }
 
 // ① 추적 목록 (세션, RLS로 본인 행만). 최근 등록순

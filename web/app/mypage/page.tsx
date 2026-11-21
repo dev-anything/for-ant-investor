@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { AccountSection } from '@/components/AccountSection';
 import { EmailOptInToggle } from '@/components/EmailOptInToggle';
 import { EmptyState } from '@/components/EmptyState';
+import { NotificationList } from '@/components/NotificationList';
 import { WatchCard } from '@/components/WatchCard';
 import { getMypage } from '@/lib/data/mypage';
 import { copy } from '@/lib/copy';
@@ -46,6 +47,15 @@ export default async function MypagePage() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section aria-labelledby="notification-heading" className="mt-10">
+        <h2 id="notification-heading" className="text-lg font-medium text-neutral-900">
+          {copy.mypage.notificationsTitle}
+        </h2>
+        <div className="mt-4">
+          <NotificationList initial={mypage.notifications} />
+        </div>
       </section>
 
       <section aria-labelledby="settings-heading" className="mt-10">
