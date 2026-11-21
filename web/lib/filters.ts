@@ -184,6 +184,31 @@ export function fillYears(text: string, years: [number, number, number]): string
     .replace(/\{Y3\}/g, String(years[2]));
 }
 
+// 근거 값 열 하나의 이름·연도 칸·정렬 키 (PRD 4장 F-03 "근거 값 열" 표). 여기서만 정의하고 화면(screener-view)은 가져다 쓴다
+export interface EvidenceColumnDef {
+  label: string; // 열 제목 (PRD 4장 F-03 근거 값 열 이름)
+  indexes: number[]; // 연도 칸 번호 (0=Y1 가장 오래된 해, 2=Y3 최근 해)
+  sortKey: ScreenerSortKey; // 정렬 키 (FS 5-2: 3개년 열은 최근 연도 값으로 정렬)
+}
+
+export const EVIDENCE_COLUMNS: Record<EvidenceKey, EvidenceColumnDef> = {
+  revenue: { label: '매출', indexes: [0, 1, 2], sortKey: 'revenue' },
+  revenue_growth_y3: { label: '매출 증가율', indexes: [2], sortKey: 'revenue_growth' },
+  operating_income: { label: '영업이익', indexes: [0, 1, 2], sortKey: 'operating_income' },
+  net_income: { label: '순이익', indexes: [0, 1, 2], sortKey: 'net_income' },
+  operating_margin: { label: '영업이익률', indexes: [0, 1, 2], sortKey: 'operating_margin' },
+  operating_margin_y3: { label: '영업이익률', indexes: [2], sortKey: 'operating_margin' },
+  revenue_y2y3: { label: '매출', indexes: [1, 2], sortKey: 'revenue' },
+  operating_margin_y2y3: { label: '영업이익률', indexes: [1, 2], sortKey: 'operating_margin' },
+  debt_ratio_y3: { label: '부채비율', indexes: [2], sortKey: 'debt_ratio' },
+  debt_ratio: { label: '부채비율', indexes: [0, 1, 2], sortKey: 'debt_ratio' },
+  total_assets: { label: '자산총계', indexes: [0, 1, 2], sortKey: 'total_assets' },
+  total_equity: { label: '자본총계', indexes: [0, 1, 2], sortKey: 'total_equity' },
+  total_equity_y3: { label: '자본총계', indexes: [2], sortKey: 'total_equity' },
+  capital_stock_y3: { label: '자본금', indexes: [2], sortKey: 'capital_stock' },
+  dps: { label: '주당 배당금', indexes: [0, 1, 2], sortKey: 'dps' },
+};
+
 /** 고른 필터의 근거 값 열 목록. 같은 열은 한 번만, 고른 순서대로 (PRD 4장 F-03). */
 export function evidenceColumns(selected: number[]): EvidenceKey[] {
   const out: EvidenceKey[] = [];

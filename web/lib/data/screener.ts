@@ -1,8 +1,8 @@
 // 스크리너 결과 조회 (FS 5-2 `screener_search`, FS 8-3). DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다.
+import { unstable_cache } from 'next/cache';
 import { db } from '@/lib/supabase/server';
-import type { ScreenerSortKey } from '@/lib/filters';
-import { modeYear } from '@/lib/screener-view';
-import type { ScreenerState, SortDir } from '@/lib/params';
+import { modeYear } from '@/lib/reference-year';
+import type { ScreenerState } from '@/lib/params';
 
 // 연도 칸 한 개 (FS 5-2 years 원소). 화면 Y1~Y3 순서(오래된 → 최근)로 온다
 export interface ScreenerYear {
@@ -44,7 +44,7 @@ export interface ScreenerResult {
   rows: ScreenerRow[];
 }
 
-// RPC 한 행의 모양 (5-2 반환 열). 적용 전이라 타입 파일에 없어 여기서 직접 정의한다
+// RPC 한 행의 모양 (FS 5-2 반환 열). 검사를 마친 뒤의 중간 모양이라 화면용 ScreenerRow와 따로 둔다
 interface RpcRow {
   totalCount: number;
   shortCode: string;
@@ -56,21 +56,6 @@ interface RpcRow {
   basDt: string | null;
   years: ScreenerYear[];
   dividends: ScreenerDividend[];
-}
-
-// types.ts의 Functions에 screener_search가 아직 없다 (마이그레이션 적용 전, 2026-11-21).
-// 적용 뒤 Admin이 types.ts를 재생성하면 이 좁은 타입과 아래 단언을 지우고 db().rpc를 그대로 쓴다.
-interface ScreenerRpcClient {
-  rpc(
-    fn: 'screener_search',
-    args: {
-      p_filters: number[];
-      p_sort: ScreenerSortKey;
-      p_dir: SortDir;
-      p_page: number;
-      p_size: number;
-    }
-  ): PromiseLike<{ data: unknown; error: { code?: string; message: string } | null }>;
 }
 
 function numberOrNull(v: unknown): number | null {
@@ -148,20 +133,13 @@ function mapRpcRow(raw: unknown): RpcRow {
   };
 }
 
-// 연결 클라이언트를 좁은 타입으로 본다 (위 ScreenerRpcClient 주석 참고)
-function screenerClient(): ScreenerRpcClient {
-  // 이유: Database 타입에 screener_search 함수가 없어 db().rpc가 이름을 거부한다.
-  // 실제 객체는 같은 supabase 클라이언트다.
-  return db() as unknown as ScreenerRpcClient;
-}
-
 /**
  * 스크리너 결과 한 페이지를 가져온다 (FS 8-3). 호출 전에 parseScreenerApiParams로 검증된 상태만 넘긴다.
  * 범위를 넘은 페이지는 0행이다 (FS 5-2: total_count도 없음 → 앱이 마지막 페이지로 다시 요청).
  * DB 오류는 throw한다 (route가 500).
  */
 export async function getScreenerResult(state: ScreenerState): Promise<ScreenerResult> {
-  const { data, error } = await screenerClient().rpc('screener_search', {
+  const { data, error } = await db().rpc('screener_search', {
     p_filters: state.filters,
     p_sort: state.sort,
     p_dir: state.dir,
@@ -195,11 +173,11 @@ export async function getScreenerResult(state: ScreenerState): Promise<ScreenerR
 // PostgREST는 한 번에 최대 1000행만 준다 (Supabase 기본). 기준 연도 계산은 전부 읽어야 하니 나눠서 받는다
 const REFERENCE_PAGE_SIZE = 1000;
 
-/**
- * 기준 연도 (PRD 10장 9번): company_summary.latest_year 가운데 가장 많은 값. 행이 없으면 null.
- * 툴팁의 {Y1}~{Y3}과 근거 값 열 제목에 쓴다.
- */
-export async function getReferenceYear(): Promise<number | null> {
+// FS 3-3: 기준 연도는 자주 안 바뀌므로 함수 단위로 1시간 캐시한다 (매 요청 2,600행 읽기 방지).
+// 캐시는 성공 결과만 남는다: 조회가 throw하면 캐시되지 않는다.
+const REFERENCE_YEAR_REVALIDATE_SECONDS = 3600;
+
+async function loadReferenceYear(): Promise<number | null> {
   const years: number[] = [];
   for (let from = 0; ; from += REFERENCE_PAGE_SIZE) {
     const { data, error } = await db()
@@ -212,4 +190,16 @@ export async function getReferenceYear(): Promise<number | null> {
     if ((data ?? []).length < REFERENCE_PAGE_SIZE) break;
   }
   return modeYear(years);
+}
+
+const cachedReferenceYear = unstable_cache(loadReferenceYear, ['reference-year'], {
+  revalidate: REFERENCE_YEAR_REVALIDATE_SECONDS,
+});
+
+/**
+ * 기준 연도 (PRD 10장 9번): company_summary.latest_year 가운데 가장 많은 값. 행이 없으면 null.
+ * 툴팁의 {Y1}~{Y3}과 근거 값 열 제목에 쓴다.
+ */
+export function getReferenceYear(): Promise<number | null> {
+  return cachedReferenceYear();
 }

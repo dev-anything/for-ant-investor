@@ -1,26 +1,19 @@
 // 스크리너 화면 계산 (FS 8-3, 6-6): 근거 값 열, 필터 툴팁 문장, 상태 전이. 모두 순수 함수다.
-import { fillYears, findFilter, toggleFilter, type EvidenceKey, type FilterDef, type ScreenerSortKey } from '@/lib/filters';
+import {
+  EVIDENCE_COLUMNS,
+  fillYears,
+  findFilter,
+  toggleFilter,
+  type EvidenceKey,
+  type FilterDef,
+  type ScreenerSortKey,
+} from '@/lib/filters';
 import { formatAmount, formatPercent, formatWon } from '@/lib/format';
 import { allowedSortKeys, DEFAULT_SCREENER_STATE, type ScreenerState, type SortDir } from '@/lib/params';
 import type { ScreenerResult, ScreenerRow } from '@/lib/data/screener';
 
 // 기준 연도 (PRD 10장 9번): 검색 대상에서 가장 많은 최신 연도. 3개년은 기준 연도 -2 ~ 기준 연도
 const YEAR_SPAN = 3;
-
-/** 최신 연도 목록에서 가장 많이 나온 연도를 고른다. 같은 횟수면 더 최근 연도. 목록이 비면 null. */
-export function modeYear(years: number[]): number | null {
-  const counts = new Map<number, number>();
-  for (const y of years) counts.set(y, (counts.get(y) ?? 0) + 1);
-  let best: number | null = null;
-  let bestCount = 0;
-  for (const [year, count] of counts) {
-    if (count > bestCount || (count === bestCount && best !== null && year > best)) {
-      best = year;
-      bestCount = count;
-    }
-  }
-  return best;
-}
 
 /** 기준 연도에서 3개년 (오래된 → 최근). 기준 연도가 없으면 null. */
 export function threeYears(refYear: number | null): [number, number, number] | null {
@@ -38,33 +31,25 @@ export function filterTooltip(filter: FilterDef, refYear: number | null): string
   return `${filter.tooltip} 계산: ${fillYears(filter.calc, years)}`;
 }
 
-// 근거 값 열 하나의 계산 방식 (FS 8-3 `evidenceColumns`). kind는 서식을 고른다
+// 근거 값 열의 서식 종류 (PRD 3-8). 라벨·연도 칸·정렬 키는 filters.ts EVIDENCE_COLUMNS가 가진다
 type EvidenceKind = 'amount' | 'percent' | 'won';
 
-interface EvidenceSpec {
-  label: string; // 열 제목 (PRD 4장 F-03 근거 값 열 이름)
-  kind: EvidenceKind;
-  indexes: number[]; // 연도 칸 번호 (0=Y1 가장 오래된 해, 2=Y3 최근 해)
-  sortKey: ScreenerSortKey; // 정렬 키 (FS 5-2: 3개년 열은 최근 연도 값으로 정렬)
-}
-
-// 근거 값 열 표 (PRD 4장 F-03 "근거 값 열" 표와 같다)
-const EVIDENCE_SPEC: Record<EvidenceKey, EvidenceSpec> = {
-  revenue: { label: '매출', kind: 'amount', indexes: [0, 1, 2], sortKey: 'revenue' },
-  revenue_growth_y3: { label: '매출 증가율', kind: 'percent', indexes: [2], sortKey: 'revenue_growth' },
-  operating_income: { label: '영업이익', kind: 'amount', indexes: [0, 1, 2], sortKey: 'operating_income' },
-  net_income: { label: '순이익', kind: 'amount', indexes: [0, 1, 2], sortKey: 'net_income' },
-  operating_margin: { label: '영업이익률', kind: 'percent', indexes: [0, 1, 2], sortKey: 'operating_margin' },
-  operating_margin_y3: { label: '영업이익률', kind: 'percent', indexes: [2], sortKey: 'operating_margin' },
-  revenue_y2y3: { label: '매출', kind: 'amount', indexes: [1, 2], sortKey: 'revenue' },
-  operating_margin_y2y3: { label: '영업이익률', kind: 'percent', indexes: [1, 2], sortKey: 'operating_margin' },
-  debt_ratio_y3: { label: '부채비율', kind: 'percent', indexes: [2], sortKey: 'debt_ratio' },
-  debt_ratio: { label: '부채비율', kind: 'percent', indexes: [0, 1, 2], sortKey: 'debt_ratio' },
-  total_assets: { label: '자산총계', kind: 'amount', indexes: [0, 1, 2], sortKey: 'total_assets' },
-  total_equity: { label: '자본총계', kind: 'amount', indexes: [0, 1, 2], sortKey: 'total_equity' },
-  total_equity_y3: { label: '자본총계', kind: 'amount', indexes: [2], sortKey: 'total_equity' },
-  capital_stock_y3: { label: '자본금', kind: 'amount', indexes: [2], sortKey: 'capital_stock' },
-  dps: { label: '주당 배당금', kind: 'won', indexes: [0, 1, 2], sortKey: 'dps' },
+const EVIDENCE_KIND: Record<EvidenceKey, EvidenceKind> = {
+  revenue: 'amount',
+  revenue_growth_y3: 'percent',
+  operating_income: 'amount',
+  net_income: 'amount',
+  operating_margin: 'percent',
+  operating_margin_y3: 'percent',
+  revenue_y2y3: 'amount',
+  operating_margin_y2y3: 'percent',
+  debt_ratio_y3: 'percent',
+  debt_ratio: 'percent',
+  total_assets: 'amount',
+  total_equity: 'amount',
+  total_equity_y3: 'amount',
+  capital_stock_y3: 'amount',
+  dps: 'won',
 };
 
 /** 표의 근거 값 열 한 칸 (연도 칸 하나). */
@@ -90,21 +75,21 @@ export function evidenceSlots(filters: number[], refYear: number | null): Eviden
   for (const id of filters) {
     const keys: EvidenceKey[] = findFilter(id)?.evidence ?? [];
     for (const key of keys) {
-      const spec = EVIDENCE_SPEC[key];
-      for (const index of spec.indexes) {
-        const dedupeKey = `${spec.label}|${index}`;
+      const column = EVIDENCE_COLUMNS[key];
+      for (const index of column.indexes) {
+        const dedupeKey = `${column.label}|${index}`;
         if (seen.has(dedupeKey)) continue;
         seen.add(dedupeKey);
 
         const isLastYear = index === YEAR_SPAN - 1;
         const year = years === null ? null : years[index];
-        const sortable = isLastYear && allowed.includes(spec.sortKey);
+        const sortable = isLastYear && allowed.includes(column.sortKey);
         slots.push({
           id: `${key}-${index}`,
           key,
           index,
-          header: year === null ? spec.label : `${spec.label} ${year}년`,
-          sortKey: sortable ? spec.sortKey : null,
+          header: year === null ? column.label : `${column.label} ${year}년`,
+          sortKey: sortable ? column.sortKey : null,
         });
       }
     }
@@ -127,17 +112,17 @@ const EMPTY_TEXT = '-';
  * 회사 연도 칸 번호(index)로 읽는다. 회사 연도가 기준 연도와 다르면 isOtherYear를 true로 준다.
  */
 export function readEvidenceCell(row: ScreenerRow, slot: EvidenceSlot, refYear: number | null): EvidenceCell {
-  const spec = EVIDENCE_SPEC[slot.key];
+  const kind = EVIDENCE_KIND[slot.key];
   const year = row.years[slot.index] ?? null;
   const actualYear = year?.fiscalYear ?? null;
   const expected = threeYears(refYear)?.[slot.index] ?? null;
   const isOtherYear = actualYear !== null && expected !== null && actualYear !== expected;
 
   let text = EMPTY_TEXT;
-  if (spec.kind === 'won') {
+  if (kind === 'won') {
     text = wonText(row, actualYear);
   } else if (year !== null) {
-    const value = spec.kind === 'amount' ? formatAmount(amountOf(year, slot.key)) : formatPercent(percentOf(year, slot.key));
+    const value = kind === 'amount' ? formatAmount(amountOf(year, slot.key)) : formatPercent(percentOf(year, slot.key));
     text = value ?? EMPTY_TEXT;
   }
   return { text, actualYear, isOtherYear };

@@ -7,7 +7,7 @@ import { copy } from '@/lib/copy';
 export default function StockError() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <ErrorState message={copy.stock.error} />
+      <ErrorState message={copy.dbError} />
     </div>
   );
 }

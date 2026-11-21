@@ -161,6 +161,12 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
       />
 
       <div ref={tableTopRef} className="mt-6">
+        {/* 조회 중 안내는 화면에 보이지 않고 스크린 리더에만 알린다 (PRD 3-1 접근성, FS 8-3) */}
+        {hasFilters && (
+          <p role="status" className="sr-only">
+            {loading ? copy.screener.loading : ''}
+          </p>
+        )}
         {!hasFilters && <EmptyState message={copy.screener.noFilter} />}
         {hasFilters && failed && <ErrorState message={copy.dbError} />}
         {hasFilters && !failed && result === null && loading && <Skeleton className="h-40 w-full" />}
