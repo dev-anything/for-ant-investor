@@ -1,0 +1,84 @@
+import Link from 'next/link';
+import { DataTable, type DataColumn, type SortDir } from '@/components/DataTable';
+import { copy } from '@/lib/copy';
+import { formatAccMt, formatMarketCap } from '@/lib/format';
+import type { ScreenerSortKey } from '@/lib/filters';
+import type { ScreenerRow } from '@/lib/data/screener';
+import { evidenceSlots, readEvidenceCell, type EvidenceSlot } from '@/lib/screener-view';
+
+// FS 8-3 ResultTable: 고정 열(종목명·코드·시장·시가총액) + 고른 필터의 근거 값 열. DataTable로 그린다.
+export function ResultTable({
+  rows,
+  filters,
+  refYear,
+  sort,
+  dimmed,
+  onSort,
+}: {
+  rows: ScreenerRow[];
+  filters: number[];
+  refYear: number | null;
+  sort: { key: ScreenerSortKey; dir: SortDir };
+  dimmed: boolean;
+  onSort: (key: ScreenerSortKey) => void;
+}) {
+  const slots = evidenceSlots(filters, refYear);
+  const columns: DataColumn<ScreenerRow>[] = [
+    {
+      id: 'name',
+      header: copy.screener.name,
+      sortKey: 'name',
+      cell: (row) => (
+        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-neutral-900 underline underline-offset-2">
+          {row.name}
+          {formatAccMt(row.accMt) && (
+            <span className="ml-1 text-xs font-normal text-neutral-600">{formatAccMt(row.accMt)}</span>
+          )}
+        </Link>
+      ),
+    },
+    { id: 'code', header: copy.screener.code, cell: (row) => row.shortCode },
+    { id: 'market', header: copy.screener.market, cell: (row) => row.market ?? '-' },
+    {
+      id: 'marketCap',
+      header: copy.screener.marketCap,
+      sortKey: 'market_cap',
+      align: 'right',
+      cell: (row) => formatMarketCap(row.marketCap),
+    },
+    ...slots.map((slot) => evidenceColumn(slot, refYear)),
+  ];
+
+  return (
+    <DataTable
+      caption={copy.screener.tableCaption}
+      columns={columns}
+      rows={rows}
+      rowKey={(row) => row.shortCode}
+      sort={sort}
+      onSort={(key) => onSort(key as ScreenerSortKey)}
+      dimmed={dimmed}
+    />
+  );
+}
+
+// 근거 값 칸 하나 → 표 열 하나. 회사 연도가 기준 연도와 다르면 칸에 작은 글자로 실제 연도를 붙인다 (PRD 10장 9번)
+function evidenceColumn(slot: EvidenceSlot, refYear: number | null): DataColumn<ScreenerRow> {
+  return {
+    id: slot.id,
+    header: slot.header,
+    sortKey: slot.sortKey,
+    align: 'right',
+    cell: (row) => {
+      const cell = readEvidenceCell(row, slot, refYear);
+      return (
+        <>
+          {cell.text}
+          {cell.isOtherYear && cell.actualYear !== null && (
+            <span className="ml-1 text-xs text-neutral-500">{cell.actualYear}년</span>
+          )}
+        </>
+      );
+    },
+  };
+}

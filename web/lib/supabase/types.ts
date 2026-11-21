@@ -757,7 +757,39 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      screener_search: {
+        Args: {
+          p_dir: string
+          p_filters: number[]
+          p_page: number
+          p_size: number
+          p_sort: string
+        }
+        Returns: {
+          acc_mt: string
+          bas_dt: string
+          dividends: Json
+          is_financial: boolean
+          itms_nm: string
+          mrkt_ctg: string
+          mrkt_tot_amt: number
+          short_code: string
+          srtn_cd: string
+          total_count: number
+          years: Json
+        }[]
+      }
+      search_stocks: {
+        Args: { p_limit?: number; p_q: string }
+        Returns: {
+          is_foreign: boolean
+          itms_nm: string
+          match_rank: number
+          mrkt_ctg: string
+          short_code: string
+          srtn_cd: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -10,16 +10,16 @@
 - [x] 0b. DB 타입 생성(Admin) + 서버 클라이언트 + `copy.ts`·`format.ts`(+테스트) + `AppHeader`·`SiteFooter`·`layout` + DB 1행 조회 확인
 - [x] 0c. 로컬 실행 스크립트 (포트 16000, `0.0.0.0`) + 빌드·기동·키 번들 검사
 - [ ] 0d. 방화벽 (LAN + Tailscale만 허용) — **사용자 sudo 필요**
-- [ ] 1a. F-01 마이그레이션 SQL `search_stocks` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
+- [x] 1a. F-01 마이그레이션 SQL `search_stocks` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
 - [ ] 1b. F-01 `/api/search`·`SearchBox`·`/` 화면
 - [x] 2a. F-02 `getStockPage`·`/stocks/[code]` 뼈대·`StockHeader`·데이터 없음·외국회사·404·로딩·오류
 - [x] 2b. F-02 `ResultsCharts` (Recharts)
 - [x] 3a. F-05 순수 모듈 `trend.ts`·`gauge.ts`·`insights.ts` + 테스트
 - [x] 3b. F-05 `Tooltip`·`Gauge`·`TrendArrow`·`Notice`·`ReportCard`
-- [ ] 4. F-03 `filters.ts` + 테스트 + `rules-sync.test.ts`
-- [ ] 5a. F-07 마이그레이션 SQL `screener_search` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
-- [ ] 5b. F-07 `params.ts`(+테스트)·`/api/screener`
-- [ ] 5c. F-07 `/screener` 화면 (`DataTable`·`PageSizeSelect`·`Pagination`·`FilterPanel`·`ResultTable`·`ScreenerClient`)
+- [x] 4. F-03 `filters.ts` + 테스트 + `rules-sync.test.ts`
+- [x] 5a. F-07 마이그레이션 SQL `screener_search` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
+- [x] 5b. F-07 `params.ts`(+테스트)·`/api/screener`
+- [x] 5c. F-07 `/screener` 화면 (`DataTable`·`PageSizeSelect`·`Pagination`·`FilterPanel`·`ResultTable`·`ScreenerClient`)
 - [ ] 6. MVP 마무리 (표본 점검, 20종목 일치율, 16000 재기동, LAN·Tailscale 접속 확인)
 - [ ] 7a. F-08 `v_industry_medians` 속도 측정 + 마이그레이션 SQL 5-3~5-5 → **Admin이 사용자 확인 후 적용**
 - [ ] 7b. F-08 `industry.ts`·`Gauge` 가운데 값·`ReportCard` 변경

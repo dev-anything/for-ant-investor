@@ -111,6 +111,46 @@ export const copy = {
       8: '영업이익은 적자인데 순이익은 흑자야',
     },
   },
+  // 스크리너 (PRD 4장 F-07, F-03, 10장 11번). FS 12장 4번: 제목은 메뉴 이름과 같다
+  screener: {
+    title: '조건으로 찾기',
+    // 필터를 하나도 안 골랐을 때 (PRD 10장 11번 기본안, 반말 확정 전)
+    noFilter: '필터를 골라 봐.',
+    // 필터 3개 초과 (PRD 4장 F-07)
+    max: '필터는 3개까지 고를 수 있어',
+    // 부딪히는 필터 (PRD 4장 F-07, 따옴표 안은 짝 필터 문구)
+    conflict: (label: string) => `'${label}'와 함께 고를 수 없어`,
+    // 고른 필터 칩 빼기 버튼 (스크린 리더용)
+    removeChip: (label: string) => `${label} 빼기`,
+    // 결과 수 줄 (PRD 4장 F-07)
+    count: (n: number) => `조건에 맞는 회사 ${n.toLocaleString('ko-KR')}개`,
+    // 0건 (PRD 4장 F-07)
+    zero: '조건에 모두 맞는 회사가 없어. 필터를 하나 빼 봐.',
+    // 금융회사 빠짐 안내와 툴팁 (PRD 4장 F-07)
+    financialBlocked: '금융회사는 이 조건을 계산할 수 없어서 빠졌어.',
+    financialBlockedTip:
+      '금융회사는 매출액 항목이 없고, 예금이 부채로 잡혀서 부채비율을 일반 회사와 견줄 수 없어.',
+    // 기준 표시 (PRD 4장 F-07)
+    basis: (basDt: string) => `시가총액은 보통주 기준, 주가 ${basDt} 기준`,
+    // 시가총액 열 제목 (정렬 버튼 글자)
+    marketCap: '시가총액',
+    name: '종목명',
+    code: '종목코드',
+    market: '시장',
+    // 표 설명 (스크린 리더용)
+    tableCaption: '조건에 맞는 회사 목록',
+    // 쪽당 개수 상자 (PRD 4장 F-07: 10 / 20 / 50)
+    sizeLabel: '한 번에',
+    sizeOption: (n: number) => `${n}개씩`,
+    // 쪽 번호 (접근성 이름)
+    pageLabel: '페이지',
+    prevPage: '이전 페이지',
+    nextPage: '다음 페이지',
+    // 로딩 중 표 위 자리 안내 (스크린 리더용)
+    loading: '결과를 불러오는 중이야',
+  },
+  // DB 오류 공통 (PRD 10장 20번 기본안, 사용자 확인 필요)
+  dbError: '지금은 정보를 불러올 수 없어. 잠시 뒤 다시 열어 줘.',
   // 문구 미정: 종목 주소가 아닌 없는 주소(404)용. PRD·FS에 문구가 없어 임시 문장을 쓴다
   notFoundPage: '이 페이지를 찾을 수 없어.',
   // 임시 홈 화면 문구 (DEV_PLAN 0b, 1b에서 교체). PRD 3-1 반말
