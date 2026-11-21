@@ -20,6 +20,13 @@ export default function HomePage() {
           {copy.nav.screener}
         </Link>
       </p>
+      {/* PRD 3-5 첫 화면 바로가기 2번째 줄 (2차, F-15) */}
+      <p className="mt-2 text-sm text-neutral-700">
+        {copy.search.industryHint}{' '}
+        <Link href="/industries" className="underline underline-offset-2 hover:text-neutral-900">
+          {copy.search.industryLink}
+        </Link>
+      </p>
       <div className="mt-12 w-full">
         <Suspense fallback={<Skeleton className="h-40 w-full" />}>
           <HomeNews />

@@ -8,6 +8,8 @@ export const copy = {
   nav: {
     search: '종목 검색',
     screener: '조건으로 찾기',
+    // PRD 4장 F-15 상단 메뉴 세 번째 (2차)
+    industry: '업종으로 둘러보기',
   },
   // 메타데이터 (서비스명 기준, 간단히)
   meta: {
@@ -60,6 +62,28 @@ export const copy = {
       lower: '같은 업종 가운데 값보다 낮아',
       same: '같은 업종 가운데 값과 같아',
     },
+    // 업종으로 둘러보기 목록 (PRD 4장 F-15, FS 9-7). 분류 이름은 줄이지 않는다
+    listTitle: '업종으로 둘러보기',
+    listMeta: '업종으로 둘러보기 · 재무 레이더',
+    listIntro: '업종을 누르면 그 업종에 속한 회사를 볼 수 있어. 업종은 한국표준산업분류(제11차) 기준이야.',
+    // 이름 뒤 회사 수 `제조업 (회사 1,203개)`. 쉼표는 화면에서만 붙인다
+    withCount: (name: string, count: number) => `${name} (회사 ${count.toLocaleString('ko-KR')}개)`,
+    // 회사 목록 제목 `의약품 제조업 · 이 업종 회사 42개` (PRD 4장 F-15)
+    companyTitle: (name: string, total: number) => `${name} · 이 업종 회사 ${total.toLocaleString('ko-KR')}개`,
+    companyMeta: (name: string) => `${name} 회사 목록 · 재무 레이더`,
+    companyCaption: '이 업종에 속한 회사 목록',
+    companyColumns: {
+      name: '종목명',
+      code: '종목코드',
+      market: '시장',
+      marketCap: '시가총액',
+    },
+    // 시가총액 기준 한 줄 (PRD 4장 F-15). 기준일은 행의 bas_dt
+    marketCapBasis: (basDt: string) => `시가총액은 보통주 기준, 주가 ${basDt} 기준`,
+    // 회사 목록에서 지표 비교 목록으로 가는 링크 (PRD 4장 F-15)
+    compareFromList: '지표로 견줘 보기 →',
+    // 종목 화면 업종 이름 옆 툴팁 (PRD 4장 F-15, FS 9-7)
+    stockTip: '같은 업종 회사를 둘러볼 수 있어.',
   },
   // 주가 수준 PER·PBR (PRD 4장 F-09, FS 9-3). 평가 표현 없이 값과 계산식만 쓴다
   valuation: {
@@ -259,6 +283,9 @@ export const copy = {
     foreign: '지원하지 않음', // PRD 4장 F-01 외국회사
     noResult: '검색 결과가 없어', // PRD 4장 F-01
     hint: '어떤 회사를 찾을지 모르겠다면 →', // PRD 3-5 첫 화면 바로가기 (링크는 nav.screener)
+    // PRD 4장 F-15 첫 화면 바로가기 2번째 줄 (2차)
+    industryHint: '회사 이름을 모르겠다면?',
+    industryLink: '업종으로 둘러보기 →',
   },
   // 경제 기사 (PRD 4장 F-18, 10장 21~25·28~32번 기본안, 사용자 확인 전). 반말 문구
   news: {

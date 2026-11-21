@@ -17,6 +17,8 @@ export function AppHeader() {
           <nav aria-label="주요 메뉴" className="flex items-center gap-4 text-sm">
             <NavLink href="/">{copy.nav.search}</NavLink>
             <NavLink href="/screener">{copy.nav.screener}</NavLink>
+            {/* PRD 4장 F-15 (2차). /industries/… 전부에서 켜진다 (isActivePath 접두어 판정) */}
+            <NavLink href="/industries">{copy.nav.industry}</NavLink>
           </nav>
         </div>
         {/* 확장: AuthMenu 자리 (F-11, F-12) */}

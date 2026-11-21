@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_INDUSTRY_COUNT, compareToIndustry } from '@/lib/industry';
+import { MIN_INDUSTRY_COUNT, compareToIndustry, groupIndustryTree } from '@/lib/industry';
 
 describe('compareToIndustry', () => {
   it('업종 정보가 없으면 no_industry다', () => {
@@ -49,5 +49,47 @@ describe('compareToIndustry', () => {
 
   it('음수 값도 같은 규칙으로 비교한다 (영업적자 업종 가운데 값)', () => {
     expect(compareToIndustry(-3.2, -1.0, 4, true)).toMatchObject({ relation: 'lower' });
+  });
+});
+
+describe('groupIndustryTree', () => {
+  const row = (
+    sectionOrder: number,
+    sectionCode: string,
+    divisionOrder: number,
+    divisionCode: string,
+    companyCount: number
+  ) => ({
+    sectionCode,
+    sectionName: `대분류${sectionCode}`,
+    sectionOrder,
+    divisionCode,
+    divisionName: `중분류${divisionCode}`,
+    divisionOrder,
+    companyCount,
+  });
+
+  it('대분류 회사 수는 중분류 회사 수의 합이다', () => {
+    const sections = groupIndustryTree([row(1, 'C', 10, '10', 41), row(1, 'C', 11, '11', 7)]);
+    expect(sections).toHaveLength(1);
+    expect(sections[0].companyCount).toBe(48);
+    expect(sections[0].divisions.map((d) => d.divisionCode)).toEqual(['10', '11']);
+  });
+
+  it('입력이 섞여 와도 대분류·중분류 번호순으로 정렬한다', () => {
+    const input = [row(2, 'J', 60, '60', 3), row(1, 'C', 11, '11', 2), row(1, 'C', 10, '10', 5)];
+    const sections = groupIndustryTree(input);
+    expect(sections.map((s) => s.sectionCode)).toEqual(['C', 'J']);
+    expect(sections[0].divisions.map((d) => d.divisionCode)).toEqual(['10', '11']);
+  });
+
+  it('원본 배열 순서는 바꾸지 않는다', () => {
+    const input = [row(2, 'J', 60, '60', 3), row(1, 'C', 10, '10', 5)];
+    groupIndustryTree(input);
+    expect(input[0].sectionCode).toBe('J');
+  });
+
+  it('빈 입력이면 빈 목록이다', () => {
+    expect(groupIndustryTree([])).toEqual([]);
   });
 });

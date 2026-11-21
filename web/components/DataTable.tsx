@@ -74,7 +74,7 @@ export function DataTable<T>({
                 >
                   {sortKey !== null && mode === 'link' && sortHref ? (
                     <SortHeaderLink href={sortHref(sortKey)} label={label} />
-                  ) :sortKey !== null && onSort ? (
+                  ) : sortKey !== null && onSort ? (
                     <button
                       type="button"
                       onClick={() => onSort(sortKey)}

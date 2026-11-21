@@ -48,3 +48,56 @@ export function compareToIndustry(
 
   return { kind: 'ok', median, n, relation };
 }
+
+// 업종 목록 한 중분류 (PRD 4장 F-15). 이름은 DB 표기 그대로 (줄이거나 바꾸지 않음)
+export interface IndustryDivisionItem {
+  divisionCode: string;
+  divisionName: string;
+  companyCount: number;
+}
+
+// 업종 목록 한 대분류. 회사 수는 중분류 합계다 (FS 5-3: 대분류 회사 수는 앱이 합친다)
+export interface IndustrySection {
+  sectionCode: string;
+  sectionName: string;
+  companyCount: number;
+  divisions: IndustryDivisionItem[];
+}
+
+// 업종 트리 행 (FS 5-3 반환 열). lib/data/industry.ts의 IndustryTreeRow와 같은 모양
+export interface IndustryTreeInput {
+  sectionCode: string;
+  sectionName: string;
+  sectionOrder: number;
+  divisionCode: string;
+  divisionName: string;
+  divisionOrder: number;
+  companyCount: number;
+}
+
+/**
+ * 중분류 행을 대분류별로 묶는다 (PRD 4장 F-15: 대분류·중분류 모두 분류 번호순).
+ * 입력 순서와 관계없이 sectionOrder → divisionOrder로 정렬한다. 원본 배열은 바꾸지 않는다.
+ */
+export function groupIndustryTree(rows: readonly IndustryTreeInput[]): IndustrySection[] {
+  const sorted = [...rows].sort(
+    (a, b) => a.sectionOrder - b.sectionOrder || a.divisionOrder - b.divisionOrder
+  );
+  const sections: IndustrySection[] = [];
+  const bySection = new Map<string, IndustrySection>();
+  for (const row of sorted) {
+    let section = bySection.get(row.sectionCode);
+    if (section === undefined) {
+      section = { sectionCode: row.sectionCode, sectionName: row.sectionName, companyCount: 0, divisions: [] };
+      bySection.set(row.sectionCode, section);
+      sections.push(section);
+    }
+    section.companyCount += row.companyCount;
+    section.divisions.push({
+      divisionCode: row.divisionCode,
+      divisionName: row.divisionName,
+      companyCount: row.companyCount,
+    });
+  }
+  return sections;
+}
