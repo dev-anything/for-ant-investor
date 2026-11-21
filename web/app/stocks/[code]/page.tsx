@@ -15,6 +15,12 @@ import { copy } from '@/lib/copy';
 // FS 3-3: 종목 화면 1시간 캐시
 export const revalidate = 3600;
 
+// 빌드 때 미리 만드는 종목 페이지는 없다 (FS 3-3 "요청 시 생성").
+// 동적 세그먼트는 이 함수가 있어야 ISR(revalidate)이 적용된다. 빈 배열이면 첫 요청 때 만들고 1시간 캐시한다.
+export function generateStaticParams() {
+  return [];
+}
+
 // generateMetadata와 본문이 같은 요청에서 DB를 두 번 치지 않도록 묶는다
 const loadStockPage = cache(getStockPage);
 

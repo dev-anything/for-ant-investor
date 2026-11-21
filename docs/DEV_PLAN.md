@@ -44,7 +44,7 @@
 - [x] 18a. F-13 마이그레이션 SQL 5-8 → **[x] Admin이 사용자 확인 후 적용** + 알림 읽음 API·`NotificationList`·`/unsubscribe`·`/api/unsubscribe`
 - [x] 18b. F-13 배치 `batch/notify.py` + `batch/tests/test_notify.py`
 - [x] 18c. F-13 `batch/notify_mail.py` + `dart_collect.py`·`krx_list.py` 연결 + `daily.yml` 단계
-- [ ] 19. 최종 점검 (전체 검사, 금지 표현·키 노출 grep, 16000 재기동, 접속 경로 확인, REQUIRE.md 정리)
+- [x] 19. 최종 점검 (전체 검사, 금지 표현·키 노출 grep, 16000 재기동, 접속 경로 확인, REQUIRE.md 정리)
 
 ---
 
