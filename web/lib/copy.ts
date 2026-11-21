@@ -101,6 +101,12 @@ export const copy = {
     noteRecordDateTip: '이날 주식을 가진 사람이 배당을 받아.',
     noteRecordDateSuffix: ' 무렵 주가로 계산해서 지금 주가로 따진 값과는 달라.',
   },
+  // 최근 공시 칸 (PRD 4장 F-17, 10장 22·27·32번 기본안). "공시 더 보기" 링크는 PRD 11장 20번 확인 전이라 두지 않는다
+  disclosure: {
+    title: '최근 공시',
+    error: '지금은 공시를 불러올 수 없어.',
+    empty: '최근 공시가 없어.',
+  },
   // 실적 그래프 (PRD 4장 F-02, 3-1·3-8). 툴팁 "정식 이름은 당기순이익"은 PRD 확정 문구
   results: {
     title: '실적',

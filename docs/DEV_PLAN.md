@@ -21,13 +21,13 @@
 - [x] 5b. F-07 `params.ts`(+테스트)·`/api/screener`
 - [x] 5c. F-07 `/screener` 화면 (`DataTable`·`PageSizeSelect`·`Pagination`·`FilterPanel`·`ResultTable`·`ScreenerClient`)
 - [x] 6. MVP 마무리 (표본 점검, 20종목 일치율, 16000 재기동, LAN·Tailscale 접속 확인)
-- [ ] 7a. F-08 `v_industry_medians` 속도 측정 + 마이그레이션 SQL 5-3~5-5 → **Admin이 사용자 확인 후 적용**
+- [x] 7a. F-08 `v_industry_medians` 속도 측정 + 마이그레이션 SQL 5-3~5-5 → **Admin이 사용자 확인 후 적용**
 - [x] 7b. F-08 `industry.ts`·`Gauge` 가운데 값·`ReportCard` 변경
 - [ ] 7c. F-08 링크 모드(`SortHeaderLink`·`DataTable`·`Pagination`·`PageSizeSelect`)·`params.ts` 목록 함수·`/industries/[division]/compare`
 - [x] 8. F-09 `ValuationSection`
 - [x] 9. F-14 `dividend.ts`·`DividendCard`
-- [ ] 10a. F-17 사전 확인 (DART `list.json` 실제 응답, PRD 11장 19·20번)
-- [ ] 10b. F-17 `disclosures.ts`·`disclosure.ts`·`DisclosureList`·`StockFeedSection`
+- [x] 10a. F-17 사전 확인 (DART `list.json` 실제 응답, PRD 11장 19·20번)
+- [x] 10b. F-17 `disclosures.ts`·`disclosure.ts`·`DisclosureList`·`StockFeedSection`
 - [ ] 11a. F-18 `news-text.ts`(+테스트)·`news.ts` (키 없으면 꺼짐)
 - [ ] 11b. F-18 `NewsList`·`NewsBlock`·`NaverAttribution`·`HomeNews`·`StockNews`·`/news`
 - [ ] 12. F-15 `/industries`·`/industries/[division]`·메뉴·바로가기·업종 링크

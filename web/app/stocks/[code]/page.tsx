@@ -6,6 +6,7 @@ import { ReportCard } from '@/components/ReportCard';
 import { ResultsCharts } from '@/components/ResultsCharts';
 import { DividendCard } from '@/components/DividendCard';
 import { ValuationSection } from '@/components/ValuationSection';
+import { StockFeedSection } from '@/components/StockFeedSection';
 import { StockHeader } from '@/components/StockHeader';
 import { getStockPage } from '@/lib/data/stock';
 import { getDisplayYears } from '@/lib/chart-data';
@@ -37,7 +38,13 @@ export default async function StockPage({ params }: StockPageProps) {
     <div className="mx-auto max-w-5xl px-4 py-8">
       <StockHeader stock={page.stock} />
       {page.status === 'foreign' && <EmptyState message={copy.stock.foreign} />}
-      {page.status === 'no_financials' && <EmptyState message={copy.stock.noFinancials} />}
+      {page.status === 'no_financials' && (
+        <>
+          <EmptyState message={copy.stock.noFinancials} />
+          {/* PRD 10장 26번: 재무 없음 화면에도 기사·공시 칸은 둔다 */}
+          <StockFeedSection corpCode={page.corpCode} />
+        </>
+      )}
       {page.status === 'ok' && page.summary && (
         <>
           <ReportCard summary={page.summary} years={page.years} industry={page.industry} />
@@ -51,6 +58,7 @@ export default async function StockPage({ params }: StockPageProps) {
             dividends={page.dividends}
             displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
           />
+          <StockFeedSection corpCode={page.corpCode} />
         </>
       )}
     </div>

@@ -62,6 +62,8 @@ export interface StockIndustry {
 
 export interface StockPage {
   stock: StockInfo;
+  // DART 회사 고유번호. 없으면 null (최근 공시 칸이 0건으로 본다, PRD 10장 26번). 화면 공시 조회용 (F-17)
+  corpCode: string | null;
   status: StockStatus;
   summary: StockSummary | null;
   years: YearRow[];
@@ -84,17 +86,17 @@ export async function getStockPage(shortCode: string): Promise<StockPage | null>
   const { info: stock, corpCode } = lookup;
 
   if (stock.isForeign) {
-    return { stock, status: 'foreign', summary: null, years: [], industry: null, valuation: null, dividends: [] };
+    return { stock, corpCode, status: 'foreign', summary: null, years: [], industry: null, valuation: null, dividends: [] };
   }
   // corp_code가 없으면 재무 조회 자체를 건너뛴다 (FS 4-1 2번)
   if (corpCode === null) {
-    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null, dividends: [] };
+    return { stock, corpCode, status: 'no_financials', summary: null, years: [], industry: null, valuation: null, dividends: [] };
   }
 
   // 재무 요약·연도를 먼저 읽는다. 4~6번(업종·주가·배당)은 status가 ok일 때만 조회한다 (FS 4-1)
   const [summary, years] = await Promise.all([findSummary(corpCode), findYears(corpCode)]);
   if (!summary) {
-    return { stock, status: 'no_financials', summary: null, years: [], industry: null, valuation: null, dividends: [] };
+    return { stock, corpCode, status: 'no_financials', summary: null, years: [], industry: null, valuation: null, dividends: [] };
   }
   const [industry, valuation, dividendRows] = await Promise.all([
     findIndustry(stock),
@@ -104,7 +106,7 @@ export async function getStockPage(shortCode: string): Promise<StockPage | null>
   // FS 4-1 6번: 연도 조건 없이 받았으니 화면 연도(is_display_year) 행만 남긴다
   const displayYears = new Set(years.filter((row) => row.isDisplayYear).map((row) => row.fiscalYear));
   const dividends = dividendRows.filter((row) => displayYears.has(row.fiscalYear));
-  return { stock, status: 'ok', summary, years, industry, valuation, dividends };
+  return { stock, corpCode, status: 'ok', summary, years, industry, valuation, dividends };
 }
 
 // FS 4-1 6번 (PRD 4장 F-14): 회사당 몇 행뿐이라 연도 조건 없이 받는다
