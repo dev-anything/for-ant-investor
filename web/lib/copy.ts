@@ -25,6 +25,26 @@ export const copy = {
     // FS 12장 2번 기본안: 없는 종목 주소 (404)
     notFound: '이 종목을 찾을 수 없어. 검색에서 다시 찾아 줘.',
   },
+  // 업종 가운데 값 (PRD 4장 F-08). 평가 표현 없이 높아/낮아/같아만 쓴다
+  industry: {
+    // 업종 정보 없음 (리포트카드 지표 위에 한 번)
+    noIndustry: '업종 정보가 없어.',
+    // 지표 3개 아래 링크 (PRD 4장 F-08, FS 9-2). industry !== null일 때만 보인다
+    compareLink: '같은 업종 회사 보기',
+    // 눈금 아래 가운데 값 라벨: `▲ 같은 업종 가운데 값 62.0%`
+    medianLabel: (valueText: string) => `같은 업종 가운데 값 ${valueText}`,
+    // 가운데 값 툴팁 (PRD 4장 F-08). {N} = 이 업종 회사 수
+    medianTip: (n: number) =>
+      `같은 업종 회사들을 줄 세웠을 때 한가운데 값이야. 이 업종 회사 ${n}개로 계산했어.`,
+    // 회사 수 부족 (PRD 4장 F-08)
+    tooFew: '같은 업종 회사가 적어서 비교 값을 표시하지 않아.',
+    // 비교 한 줄 (PRD 4장 F-08). 세 번째는 PRD 표기 "같아"를 조사 맞춰 쓴 문구 (문구 미정, 보고 참고)
+    relation: {
+      higher: '같은 업종 가운데 값보다 높아',
+      lower: '같은 업종 가운데 값보다 낮아',
+      same: '같은 업종 가운데 값과 같아',
+    },
+  },
   // 실적 그래프 (PRD 4장 F-02, 3-1·3-8). 툴팁 "정식 이름은 당기순이익"은 PRD 확정 문구
   results: {
     title: '실적',
@@ -65,10 +85,11 @@ export const copy = {
     },
     // 눈금 관련 작은 문구 (Gauge)
     gauge: {
-      // 눈금 끝 표시: `범위 0%~300%`
-      range: (min: string, max: string) => `범위 ${min}~${max}`,
-      // 눈금 aria-label: `부채비율 87.3%, 범위 0%~300%` (FS 7장)
+      // 눈금 aria-label용 범위: `범위 0~300%` (FS 7장 예시와 글자 단위로 같게)
+      range: (min: number, max: number) => `범위 ${min}~${max}%`,
+      // 눈금 aria-label: `부채비율 87.3%, 범위 0~300%` (FS 7장)
       ariaLabel: (name: string, valueText: string, range: string) => `${name} ${valueText}, ${range}`,
+      // 눈금 범위 밖 값일 때 aria-label 끝에 붙인다 (Gauge가 clamped일 때 사용)
       outOfRange: '눈금 범위를 벗어난 값',
     },
     // 툴팁 열기 버튼 (보이지 않는 글자, 스크린 리더용)

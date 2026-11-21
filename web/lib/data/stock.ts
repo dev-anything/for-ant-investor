@@ -3,6 +3,7 @@
 import 'server-only';
 import { db } from '@/lib/supabase/server';
 import type { Insight } from '@/lib/insights';
+import type { IndustryMedian } from '@/lib/industry';
 
 export type StockStatus = 'ok' | 'no_financials' | 'foreign';
 
@@ -48,11 +49,22 @@ export interface YearRow {
   revenueGrowth: number | null;
 }
 
+// 같은 업종(중분류) 가운데 값 (FS 4-1 5번, v_industry_medians). 업종 정보가 없으면 StockPage.industry가 null
+export type MedianKey = 'debt_ratio' | 'operating_margin' | 'revenue_growth' | 'per' | 'pbr';
+
+export interface StockIndustry {
+  divisionCode: string;
+  divisionName: string;
+  medians: Record<MedianKey, IndustryMedian>;
+}
+
 export interface StockPage {
   stock: StockInfo;
   status: StockStatus;
   summary: StockSummary | null;
   years: YearRow[];
+  // ok가 아니면 null. ok여도 업종 코드·이름이 없으면 null (PRD 4장 F-08 "업종 정보가 없어.")
+  industry: StockIndustry | null;
 }
 
 /**
@@ -66,18 +78,52 @@ export async function getStockPage(shortCode: string): Promise<StockPage | null>
   const { info: stock, corpCode } = lookup;
 
   if (stock.isForeign) {
-    return { stock, status: 'foreign', summary: null, years: [] };
+    return { stock, status: 'foreign', summary: null, years: [], industry: null };
   }
   // corp_code가 없으면 재무 조회 자체를 건너뛴다 (FS 4-1 2번)
   if (corpCode === null) {
-    return { stock, status: 'no_financials', summary: null, years: [] };
+    return { stock, status: 'no_financials', summary: null, years: [], industry: null };
   }
 
-  const [summary, years] = await Promise.all([findSummary(corpCode), findYears(corpCode)]);
+  // 업종 가운데 값은 재무 조회와 함께 병렬로 읽는다 (FS 4-1 5번)
+  const [summary, years, industry] = await Promise.all([
+    findSummary(corpCode),
+    findYears(corpCode),
+    findIndustry(stock),
+  ]);
   if (!summary) {
-    return { stock, status: 'no_financials', summary: null, years: [] };
+    return { stock, status: 'no_financials', summary: null, years: [], industry: null };
   }
-  return { stock, status: 'ok', summary, years };
+  return { stock, status: 'ok', summary, years, industry };
+}
+
+// FS 4-1 5번: 업종 코드·이름이 없으면 조회하지 않는다. 뷰 행이 없으면 업종은 있고 회사 수 0으로 본다 (비교 안 함)
+async function findIndustry(stock: StockInfo): Promise<StockIndustry | null> {
+  if (stock.divisionCode === null || stock.divisionName === null) return null;
+
+  const { data, error } = await db()
+    .from('v_industry_medians')
+    .select(
+      'debt_ratio_median,debt_ratio_n,operating_margin_median,operating_margin_n,revenue_growth_median,revenue_growth_n,per_median,per_n,pbr_median,pbr_n'
+    )
+    .eq('division_code', stock.divisionCode)
+    .maybeSingle();
+  if (error) throw new Error(`DB 조회 오류(v_industry_medians): ${error.message}`);
+
+  const empty: IndustryMedian = { value: null, n: 0 };
+  return {
+    divisionCode: stock.divisionCode,
+    divisionName: stock.divisionName,
+    medians: {
+      debt_ratio: data ? { value: data.debt_ratio_median, n: data.debt_ratio_n ?? 0 } : empty,
+      operating_margin: data
+        ? { value: data.operating_margin_median, n: data.operating_margin_n ?? 0 }
+        : empty,
+      revenue_growth: data ? { value: data.revenue_growth_median, n: data.revenue_growth_n ?? 0 } : empty,
+      per: data ? { value: data.per_median, n: data.per_n ?? 0 } : empty,
+      pbr: data ? { value: data.pbr_median, n: data.pbr_n ?? 0 } : empty,
+    },
+  };
 }
 
 // corp_code는 재무 조회용이라 화면으로 넘기는 StockInfo에는 넣지 않는다

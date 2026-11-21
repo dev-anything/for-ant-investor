@@ -37,7 +37,7 @@ export default async function StockPage({ params }: StockPageProps) {
       {page.status === 'no_financials' && <EmptyState message={copy.stock.noFinancials} />}
       {page.status === 'ok' && page.summary && (
         <>
-          <ReportCard summary={page.summary} years={page.years} />
+          <ReportCard summary={page.summary} years={page.years} industry={page.industry} />
           <ResultsCharts
             years={page.years}
             fsDiv={page.summary.fsDiv}
