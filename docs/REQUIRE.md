@@ -42,6 +42,9 @@
 | 2026-11-21 | F-10 `/api/chat`은 Origin 헤더가 없으면 통과 (있으면 Host와 같아야 함) | 브라우저 POST는 항상 Origin을 붙임. 막으려면 `isSameOrigin` 한 줄 |
 | 2026-11-21 | 2차 배당 정확도: 표본 20종목 120칸 100% 일치 (`scripts/accuracy_check.py --dividends`, 결과 `api_check_results/accuracy_dividends_2026-11-21.md`). 2차 수용 기준 점검 PASS | PRD 9장. `check`·`not_disclosed`·013 경우는 표본에 없어 코드로만 확인 |
 | 2026-11-21 | `/industries/[division]`·`/compare`는 쿼리를 읽어서 빌드상 동적(ƒ)으로 나옴 (`revalidate = 3600`은 설정) | 응답 0.2초대라 그대로 둠 |
+| 2026-11-21 | F-13 감사의견 변화는 같은 `row_no`끼리 짝지어 의견만 비교 | PRD 11장 3번 미정. DB 확인: 전년과 같은 row_no 짝 8,846개 중 의견이 다른 101개가 모두 실제 의견 변화(적정→의견거절 67 등) — 행 순서 뒤섞임 흔적 없음 |
+| 2026-11-21 | F-13 처음 수집된 회사(전년 자료 없음)는 알리지 않음 | 첫 적재 때 수천 건 알림 방지 |
+| 2026-11-21 | F-13 알림 문구의 증감률은 소수 1자리 ("전년보다 16.7% 증가") | PRD 3-8 기본 규칙. PRD F-13 예시는 정수 — 사용자 확인 필요 |
 | 2026-11-21 | Tailwind는 표준 `@tailwindcss/postcss` 방식, `next.config.ts`의 `loadEnvConfig`에 `forceReload` 인자 추가 | 빌드 워커가 루트 `.env`를 못 읽는 문제 |
 
 ## 방화벽 (R1)
