@@ -39,6 +39,8 @@ export default async function StockPage({ params }: StockPageProps) {
       {/* 알림 띠·읽는 순서 버튼은 재무 화면(ok)에서만 (PRD 4장 F-16, 재무 없음·외국회사는 없음) */}
       <StockHeader
         stock={page.stock}
+        // 외국회사 제외 (PRD F-12): 재무 있음·재무 없음에서만 추적 버튼
+        watchable={page.status !== 'foreign'}
         readingTour={page.status === 'ok' && page.summary ? { isFinancial: page.summary.isFinancial } : undefined}
       />
       {page.status === 'foreign' && <EmptyState message={copy.stock.foreign} />}

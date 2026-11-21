@@ -5,6 +5,7 @@ import { db } from '@/lib/supabase/server';
 import type { DividendRow, DpsStatus, YieldStatus } from '@/lib/dividend';
 import type { Insight } from '@/lib/insights';
 import type { IndustryMedian } from '@/lib/industry';
+import type { Database } from '@/lib/supabase/types';
 import type { StockValuation } from '@/lib/valuation';
 
 export type StockStatus = 'ok' | 'no_financials' | 'foreign';
@@ -235,17 +236,32 @@ async function findSummary(corpCode: string): Promise<StockSummary | null> {
   };
 }
 
-async function findYears(corpCode: string): Promise<YearRow[]> {
-  const { data, error } = await db()
-    .from('v_company_years')
-    .select(
-      'fiscal_year,fs_div,is_display_year,is_latest,revenue,operating_income,net_income,total_assets,total_liabilities,total_equity,capital_stock,debt_ratio,operating_margin,revenue_growth'
-    )
-    .eq('corp_code', corpCode)
-    .order('fiscal_year', { ascending: true });
-  if (error) throw new Error(`DB 조회 오류(v_company_years): ${error.message}`);
+// v_company_years에서 화면이 읽는 열 (FS 4-1). 마이페이지(FS 9-12)도 같은 열을 읽는다
+export const YEAR_COLUMNS =
+  'fiscal_year,fs_div,is_display_year,is_latest,revenue,operating_income,net_income,total_assets,total_liabilities,total_equity,capital_stock,debt_ratio,operating_margin,revenue_growth' as const;
 
-  return (data ?? []).map((row) => ({
+// v_company_years 한 행 중 YEAR_COLUMNS 열 (타입은 생성 파일에서 가져온다)
+export type YearDbRow = Pick<
+  Database['public']['Views']['v_company_years']['Row'],
+  | 'fiscal_year'
+  | 'fs_div'
+  | 'is_display_year'
+  | 'is_latest'
+  | 'revenue'
+  | 'operating_income'
+  | 'net_income'
+  | 'total_assets'
+  | 'total_liabilities'
+  | 'total_equity'
+  | 'capital_stock'
+  | 'debt_ratio'
+  | 'operating_margin'
+  | 'revenue_growth'
+>;
+
+// DB 열 이름 → 화면용 camelCase 한 곳 (TypeScript 규칙 C1). 종목 화면과 마이페이지가 같이 쓴다
+export function toYearRow(row: YearDbRow): YearRow {
+  return {
     fiscalYear: required(row.fiscal_year, 'fiscal_year'),
     fsDiv: required(row.fs_div, 'fs_div'),
     isDisplayYear: row.is_display_year === true,
@@ -260,7 +276,18 @@ async function findYears(corpCode: string): Promise<YearRow[]> {
     debtRatio: row.debt_ratio,
     operatingMargin: row.operating_margin,
     revenueGrowth: row.revenue_growth,
-  }));
+  };
+}
+
+async function findYears(corpCode: string): Promise<YearRow[]> {
+  const { data, error } = await db()
+    .from('v_company_years')
+    .select(YEAR_COLUMNS)
+    .eq('corp_code', corpCode)
+    .order('fiscal_year', { ascending: true });
+  if (error) throw new Error(`DB 조회 오류(v_company_years): ${error.message}`);
+
+  return (data ?? []).map(toYearRow);
 }
 
 // 필수 DB 값이 비어 있으면 throw. 값 자체는 메시지에 넣지 않는다 (컬럼 이름만)
@@ -272,13 +299,13 @@ function required<T>(value: T | null, column: string): T {
 }
 
 // DB check 제약(none·partial·full·unknown)과 맞춤. 모르는 값은 unknown으로 둔다
-function toCapitalImpairment(value: string): CapitalImpairment {
+export function toCapitalImpairment(value: string): CapitalImpairment {
   if (value === 'none' || value === 'partial' || value === 'full') return value;
   return 'unknown';
 }
 
 // insights jsonb 배열을 모양 확인하며 읽는다. id가 숫자가 아니면 건너뛴다 (화면을 깨지 않게)
-function toInsights(value: unknown): Insight[] {
+export function toInsights(value: unknown): Insight[] {
   if (!Array.isArray(value)) return [];
   const result: Insight[] = [];
   for (const item of value) {

@@ -378,6 +378,82 @@ export const copy = {
       },
     },
   },
+  // 로그인·계정 (PRD F-11, 10장 17번, FS 12장 7·8·9번). 존댓말 예외 (로그인 화면)
+  auth: {
+    login: '로그인',
+    // 로그인 뒤 메뉴 (PRD F-11). 숫자는 안 읽은 알림 수
+    mypage: '마이페이지',
+    logout: '로그아웃',
+    logoutFailed: '로그아웃하지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+    dialogTitle: '이메일로 로그인',
+    // 창을 여는 이유별 안내 (FS 9-11). 로그인 화면이라 존댓말
+    reason: {
+      // FS 9-11: 종목 추적 안내는 반말 (PRD F-12 문구)
+      watch: '로그인하면 종목을 추적할 수 있어.',
+      expired: '로그인 링크가 만료되었습니다. 다시 받아 주세요.',
+      // FS 12장 9번
+      required: '로그인이 필요합니다.',
+    },
+    inputLabel: '이메일 주소를 입력해 주세요',
+    inputPlaceholder: '이메일 주소를 입력해 주세요',
+    submit: '로그인 링크 받기',
+    sending: '보내는 중입니다.',
+    // PRD 10장 17번: 로그인 창 개인정보 안내 (사용자 확인 전 기본안)
+    privacy: '이메일 주소는 로그인과 알림 발송에만 사용합니다.',
+    // PRD F-11 보낸 뒤 문구
+    sent: '로그인 링크를 보냈습니다. 메일함을 확인해 주세요.',
+    sentNote: '메일이 오지 않으면 스팸함을 확인해 주세요.',
+    resend: '링크 다시 보내기',
+    resendWait: (seconds: number) => `${seconds}초 뒤에 다시 보낼 수 있습니다.`,
+    // FS 12장 7번: 발송 실패
+    sendFailed: '로그인 링크를 보내지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+    // FS 12장 8번: 이메일 형식 오류 (보내기 전 브라우저 검사)
+    invalidEmail: '이메일 주소를 확인해 주세요.',
+    close: '닫기',
+    // PRD F-11 탈퇴 확인 문구 (마이페이지 계정 칸, 17b에서 사용)
+    deleteConfirm: '탈퇴하면 추적 종목과 알림 기록이 모두 지워집니다. 탈퇴할까요?',
+  },
+  // 추적하기 버튼 (PRD F-12, 확장). 사용자 문구라 반말 (FS 12장 10번 포함)
+  watch: {
+    follow: '추적하기',
+    following: '추적 중',
+    limit: '추적 종목은 20개까지 등록할 수 있어.',
+    failed: '지금은 바꿀 수 없어. 잠시 뒤 다시 해 줘.',
+  },
+  // 마이페이지 (PRD F-12, FS 9-12, FS 12장 9·10·11·13번). 칸 이름·안내는 반말, 로그인·계정 칸 문구는 존댓말 (PRD 3-1)
+  mypage: {
+    pageTitle: '마이페이지 · 재무 레이더',
+    title: '마이페이지',
+    // FS 12장 13번: `추적 종목 ({n}/20)`
+    watchTitle: (count: number, limit: number) => `추적 종목 (${count}/${limit})`,
+    // PRD F-12 추적 없음 안내
+    noWatch: "아직 추적하는 종목이 없어. 종목 화면에서 '추적하기'를 눌러 봐.",
+    // PRD F-12 목록에서 빠진 종목 표시
+    delisted: '목록에서 빠짐',
+    // FS 9-12 재무 데이터가 없는 종목 (카드)
+    noFinancials: '재무 데이터 없음',
+    // FS 12장 11번: 자본잠식 표시
+    capitalFull: '완전 자본잠식',
+    capitalPartial: '부분 자본잠식',
+    // PRD F-12 "눈여겨볼 변화" 문장 더 있을 때
+    moreInsights: (count: number) => `외 ${count}건`,
+    // FS 9-12 최신 연도 전년 대비 증감률 한 줄 (반말, 권유·평가 표현 없음)
+    growthUp: (year: number, metric: string, percent: string) => `${year}년 ${metric} 전년보다 ${percent} 증가`,
+    growthDown: (year: number, metric: string, percent: string) => `${year}년 ${metric} 전년보다 ${percent} 감소`,
+    growthFlat: (year: number, metric: string) => `${year}년 ${metric} 전년과 같아`,
+    // FS 9-12 알림 설정 칸 (알림 목록 칸은 18a에서 추가)
+    settingsTitle: '알림 설정',
+    emailOptIn: '알림 메일 받기',
+    // FS 12장 10번: 추적·메일 설정 변경 실패 (같은 문구를 쓴다)
+    toggleFailed: '지금은 바꿀 수 없어. 잠시 뒤 다시 해 줘.',
+    // FS 9-12 계정 칸 (로그인·계정 화면이라 존댓말)
+    accountTitle: '계정',
+    deleteButton: '탈퇴하기',
+    deleteSubmit: '탈퇴',
+    deleteCancel: '취소',
+    // FS 기본안 없음 (PRD 10장 미정) → FS 12장 10번과 같은 문구로 임시 사용. 화면 확인 때 확정
+    deleteFailed: '지금은 바꿀 수 없어. 잠시 뒤 다시 해 줘.',
+  },
   footer: {
     // PRD 10장 1번: 투자 책임 고지 기본안 (화면 하단 한 줄, 존댓말)
     disclaimer: '이 서비스는 투자 권유가 아닌 참고 정보이며, 투자 판단의 책임은 본인에게 있습니다.',

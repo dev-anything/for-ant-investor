@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { AuthMenu } from '@/components/AuthMenu';
 import { NavLink } from '@/components/NavLink';
 import { copy } from '@/lib/copy';
 
@@ -21,7 +23,10 @@ export function AppHeader() {
             <NavLink href="/industries">{copy.nav.industry}</NavLink>
           </nav>
         </div>
-        {/* 확장: AuthMenu 자리 (F-11, F-12) */}
+        {/* 확장 (F-11): 로그인 메뉴. 쿼리(`?login=`)를 읽으니 Suspense로 감싼다. 자리는 AuthMenu와 같은 폭 */}
+        <Suspense fallback={<div className="flex h-8 min-w-40" aria-hidden="true" />}>
+          <AuthMenu />
+        </Suspense>
       </div>
     </header>
   );

@@ -17,11 +17,12 @@ import { copy } from '@/lib/copy';
 import { Tooltip } from '@/components/Tooltip';
 
 // PRD 4장 F-02: 적자 막대는 빨강이 아니라 옅은 회색으로 구분한다 (무채색만)
-const POSITIVE_FILL = '#525252';
-const NEGATIVE_FILL = '#c4c4c4';
+// 마이페이지 작은 막대(MiniBars)와 같은 색을 쓰려고 export한다 (FS 9-12)
+export const POSITIVE_FILL = '#525252';
+export const NEGATIVE_FILL = '#c4c4c4';
 const CHART_HEIGHT_PX = 200;
 // 0 기준선 색 (FS 8-2: 무채색, 막대 채움보다 진한 회색)
-const BASELINE_STROKE = '#737373';
+export const BASELINE_STROKE = '#737373';
 
 // 막대 위(양수)·아래(음수) 값 라벨 자리 (px)
 const LABEL_GAP_PX = 6;

@@ -37,10 +37,10 @@
 - [x] 14c. F-10 `ChatFilterInput` + 스크리너 연결
 - [x] 15. 2차 마무리 (표본 대조, 재기동, 접속 확인)
 - [ ] 16a. F-11 마이그레이션 SQL 5-7 → **[x] Admin이 사용자 확인 후 적용** + Supabase 대시보드 설정 안내 (REQUIRE.md)
-- [ ] 16b. F-11 `@supabase/ssr`·`session.ts`·`browser.ts`·`proxy.ts`·`auth.ts`(+테스트)·`/api/me`·`/auth/callback`
-- [ ] 16c. F-11 `AuthMenu`·`LoginDialog`·탈퇴
-- [ ] 17a. F-12 `/api/watchlist`·`/api/settings`·`WatchButton`·로그인 뒤 자동 등록
-- [ ] 17b. F-12 `/mypage`·`WatchCard`·`MiniBars`·`EmailOptInToggle`
+- [x] 16b. F-11 `@supabase/ssr`·`session.ts`·`browser.ts`·`proxy.ts`·`auth.ts`(+테스트)·`/api/me`·`/auth/callback`
+- [x] 16c. F-11 `AuthMenu`·`LoginDialog`·탈퇴
+- [x] 17a. F-12 `/api/watchlist`·`/api/settings`·`WatchButton`·로그인 뒤 자동 등록
+- [x] 17b. F-12 `/mypage`·`WatchCard`·`MiniBars`·`EmailOptInToggle`
 - [ ] 18a. F-13 마이그레이션 SQL 5-8 → **[x] Admin이 사용자 확인 후 적용** + 알림 읽음 API·`NotificationList`·`/unsubscribe`·`/api/unsubscribe`
 - [ ] 18b. F-13 배치 `batch/notify.py` + `batch/tests/test_notify.py`
 - [ ] 18c. F-13 `batch/notify_mail.py` + `dart_collect.py`·`krx_list.py` 연결 + `daily.yml` 단계
