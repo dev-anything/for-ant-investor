@@ -1,8 +1,14 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { HomeNews } from '@/components/HomeNews';
 import { SearchBox } from '@/components/SearchBox';
+import { Skeleton } from '@/components/Skeleton';
 import { copy } from '@/lib/copy';
 
-// FS 8-1 `/` 검색 (F-01). 첫 화면에 조회할 데이터가 없어 서버에서 읽을 것이 없다. 검색은 SearchBox가 API Route를 부른다
+// FS 3-3: 첫 화면은 기사 칸 때문에 30분마다 다시 그린다 (FS 3-3, F-18)
+export const revalidate = 1800;
+
+// FS 8-1 `/` 검색 (F-01). 검색은 SearchBox가 API Route를 부른다. 경제 기사 칸(F-18)은 Suspense 안에서 따로 기다린다
 export default function HomePage() {
   return (
     <div className="mx-auto flex max-w-5xl flex-col items-center px-4 py-16">
@@ -14,6 +20,11 @@ export default function HomePage() {
           {copy.nav.screener}
         </Link>
       </p>
+      <div className="mt-12 w-full">
+        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+          <HomeNews />
+        </Suspense>
+      </div>
     </div>
   );
 }

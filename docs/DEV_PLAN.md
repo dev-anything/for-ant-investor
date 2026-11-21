@@ -28,8 +28,8 @@
 - [x] 9. F-14 `dividend.ts`·`DividendCard`
 - [x] 10a. F-17 사전 확인 (DART `list.json` 실제 응답, PRD 11장 19·20번)
 - [x] 10b. F-17 `disclosures.ts`·`disclosure.ts`·`DisclosureList`·`StockFeedSection`
-- [ ] 11a. F-18 `news-text.ts`(+테스트)·`news.ts` (키 없으면 꺼짐)
-- [ ] 11b. F-18 `NewsList`·`NewsBlock`·`NaverAttribution`·`HomeNews`·`StockNews`·`/news`
+- [x] 11a. F-18 `news-text.ts`(+테스트)·`news.ts` (키 없으면 꺼짐)
+- [x] 11b. F-18 `NewsList`·`NewsBlock`·`NaverAttribution`·`HomeNews`·`StockNews`·`/news`
 - [ ] 12. F-15 `/industries`·`/industries/[division]`·메뉴·바로가기·업종 링크
 - [ ] 13. F-16 `driver.js`·`tour.ts`(+테스트)·`ReadingTour`·`data-tour`
 - [ ] 14a. F-10 마이그레이션 SQL 5-6 → **Admin이 사용자 확인 후 적용**
