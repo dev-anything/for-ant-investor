@@ -1,6 +1,7 @@
 // 종목 화면 조회 (FS 4-1, MVP 1·2·3번). 2차 추가 조회(주가·업종·배당)는 해당 단계에서 붙인다.
 // DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다 (TypeScript 규칙 C1).
 import { db } from '@/lib/supabase/server';
+import type { Insight } from '@/lib/insights';
 
 export type StockStatus = 'ok' | 'no_financials' | 'foreign';
 
@@ -17,15 +18,6 @@ export interface StockInfo {
   divisionName: string | null;
   // 결산월 원본 (예: '03'). 12월 결산 표시는 formatAccMt가 맡는다
   accMt: string | null;
-}
-
-// PRD 4장 F-05 문장 템플릿 입력 (lib/insights.ts는 3a에서 만든다. 그때 이 타입을 옮긴다)
-export interface Insight {
-  id: number;
-  year: number | null;
-  n: number | null;
-  prev: number | null;
-  curr: number | null;
 }
 
 export interface StockSummary {

@@ -47,6 +47,29 @@ export const copy = {
     netIncomeTip: '정식 이름은 당기순이익',
     tipButtonLabel: '설명 보기',
   },
+  // 리포트카드 (PRD 4장 F-05). 화살표 옆 말과 "눈여겨볼 변화" 문장 8개는 PRD 그대로 쓴다
+  reportCard: {
+    // 방향 화살표 옆 말 (lib/trend.ts)
+    trend: {
+      flat: '비슷한 수준',
+      risingYears: '3년째 증가',
+      fallingYears: '3년째 감소',
+      mixed: '오르내림',
+      risingYear: '전년보다 증가',
+      fallingYear: '전년보다 감소',
+    },
+    // 문장 템플릿 (lib/insights.ts). id는 PRD 4장 F-05 표 번호
+    insight: {
+      1: '매출은 늘었는데 영업이익률은 줄었어',
+      2: '매출은 줄었는데 영업이익은 늘었어',
+      3: '영업이익은 흑자인데 순이익은 적자야',
+      4: (year: number) => `${year}년에 영업이익이 흑자로 돌아섰어`,
+      5: (year: number) => `${year}년에 영업이익이 적자로 돌아섰어`,
+      6: (n: number) => `영업적자가 ${n}년째 이어지고 있어`,
+      7: (prev: string, curr: string) => `부채비율이 1년 사이 ${prev}%에서 ${curr}%로 올랐어`,
+      8: '영업이익은 적자인데 순이익은 흑자야',
+    },
+  },
   // 문구 미정: 종목 주소가 아닌 없는 주소(404)용. PRD·FS에 문구가 없어 임시 문장을 쓴다
   notFoundPage: '이 페이지를 찾을 수 없어.',
   // 임시 홈 화면 문구 (DEV_PLAN 0b, 1b에서 교체). PRD 3-1 반말
