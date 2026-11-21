@@ -11,7 +11,7 @@
 - [x] 0c. 로컬 실행 스크립트 (포트 16000, `0.0.0.0`) + 빌드·기동·키 번들 검사
 - [ ] 0d. 방화벽 (LAN + Tailscale만 허용) — **사용자 sudo 필요**
 - [x] 1a. F-01 마이그레이션 SQL `search_stocks` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
-- [ ] 1b. F-01 `/api/search`·`SearchBox`·`/` 화면
+- [x] 1b. F-01 `/api/search`·`SearchBox`·`/` 화면
 - [x] 2a. F-02 `getStockPage`·`/stocks/[code]` 뼈대·`StockHeader`·데이터 없음·외국회사·404·로딩·오류
 - [x] 2b. F-02 `ResultsCharts` (Recharts)
 - [x] 3a. F-05 순수 모듈 `trend.ts`·`gauge.ts`·`insights.ts` + 테스트

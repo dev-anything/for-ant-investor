@@ -189,3 +189,21 @@ export function toQuery(state: ScreenerState): string {
   if (state.size !== d.size) parts.push(`size=${state.size}`);
   return parts.join('&');
 }
+
+// --- 종목 검색 (F-01, FS 8-1, 4-2) ---
+
+// 검색어 길이 상한 (글자 수, 앞뒤 공백 제거 뒤). FS 8-1: 1~50자
+export const SEARCH_QUERY_MAX_LENGTH = 50;
+// 연관검색어 개수 상한 (PRD 4장 F-01 "최대 10개")
+export const SEARCH_RESULT_LIMIT = 10;
+
+/**
+ * 검색어를 검증한다 (FS 8-1). 앞뒤 공백을 떼고 1~50자면 그 값, 아니면 null (API는 400).
+ * 글자 수는 DB의 length와 맞추려고 UTF-16 길이가 아니라 문자(코드 포인트) 수로 센다.
+ */
+export function parseSearchQuery(raw: string | null): string | null {
+  if (raw === null) return null;
+  const q = raw.trim();
+  if (q.length === 0 || [...q].length > SEARCH_QUERY_MAX_LENGTH) return null;
+  return q;
+}

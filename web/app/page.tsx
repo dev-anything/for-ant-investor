@@ -1,28 +1,19 @@
+import Link from 'next/link';
+import { SearchBox } from '@/components/SearchBox';
 import { copy } from '@/lib/copy';
-import { db } from '@/lib/supabase/server';
 
-// DEV_PLAN 0b: 임시 홈 화면 (v_search_targets 1행 조회 확인용, 1b에서 교체)
-export default async function HomePage() {
-  const { data, error } = await db()
-    .from('v_search_targets')
-    .select('short_code,itms_nm')
-    .limit(1);
-
-  if (error) {
-    throw new Error(`DB 조회 오류: ${error.message}`);
-  }
-
-  const stock = data?.[0];
-
+// FS 8-1 `/` 검색 (F-01). 첫 화면에 조회할 데이터가 없어 서버에서 읽을 것이 없다. 검색은 SearchBox가 API Route를 부른다
+export default function HomePage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      {stock ? (
-        <p className="text-neutral-700">
-          {copy.home.stockLabel} {stock.itms_nm} ({stock.short_code})
-        </p>
-      ) : (
-        <p className="text-neutral-500">{copy.home.empty}</p>
-      )}
+    <div className="mx-auto flex max-w-5xl flex-col items-center px-4 py-16">
+      <h1 className="sr-only">{copy.search.label}</h1>
+      <SearchBox />
+      <p className="mt-4 text-sm text-neutral-700">
+        {copy.search.hint}{' '}
+        <Link href="/screener" className="underline underline-offset-2 hover:text-neutral-900">
+          {copy.nav.screener}
+        </Link>
+      </p>
     </div>
   );
 }
