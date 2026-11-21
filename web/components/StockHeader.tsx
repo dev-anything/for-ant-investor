@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Fragment, type ReactNode } from 'react';
+import { ReadingTour } from '@/components/ReadingTour';
 import { Tooltip } from '@/components/Tooltip';
 import { copy } from '@/lib/copy';
 import { formatAccMt } from '@/lib/format';
@@ -8,7 +9,14 @@ import type { StockInfo } from '@/lib/data/stock';
 // FS 8-2 StockHeader, PRD 3-5 머리: 회사 이름 + 정보 줄 (서버 컴포넌트)
 // 정보 줄은 값이 있는 칸만 잇는다. 12월 결산은 formatAccMt가 null을 줘서 생략된다 (PRD 3-5)
 // 업종 이름은 F-15 업종 목록으로 가는 링크다 (PRD 4장 F-15, 2차)
-export function StockHeader({ stock }: { stock: StockInfo }) {
+// readingTour: status='ok'일 때만 넘긴다 (PRD 4장 F-16, FS 9-8). 없으면 알림 띠·버튼도 없다
+export function StockHeader({
+  stock,
+  readingTour,
+}: {
+  stock: StockInfo;
+  readingTour?: { isFinancial: boolean };
+}) {
   const infoParts: ReactNode[] = [stock.shortCode, stock.market];
 
   if (stock.divisionCode !== null && stock.divisionName !== null) {
@@ -40,6 +48,7 @@ export function StockHeader({ stock }: { stock: StockInfo }) {
           </Fragment>
         ))}
       </p>
+      {readingTour && <ReadingTour isFinancial={readingTour.isFinancial} />}
     </header>
   );
 }

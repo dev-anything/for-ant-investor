@@ -38,11 +38,24 @@ export function ResultsCharts({
           {copy.results.financialNotice}
         </p>
       )}
-      {/* 가로 3개, 좁은 화면은 세로로 쌓는다 */}
+      {/* 가로 3개, 좁은 화면은 세로로 쌓는다. data-tour는 읽는 순서 안내가 짚는 자리다 (FS 9-1)
+          sales = 매출액 그래프 하나, profit = 영업이익·순이익 묶음 (두 칸 차지, 금융회사는 세 칸 전부) */}
       <div className="mt-4 grid gap-6 md:grid-cols-3">
-        {metrics.map((metric) => (
-          <ResultsChart key={metric} metric={metric} bars={buildMetricBars(years, metric)} />
-        ))}
+        {metrics.includes('revenue') && (
+          <div data-tour="sales" className="min-w-0">
+            <ResultsChart metric="revenue" bars={buildMetricBars(years, 'revenue')} />
+          </div>
+        )}
+        <div
+          data-tour="profit"
+          className={`grid min-w-0 gap-6 md:grid-cols-2 ${isFinancial ? 'md:col-span-3' : 'md:col-span-2'}`}
+        >
+          {metrics
+            .filter((metric) => metric !== 'revenue')
+            .map((metric) => (
+              <ResultsChart key={metric} metric={metric} bars={buildMetricBars(years, metric)} />
+            ))}
+        </div>
       </div>
     </section>
   );

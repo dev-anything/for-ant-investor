@@ -56,17 +56,20 @@ export function ReportCard({
           <>
             {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
             {industry === null && <p className="py-4 text-sm text-neutral-700">{copy.industry.noIndustry}</p>}
-            <MetricRow
-              gauge="debt_ratio"
-              values={debtValues}
-              compare={compareFor('debt_ratio', debtValues, industry)}
-              gaugeSlot={
-                capitalImpairment === 'full' ? <CapitalNotice impairment="full" /> : undefined
-              }
-              belowGauge={
-                capitalImpairment === 'partial' ? <CapitalNotice impairment="partial" /> : undefined
-              }
-            />
+            {/* data-tour="debt": 부채비율 행 또는 그 자리의 완전 자본잠식 상자를 짚는다 (FS 9-1) */}
+            <div data-tour="debt">
+              <MetricRow
+                gauge="debt_ratio"
+                values={debtValues}
+                compare={compareFor('debt_ratio', debtValues, industry)}
+                gaugeSlot={
+                  capitalImpairment === 'full' ? <CapitalNotice impairment="full" /> : undefined
+                }
+                belowGauge={
+                  capitalImpairment === 'partial' ? <CapitalNotice impairment="partial" /> : undefined
+                }
+              />
+            </div>
             <MetricRow
               gauge="operating_margin"
               values={marginValues}

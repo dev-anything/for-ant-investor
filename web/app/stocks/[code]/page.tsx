@@ -36,7 +36,11 @@ export default async function StockPage({ params }: StockPageProps) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <StockHeader stock={page.stock} />
+      {/* 알림 띠·읽는 순서 버튼은 재무 화면(ok)에서만 (PRD 4장 F-16, 재무 없음·외국회사는 없음) */}
+      <StockHeader
+        stock={page.stock}
+        readingTour={page.status === 'ok' && page.summary ? { isFinancial: page.summary.isFinancial } : undefined}
+      />
       {page.status === 'foreign' && <EmptyState message={copy.stock.foreign} />}
       {page.status === 'no_financials' && (
         <>

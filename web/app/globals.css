@@ -1,1 +1,48 @@
 @import "tailwindcss";
+/* FS 9-8: driver.js 기본 CSS를 먼저 불러오고, 아래에서 무채색으로 덮는다 (PRD F-16) */
+@import "driver.js/dist/driver.css";
+
+/* 말풍선 색은 무채색 (PRD 3-1 색 규칙). 기본 파랑 버튼 대신 검정·흰색만 쓴다 */
+.driver-popover {
+  background-color: #ffffff;
+  color: #171717;
+  border: 1px solid #a3a3a3;
+}
+.driver-popover-title {
+  color: #171717;
+  font-weight: 700;
+}
+.driver-popover-description {
+  color: #404040;
+}
+.driver-popover-progress-text {
+  color: #525252;
+}
+.driver-popover-footer-btn,
+.driver-popover-navigation-btns button {
+  background-color: #ffffff;
+  color: #171717;
+  border: 1px solid #a3a3a3;
+  text-shadow: none;
+}
+.driver-popover-navigation-btns .driver-popover-next-btn {
+  background-color: #171717;
+  color: #ffffff;
+  border-color: #171717;
+}
+
+/* 640px 미만은 말풍선을 화면 아래쪽에 고정한다 (FS 9-8). 화살표는 숨긴다 */
+@media (max-width: 639.98px) {
+  .driver-popover {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  .driver-popover-arrow {
+    display: none !important;
+  }
+}
