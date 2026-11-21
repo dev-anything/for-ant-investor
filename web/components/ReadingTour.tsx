@@ -46,12 +46,15 @@ function collectTourSteps(isFinancial: boolean) {
 
 // driver.js는 누를 때 불러온다 (번들 줄이기, FS 9-8)
 async function startTour(isFinancial: boolean): Promise<void> {
-  const { driver } = await import('driver.js');
+  // 단계는 화면에서 먼저 모은다. 보일 단계가 없으면 driver.js를 불러오지 않는다
   const steps = collectTourSteps(isFinancial);
   if (steps.length === 0) return;
 
+  const { driver } = await import('driver.js');
   const tour = driver({
     showProgress: true,
+    // 기본 닫기(✕) 버튼은 뺀다. 건너뛰기는 아래 footer 버튼으로만 한다 (FS 9-8)
+    showButtons: ['next', 'previous'],
     progressText: copy.tour.progress,
     prevBtnText: copy.tour.prev,
     nextBtnText: copy.tour.next,

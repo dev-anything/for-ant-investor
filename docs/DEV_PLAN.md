@@ -33,8 +33,8 @@
 - [x] 12. F-15 `/industries`·`/industries/[division]`·메뉴·바로가기·업종 링크
 - [x] 13. F-16 `driver.js`·`tour.ts`(+테스트)·`ReadingTour`·`data-tour`
 - [ ] 14a. F-10 마이그레이션 SQL 5-6 → **[x] Admin이 사용자 확인 후 적용**
-- [ ] 14b. F-10 `chat.ts`(+테스트)·`/api/chat`·`chat-isolation.test.ts` (키 없으면 꺼짐)
-- [ ] 14c. F-10 `ChatFilterInput` + 스크리너 연결
+- [x] 14b. F-10 `chat.ts`(+테스트)·`/api/chat`·`chat-isolation.test.ts` (키 없으면 꺼짐)
+- [x] 14c. F-10 `ChatFilterInput` + 스크리너 연결
 - [ ] 15. 2차 마무리 (표본 대조, 재기동, 접속 확인)
 - [ ] 16a. F-11 마이그레이션 SQL 5-7 → **[x] Admin이 사용자 확인 후 적용** + Supabase 대시보드 설정 안내 (REQUIRE.md)
 - [ ] 16b. F-11 `@supabase/ssr`·`session.ts`·`browser.ts`·`proxy.ts`·`auth.ts`(+테스트)·`/api/me`·`/auth/callback`

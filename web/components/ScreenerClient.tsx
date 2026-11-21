@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EmptyState } from '@/components/EmptyState';
+import { ChatFilterInput } from '@/components/ChatFilterInput';
 import { ErrorState } from '@/components/ErrorState';
 import { FilterPanel } from '@/components/FilterPanel';
 import { PageSizeSelect } from '@/components/PageSizeSelect';
@@ -140,6 +141,12 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
 
   const handleSort = (key: ScreenerState['sort']) => void load(applySort(state, key));
   const handleSize = (size: ScreenerState['size']) => void load(applySize(state, size));
+  // 문장으로 고른 필터는 앞 선택을 이어받지 않고 그 필터로 바꾼다 (PRD 4장 F-10 규칙 5), 쪽은 1쪽
+  const handleChatApply = (filters: number[]) => {
+    setNotice(null);
+    setHoverNotice(null);
+    void load({ ...state, filters, page: 1 });
+  };
   const handlePage = (page: number) => {
     void load({ ...state, page });
     tableTopRef.current?.scrollIntoView({ block: 'start' });
@@ -151,6 +158,8 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <h1 className="text-2xl font-bold text-neutral-900">{copy.screener.title}</h1>
+
+      <ChatFilterInput onApply={handleChatApply} />
 
       <FilterPanel
         selected={state.filters}
