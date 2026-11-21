@@ -1,0 +1,49 @@
+'use client';
+
+import { ResultsChart } from '@/components/ResultsChart';
+import type { YearRow } from '@/lib/data/stock';
+import { buildMetricBars, chartMetricsFor, getDisplayYears } from '@/lib/chart-data';
+import { copy } from '@/lib/copy';
+import { formatFsDiv, formatYearRange } from '@/lib/format';
+
+// FS 8-2 ResultsCharts: 최근 3개년 실적 막대그래프 묶음 (PRD 4장 F-02)
+// 금융회사 판별은 다시 하지 않고 summary.isFinancial 값을 그대로 받는다 (PRD 3-6)
+export function ResultsCharts({
+  years,
+  fsDiv,
+  isFinancial,
+}: {
+  years: YearRow[];
+  fsDiv: string;
+  isFinancial: boolean;
+}) {
+  const displayYears = getDisplayYears(years);
+  // 화면 연도가 하나도 없으면 그래프를 그리지 않고 재무 없음 문구를 쓴다 (PRD 3-7)
+  if (displayYears.length === 0) {
+    return <p className="mt-6 text-neutral-700">{copy.stock.noFinancials}</p>;
+  }
+
+  const yearRange = formatYearRange(displayYears.map((row) => row.fiscalYear)) ?? '';
+  const fsLabel = formatFsDiv(fsDiv) ?? fsDiv;
+  const metrics = chartMetricsFor(isFinancial);
+
+  return (
+    <section aria-labelledby="results-title" className="mt-8">
+      <h2 id="results-title" className="text-lg font-bold text-neutral-900">
+        {copy.results.title}
+      </h2>
+      <p className="mt-1 text-sm text-neutral-600">{copy.results.basis(fsLabel, yearRange)}</p>
+      {isFinancial && (
+        <p className="mt-2 rounded border border-neutral-300 px-3 py-2 text-sm text-neutral-700">
+          {copy.results.financialNotice}
+        </p>
+      )}
+      {/* 가로 3개, 좁은 화면은 세로로 쌓는다 */}
+      <div className="mt-4 grid gap-6 md:grid-cols-3">
+        {metrics.map((metric) => (
+          <ResultsChart key={metric} metric={metric} bars={buildMetricBars(years, metric)} />
+        ))}
+      </div>
+    </section>
+  );
+}

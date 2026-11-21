@@ -27,6 +27,26 @@ export const copy = {
     // PRD 10장 20번: DB 오류 (사용자 확인 필요)
     error: '지금은 정보를 불러올 수 없어. 잠시 뒤 다시 열어 줘.',
   },
+  // 실적 그래프 (PRD 4장 F-02, 3-1·3-8). 툴팁 "정식 이름은 당기순이익"은 PRD 확정 문구
+  results: {
+    title: '실적',
+    // 실적 그래프 시각적으로 숨긴 표의 연도 열 머리글 (접근성)
+    yearHeader: '사업연도',
+    // FS 8-2: `기준: {formatFsDiv} · {formatYearRange} 사업연도`
+    basis: (fsLabel: string, yearRange: string) => `기준: ${fsLabel} · ${yearRange} 사업연도`,
+    // PRD 4장 F-02 금융회사 안내
+    financialNotice: '금융회사는 매출액 항목이 없어서 영업이익과 순이익만 보여줘',
+    notProvided: '제공되지 않음',
+    // 툴팁 증감률 줄: `전년 대비 +12.3%`
+    growth: (text: string) => `전년 대비 ${text}`,
+    metricTitle: {
+      revenue: '매출액',
+      operatingIncome: '영업이익',
+      netIncome: '순이익',
+    },
+    netIncomeTip: '정식 이름은 당기순이익',
+    tipButtonLabel: '설명 보기',
+  },
   // 문구 미정: 종목 주소가 아닌 없는 주소(404)용. PRD·FS에 문구가 없어 임시 문장을 쓴다
   notFoundPage: '이 페이지를 찾을 수 없어.',
   // 임시 홈 화면 문구 (DEV_PLAN 0b, 1b에서 교체). PRD 3-1 반말

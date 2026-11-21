@@ -13,7 +13,6 @@ export interface StockInfo {
   name: string;
   market: string;
   isForeign: boolean;
-  corpCode: string | null;
   divisionCode: string | null;
   divisionName: string | null;
   // 결산월 원본 (예: '03'). 12월 결산 표시는 formatAccMt가 맡는다
@@ -69,28 +68,29 @@ export interface StockPage {
  */
 export async function getStockPage(shortCode: string): Promise<StockPage | null> {
   const code = shortCode.toUpperCase();
-  const stock = await findStock(code);
-  if (!stock) return null;
+  const lookup = await findStock(code);
+  if (!lookup) return null;
+  const { info: stock, corpCode } = lookup;
 
   if (stock.isForeign) {
     return { stock, status: 'foreign', summary: null, years: [] };
   }
   // corp_code가 없으면 재무 조회 자체를 건너뛴다 (FS 4-1 2번)
-  if (stock.corpCode === null) {
+  if (corpCode === null) {
     return { stock, status: 'no_financials', summary: null, years: [] };
   }
 
-  const [summary, years] = await Promise.all([
-    findSummary(stock.corpCode),
-    findYears(stock.corpCode),
-  ]);
+  const [summary, years] = await Promise.all([findSummary(corpCode), findYears(corpCode)]);
   if (!summary) {
     return { stock, status: 'no_financials', summary: null, years: [] };
   }
   return { stock, status: 'ok', summary, years };
 }
 
-async function findStock(code: string): Promise<StockInfo | null> {
+// corp_code는 재무 조회용이라 화면으로 넘기는 StockInfo에는 넣지 않는다
+type StockLookup = { info: StockInfo; corpCode: string | null };
+
+async function findStock(code: string): Promise<StockLookup | null> {
   const { data, error } = await db()
     .from('v_search_targets')
     .select('srtn_cd,short_code,itms_nm,mrkt_ctg,is_foreign,corp_code,division_code,division_name,acc_mt')
@@ -100,16 +100,18 @@ async function findStock(code: string): Promise<StockInfo | null> {
   if (!data) return null;
 
   return {
-    srtnCd: required(data.srtn_cd, 'srtn_cd'),
-    shortCode: required(data.short_code, 'short_code'),
-    name: required(data.itms_nm, 'itms_nm'),
-    market: required(data.mrkt_ctg, 'mrkt_ctg'),
-    // is_foreign은 generated 열이라 null이 올 수 없다. 혹시 null이면 국내 회사로 본다 (화면에서 "지원하지 않음" 아님)
-    isForeign: data.is_foreign === true,
+    info: {
+      srtnCd: required(data.srtn_cd, 'srtn_cd'),
+      shortCode: required(data.short_code, 'short_code'),
+      name: required(data.itms_nm, 'itms_nm'),
+      market: required(data.mrkt_ctg, 'mrkt_ctg'),
+      // is_foreign은 generated 열이라 null이 올 수 없다. 혹시 null이면 국내 회사로 본다 (화면에서 "지원하지 않음" 아님)
+      isForeign: data.is_foreign === true,
+      divisionCode: data.division_code,
+      divisionName: data.division_name,
+      accMt: data.acc_mt,
+    },
     corpCode: data.corp_code,
-    divisionCode: data.division_code,
-    divisionName: data.division_name,
-    accMt: data.acc_mt,
   };
 }
 

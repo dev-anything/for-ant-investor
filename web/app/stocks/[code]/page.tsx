@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { EmptyState } from '@/components/EmptyState';
+import { ResultsCharts } from '@/components/ResultsCharts';
 import { StockHeader } from '@/components/StockHeader';
 import { getStockPage } from '@/lib/data/stock';
 import { copy } from '@/lib/copy';
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: StockPageProps): Promise<Meta
   return { title: copy.meta.stockTitle(page.stock.name, page.stock.shortCode) };
 }
 
-// FS 8-2 status별 화면. ok일 때 본문(리포트카드·그래프)은 2b·3b에서 채운다
+// FS 8-2 status별 화면. ok일 때 본문은 리포트카드(3b, 위) 다음 실적 그래프(2b)
 export default async function StockPage({ params }: StockPageProps) {
   const { code } = await params;
   const page = await loadStockPage(code);
@@ -33,6 +34,13 @@ export default async function StockPage({ params }: StockPageProps) {
       <StockHeader stock={page.stock} />
       {page.status === 'foreign' && <EmptyState message={copy.stock.foreign} />}
       {page.status === 'no_financials' && <EmptyState message={copy.stock.noFinancials} />}
+      {page.status === 'ok' && page.summary && (
+        <ResultsCharts
+          years={page.years}
+          fsDiv={page.summary.fsDiv}
+          isFinancial={page.summary.isFinancial}
+        />
+      )}
     </div>
   );
 }
