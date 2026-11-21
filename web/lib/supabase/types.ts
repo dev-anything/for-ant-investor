@@ -757,6 +757,59 @@ export type Database = {
       }
     }
     Functions: {
+      industry_companies: {
+        Args: {
+          p_dir: string
+          p_division: string
+          p_page: number
+          p_size: number
+          p_sort: string
+        }
+        Returns: {
+          acc_mt: string
+          bas_dt: string
+          itms_nm: string
+          mrkt_ctg: string
+          mrkt_tot_amt: number
+          short_code: string
+          srtn_cd: string
+          total_count: number
+        }[]
+      }
+      industry_metrics: {
+        Args: {
+          p_dir: string
+          p_division: string
+          p_page: number
+          p_size: number
+          p_sort: string
+        }
+        Returns: {
+          acc_mt: string
+          debt_ratio: number
+          fiscal_year: number
+          is_financial: boolean
+          itms_nm: string
+          mrkt_ctg: string
+          operating_margin: number
+          revenue_growth: number
+          short_code: string
+          srtn_cd: string
+          total_count: number
+        }[]
+      }
+      industry_tree: {
+        Args: never
+        Returns: {
+          company_count: number
+          division_code: string
+          division_name: string
+          division_order: number
+          section_code: string
+          section_name: string
+          section_order: number
+        }[]
+      }
       screener_search: {
         Args: {
           p_dir: string
