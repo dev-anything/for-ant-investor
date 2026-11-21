@@ -40,6 +40,8 @@
 | 2026-11-21 | F-17 "공시 더 보기" 링크는 넣지 않음 | PRD 11장 20번 링크 형식 미확인, FS 9-5 기본안(숨김) |
 | 2026-11-21 | F-10 `CHAT_MODEL`은 빈 값으로 둠 → 키가 있어도 모델을 정하기 전까지 챗봇은 꺼짐 | OpenRouter 무료 모델 이름·한도 미확인 (R6, PRD 10장 19번). `web/lib/chat.ts` 상수 하나만 바꾸면 됨 |
 | 2026-11-21 | F-10 `/api/chat`은 Origin 헤더가 없으면 통과 (있으면 Host와 같아야 함) | 브라우저 POST는 항상 Origin을 붙임. 막으려면 `isSameOrigin` 한 줄 |
+| 2026-11-21 | 2차 배당 정확도: 표본 20종목 120칸 100% 일치 (`scripts/accuracy_check.py --dividends`, 결과 `api_check_results/accuracy_dividends_2026-11-21.md`). 2차 수용 기준 점검 PASS | PRD 9장. `check`·`not_disclosed`·013 경우는 표본에 없어 코드로만 확인 |
+| 2026-11-21 | `/industries/[division]`·`/compare`는 쿼리를 읽어서 빌드상 동적(ƒ)으로 나옴 (`revalidate = 3600`은 설정) | 응답 0.2초대라 그대로 둠 |
 | 2026-11-21 | Tailwind는 표준 `@tailwindcss/postcss` 방식, `next.config.ts`의 `loadEnvConfig`에 `forceReload` 인자 추가 | 빌드 워커가 루트 `.env`를 못 읽는 문제 |
 
 ## 방화벽 (R1)

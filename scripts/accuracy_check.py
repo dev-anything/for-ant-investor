@@ -19,6 +19,7 @@
 
 from __future__ import annotations
 
+import argparse
 import sys
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal, getcontext
@@ -29,7 +30,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from batch.common import Dart, Supabase  # noqa: E402
-from batch.dart_collect import ACCOUNT_COLS, PERIODS, REPRT, to_int  # noqa: E402
+from batch.dart_collect import (  # noqa: E402
+    ACCOUNT_COLS, DIV_PERIODS, PERIODS, REPRT, SE_DPS, SE_YIELD, to_int, to_num,
+)
 
 # ---------------------------------------------------------------- 표본 (고정 20종목)
 # 시장·업종·금융회사·적자·자본잠식·별도재무제표·12월 결산 아님이 섞이도록 골랐다 (PRD 9장).
@@ -201,6 +204,198 @@ def compare_stock(corp: str, db_data: dict, dart_rows: dict, has_rev: bool, dart
     return results, notes
 
 
+# ---------------------------------------------------------------- 배당 대조 (PRD 9장: 주당 배당금·배당수익률)
+DIV_ITEMS = ("dps", "yield")
+DIV_LABEL = {"dps": "주당 배당금", "yield": "배당수익률"}
+NO_DATA = "데이터 없음"  # 화면: "이 회사의 배당 정보가 없어" (PRD F-14 표)
+
+
+def fetch_db_dividends(db: Supabase, corp: str) -> dict[int, dict]:
+    """화면이 읽는 dividends 행을 연도별로 (읽기만 함)."""
+    rows = db.select("dividends", {"corp_code": f"eq.{corp}"})
+    return {r["fiscal_year"]: r for r in rows}
+
+
+def dart_dividends(dart: Dart, corp: str, latest: int) -> tuple[dict[int, dict], list[str]]:
+    """DART alotMatter 사업보고서(최신 연도 1회)를 연도별 기대 값으로 바꾼다.
+    batch/dart_collect.fetch_dividend와 같은 규칙: 보통주 행만, 무배당은 '-' 또는 0, 수익률 없으면 공시 없음.
+    반환: ({연도: {dps_status, dps, yield_status, dividend_yield}}, 메모). 013이면 빈 dict + 메모."""
+    body = dart.json("alotMatter.json", {"corp_code": corp, "bsns_year": str(latest), "reprt_code": REPRT})
+    st = body.get("status")
+    if st == "013":
+        return {}, [f"DART 배당 013 (bsns_year {latest}): 공시 없음으로 취급"]
+    if st != "000":
+        raise RuntimeError(f"DART 배당 status {st} (bsns_year {latest})")
+    rows = body.get("list", [])
+    notes: list[str] = []
+
+    def pick(se: str) -> dict | None:
+        found = [r for r in rows if (r.get("se") or "").strip() == se
+                 and (r.get("stock_knd") or "").strip() == "보통주"]
+        if len(found) > 1 and any(tuple(f.get(p) for p, _ in DIV_PERIODS)
+                                  != tuple(found[0].get(p) for p, _ in DIV_PERIODS) for f in found[1:]):
+            notes.append(f"배당 중복 행 값이 다름 ({se}): 첫 행 사용 (batch도 같은 규칙, data_issues 기록 대상)")
+        return found[0] if found else None
+
+    dps_row, yld_row = pick(SE_DPS), pick(SE_YIELD)
+    out: dict[int, dict] = {}
+    for field, back in DIV_PERIODS:
+        fy = latest - back
+        raw_dps = ((dps_row or {}).get(field) or "").strip()
+        raw_yld = ((yld_row or {}).get(field) or "").strip()
+        dps = to_num(raw_dps)
+        dps_val = None
+        if raw_dps in ("", "-") or dps == 0:
+            dps_status = "none"
+        elif dps is None:
+            dps_status = "check"  # 숫자가 아님: 화면 "확인 필요"
+        else:
+            dps_status = "paid"
+            dps_val = Decimal(raw_dps.replace(",", ""))  # 원 단위 비교용 (소수면 그대로 둔다)
+        yld = to_num(raw_yld)
+        if yld is not None:
+            yield_status = "value"
+        elif dps_status == "paid":
+            yield_status = "not_disclosed"  # 배당은 했는데 수익률 공시 없음 (직접 계산하지 않는다)
+        else:
+            yield_status = "none"
+        out[fy] = {"dps_status": dps_status, "dps": dps_val, "yield_status": yield_status,
+                   "dividend_yield": Decimal(raw_yld.replace(",", "")) if yld is not None else None}
+    return out, notes
+
+
+def compare_dividends(corp: str, display_years: list[int], db_rows: dict[int, dict],
+                      dart_rows: dict[int, dict], latest: int, notes: list[str]) -> list[dict]:
+    """표시 연도(Y1~Y3)마다 주당 배당금·배당수익률 두 칸을 비교한다.
+    금액: 원 단위 정확히 같음 (Decimal 비교). 배당수익률: 소수 1자리 HALF_UP 뒤 비교 (화면 규칙).
+    상태(paid/none/check, value/not_disclosed/none)는 값과 같이 맞아야 한다. 공시·행 없음도 상태로 본다."""
+    results: list[dict] = []
+    db_src = {r.get("source_bsns_year") for r in db_rows.values()}
+    if db_rows and db_src != {latest}:
+        notes.append(f"DB 배당 출처 연도 {sorted(x for x in db_src if x)} ≠ DART 최신 연도 {latest}")
+    for year in sorted(display_years):
+        d_row = db_rows.get(year)
+        t_row = dart_rows.get(year)
+        # DB 값 (화면이 쓰는 값)
+        db_dps = None if d_row is None else {"status": d_row["dps_status"], "value": d_row["dps"]}
+        db_yld = None if d_row is None else {"status": d_row["yield_status"],
+                                             "value": round_one(Fraction(str(d_row["dividend_yield"])))
+                                             if d_row["dividend_yield"] is not None else None}
+        # DART 원본 기대 값
+        t_dps = None if t_row is None else {"status": t_row["dps_status"],
+                                            "value": t_row["dps"]}
+        t_yld = None if t_row is None else {"status": t_row["yield_status"],
+                                            "value": round_one(Fraction(str(t_row["dividend_yield"])))
+                                            if t_row["dividend_yield"] is not None else None}
+        for item in DIV_ITEMS:
+            a = db_dps if item == "dps" else db_yld
+            b = t_dps if item == "dps" else t_yld
+            a_s = NO_DATA if a is None else _fmt_div(item, a)
+            b_s = NO_DATA if b is None else _fmt_div(item, b)
+            ok = a == b or (a is None and b is None)
+            results.append({"corp": corp, "year": year, "item": item, "db": a_s, "dart": b_s, "ok": ok})
+    return results
+
+
+def _fmt_div(item: str, cell: dict) -> str:
+    """칸 표시 문자열: 상태 + 값 (금액은 천 단위 쉼표, 수익률은 소수 1자리)."""
+    st, v = cell["status"], cell["value"]
+    if v is None:
+        return st
+    if item == "dps":
+        return f"{st} {Decimal(v):,.0f}"
+    return f"{st} {v}"
+
+
+def run_dividends() -> int:
+    """배당 대조만 실행하고 api_check_results/accuracy_dividends_<날짜>.md를 쓴다 (키·URL 출력 없음)."""
+    db = Supabase()
+    dart = Dart()
+    out_rows: list[dict] = []
+    notes_all: dict[str, list[str]] = {}
+    failures: dict[str, str] = {}
+    names: dict[str, str] = {}
+
+    for code, _tag in SAMPLE:
+        stock = db.select("stocks", {"short_code": f"eq.{code}", "select": "corp_code,itms_nm"})
+        if not stock:
+            failures[code] = "stocks에 종목코드 없음"
+            continue
+        corp = stock[0]["corp_code"]
+        names[code] = f"{stock[0]['itms_nm']} ({code})"
+        try:
+            summ = db.select("company_summary", {"corp_code": f"eq.{corp}"})[0]
+            latest = summ["latest_year"]
+            display_years = [latest - 2, latest - 1, latest]  # 화면 3개년 (PRD F-02). 4번째 해는 F-05 증가율용이라 비교 안 함
+            db_rows = fetch_db_dividends(db, corp)
+            dart_rows, notes = dart_dividends(dart, corp, latest)
+            results = compare_dividends(corp, display_years, db_rows, dart_rows, latest, notes)
+            for r in results:
+                r["code"] = code
+            out_rows.extend(results)
+            notes_all[code] = notes
+        except Exception as e:  # 한 종목 실패가 전체를 멈추지 않게 기록한다
+            failures[code] = str(e)[:200]
+
+    total = len(out_rows)
+    matched = sum(1 for r in out_rows if r["ok"])
+    rate = (Decimal(matched) * 100 / Decimal(total)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP) if total else Decimal(0)
+    today = date.today().isoformat()
+    path = ROOT / "api_check_results" / f"accuracy_dividends_{today}.md"
+    path.parent.mkdir(exist_ok=True)
+
+    lines = [f"# 배당 정확도 대조 ({today})", "",
+             "- 표본: 20종목 (PRD 9장), 값 A = DB `dividends`(화면), 값 B = DART `alotMatter.json` 사업보고서(11011, 최신 연도 1회)",
+             f"- 대조 칸 {total}칸 중 일치 {matched}칸",
+             f"- **전체 일치율: {rate}%** (목표 95% 이상)", ""]
+    stats: dict[str, list[int]] = {}
+    for r in out_rows:
+        s = stats.setdefault(r["item"], [0, 0])
+        s[0] += 1
+        s[1] += 1 if r["ok"] else 0
+    lines += ["## 항목별", "", "| 항목 | 칸 | 일치 | 일치율 |", "| --- | --- | --- | --- |"]
+    for item in DIV_ITEMS:
+        if item in stats:
+            n, m = stats[item]
+            lines.append(f"| {DIV_LABEL[item]} | {n} | {m} | {Decimal(m) * 100 / Decimal(n):.1f}% |")
+    lines += ["", "## 불일치 목록", ""]
+    mism = [r for r in out_rows if not r["ok"]]
+    if mism:
+        lines += ["| 종목 | 연도 | 항목 | 화면(DB) | DART 원본 |", "| --- | --- | --- | --- | --- |"]
+        for r in mism:
+            lines.append(f"| {r['code']} | {r['year']} | {DIV_LABEL[r['item']]} | {r['db']} | {r['dart']} |")
+    else:
+        lines.append("없음.")
+    lines += ["", "## 종목별 상세", ""]
+    for code, _ in SAMPLE:
+        if code in failures:
+            lines += [f"### {code} (실패)", f"- {failures[code]}", ""]
+            continue
+        rows = [r for r in out_rows if r["code"] == code]
+        if not rows:
+            continue
+        lines.append(f"### {names.get(code, code)}")
+        for n in notes_all.get(code, []):
+            lines.append(f"- 메모: {n}")
+        years = sorted({r["year"] for r in rows})
+        lines += ["", "| 항목 | " + " | ".join(str(y) for y in years) + " |", "|---" * (len(years) + 1) + "|"]
+        for item in DIV_ITEMS:
+            cells = []
+            for y in years:
+                r = next(x for x in rows if x["year"] == y and x["item"] == item)
+                cells.append(f"{'일치' if r['ok'] else '**불일치**'} (화면 {r['db']} / DART {r['dart']})")
+            lines.append(f"| {DIV_LABEL[item]} | " + " | ".join(cells) + " |")
+        lines.append("")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    print(f"배당 대조: 표본 {len(SAMPLE)}종목, 대조 {total}칸, 일치 {matched}칸, 전체 일치율 {rate}%")
+    print(f"불일치 {len(mism)}칸, 실패 종목 {len(failures)}개")
+    for code, msg in failures.items():
+        print(f"  실패 {code}: {msg}")
+    print(f"결과 파일: {path}")
+    return 0
+
+
 def main() -> int:
     db = Supabase()
     dart = Dart()
@@ -288,4 +483,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    ap = argparse.ArgumentParser(description="데이터 정확도 대조 (PRD 9장)")
+    ap.add_argument("--dividends", action="store_true", help="배당(주당 배당금·배당수익률)만 대조")
+    args = ap.parse_args()
+    raise SystemExit(run_dividends() if args.dividends else main())
