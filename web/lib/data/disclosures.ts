@@ -4,6 +4,7 @@ import { unstable_cache } from 'next/cache';
 import {
   DART_PAGE_COUNT,
   DISCLOSURE_COUNT,
+  DartStatusError,
   dartDateRange,
   OWNERSHIP_PBLNTF_TYPE,
   excludeOwnershipDisclosures,
@@ -57,7 +58,7 @@ async function callDart(params: URLSearchParams): Promise<DartListPage> {
     signal: AbortSignal.timeout(DART_TIMEOUT_MS),
   });
   // HTTP 상태만 기록한다 (URL에는 키가 있다)
-  if (!res.ok) throw new Error(`DART HTTP ${res.status}`);
+  if (!res.ok) throw new DartStatusError(`HTTP ${res.status}`);
   return parseDartList((await res.json()) as unknown);
 }
 
@@ -79,7 +80,13 @@ export async function getRecentDisclosures(corpCode: string | null): Promise<Dis
     return { status: 'ok', items: takeRecent(kept, DISCLOSURE_COUNT) };
   } catch (error) {
     // 메시지는 이 파일이 만든 것(상태 코드·필드 이름)이나 네트워크 오류 문구라 키·URL이 없다
-    console.error('[공시] 최근 공시를 불러오지 못했어:', error instanceof Error ? error.message : 'unknown');
+    console.error('[공시] 최근 공시를 불러오지 못했어:', failureCodeOf(error));
     return { status: 'error' };
   }
+}
+
+// 로그에는 상태 코드만 남긴다 (FS 3-3). 그 밖의 오류는 종류 이름만 쓴다 (메시지에 URL·키가 섞일 수 있어서)
+function failureCodeOf(error: unknown): string {
+  if (error instanceof DartStatusError) return error.message;
+  return error instanceof Error ? error.name : 'unknown';
 }

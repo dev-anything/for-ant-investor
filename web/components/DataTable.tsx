@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { SortHeaderLink } from '@/components/SortHeaderLink';
 
 // FS 7장 DataTable: 열 정의 + 행. 정렬 제목 버튼(aria-sort), 넓으면 표 안에서만 가로 스크롤.
 // mode: 'button'은 onSort로 상태를 바꾸는 버튼, 'link'는 sortHref가 주는 주소로 가는 링크 (2차 업종 목록, FS 7장)
@@ -72,10 +73,8 @@ export function DataTable<T>({
                   className={`whitespace-nowrap px-3 py-2 font-semibold ${alignClass}`}
                 >
                   {sortKey !== null && mode === 'link' && sortHref ? (
-                    <a href={sortHref(sortKey)} className="hover:text-neutral-900">
-                      {label}
-                    </a>
-                  ) : sortKey !== null && onSort ? (
+                    <SortHeaderLink href={sortHref(sortKey)} label={label} />
+                  ) :sortKey !== null && onSort ? (
                     <button
                       type="button"
                       onClick={() => onSort(sortKey)}

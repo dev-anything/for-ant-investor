@@ -38,6 +38,22 @@ export const copy = {
       `같은 업종 회사들을 줄 세웠을 때 한가운데 값이야. 이 업종 회사 ${n}개로 계산했어.`,
     // 회사 수 부족 (PRD 4장 F-08)
     tooFew: '같은 업종 회사가 적어서 비교 값을 표시하지 않아.',
+    // 같은 업종 회사 목록 (PRD 4장 F-08, FS 9-2). {N} = 회사 수
+    compareTitle: (name: string, total: number) => `${name} 회사 ${total}개`,
+    compareMeta: (name: string) => `${name} 지표 비교 · 재무 레이더`,
+    compareCaption: '같은 업종 회사의 지표 비교 목록',
+    compareColumns: {
+      name: '종목명',
+      code: '종목코드',
+      market: '시장',
+      debt: '부채비율',
+      margin: '영업이익률',
+      growth: '매출 증가율',
+    },
+    // 열 제목 연도 (`부채비율 2025년`)와 회사 연도가 다를 때 칸의 작은 표시
+    yearLabel: (year: number) => `${year}년`,
+    // 없는 업종 주소 (FS 12장 5번 기본안, 404)
+    notFoundDivision: '이 업종을 찾을 수 없어. 업종으로 둘러보기에서 다시 찾아 줘.',
     // 비교 한 줄 (PRD 4장 F-08). 세 번째는 PRD 표기 "같아"를 조사 맞춰 쓴 문구 (문구 미정, 보고 참고)
     relation: {
       higher: '같은 업종 가운데 값보다 높아',

@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_LIST_STATE,
   DEFAULT_SCREENER_STATE,
+  INDUSTRY_METRIC_SORTS,
+  isDivisionCode,
+  listHref,
+  nextListSort,
+  parseListParams,
+  toListQuery,
+  type ListState,
   allowedSortKeys,
   normalizeFilterIds,
   parseScreenerApiParams,
@@ -199,5 +207,65 @@ describe('toQuery', () => {
     for (const state of states) {
       expect(parseScreenerParams(raw(toQuery(state)))).toEqual(state);
     }
+  });
+});
+
+describe('업종 목록 URL 상태 (FS 6-6, F-08)', () => {
+  it('아무 키도 없으면 기본 상태다 (가나다순, 1쪽, 10개)', () => {
+    expect(parseListParams({}, INDUSTRY_METRIC_SORTS)).toEqual(DEFAULT_LIST_STATE);
+  });
+
+  it('정상 값은 그대로 읽는다', () => {
+    expect(parseListParams(raw('sort=debt_ratio&dir=desc&page=2&size=20'), INDUSTRY_METRIC_SORTS)).toEqual({
+      sort: 'debt_ratio',
+      dir: 'desc',
+      page: 2,
+      size: 20,
+    });
+  });
+
+  it('목록에 없는 정렬 키는 name으로 바로잡는다 (스크리너 키 market_cap은 지표 목록에 없음)', () => {
+    expect(parseListParams(raw('sort=market_cap'), INDUSTRY_METRIC_SORTS).sort).toBe('name');
+    expect(parseListParams(raw('sort=zzz'), INDUSTRY_METRIC_SORTS).sort).toBe('name');
+  });
+
+  it('잘못된 dir·page·size는 기본값으로 바로잡는다', () => {
+    expect(parseListParams(raw('dir=up&page=0&size=15'), INDUSTRY_METRIC_SORTS)).toEqual(DEFAULT_LIST_STATE);
+    expect(parseListParams(raw('page=abc&size=010'), INDUSTRY_METRIC_SORTS)).toEqual(DEFAULT_LIST_STATE);
+  });
+
+  it('기본값인 키는 쿼리에서 생략한다', () => {
+    expect(toListQuery(DEFAULT_LIST_STATE)).toBe('');
+    expect(toListQuery({ ...DEFAULT_LIST_STATE, sort: 'debt_ratio', dir: 'desc', page: 2, size: 20 })).toBe(
+      'sort=debt_ratio&dir=desc&page=2&size=20'
+    );
+  });
+
+  it('쿼리를 만들고 다시 읽으면 같은 상태가 된다 (왕복)', () => {
+    const state: ListState = { sort: 'revenue_growth', dir: 'asc', page: 3, size: 50 };
+    const back = parseListParams(raw(toListQuery(state)), INDUSTRY_METRIC_SORTS);
+    expect(back).toEqual(state);
+  });
+
+  it('listHref는 쿼리가 없으면 경로만 준다', () => {
+    expect(listHref('/industries/26/compare', DEFAULT_LIST_STATE)).toBe('/industries/26/compare');
+    expect(listHref('/industries/26/compare', { ...DEFAULT_LIST_STATE, page: 2 })).toBe(
+      '/industries/26/compare?page=2'
+    );
+  });
+
+  it('nextListSort: 같은 열이면 방향을 뒤집고, 다른 열이면 asc로 하며, 쪽은 1쪽이 된다', () => {
+    const state: ListState = { sort: 'debt_ratio', dir: 'asc', page: 4, size: 10 };
+    expect(nextListSort(state, 'debt_ratio')).toEqual({ ...state, dir: 'desc', page: 1 });
+    expect(nextListSort({ ...state, dir: 'desc' }, 'debt_ratio').dir).toBe('asc');
+    expect(nextListSort({ ...state, dir: 'desc' }, 'name')).toEqual({ ...state, sort: 'name', dir: 'asc', page: 1 });
+  });
+
+  it('isDivisionCode는 두 자리 숫자만 받는다', () => {
+    expect(isDivisionCode('26')).toBe(true);
+    expect(isDivisionCode('01')).toBe(true);
+    expect(isDivisionCode('abc')).toBe(false);
+    expect(isDivisionCode('2')).toBe(false);
+    expect(isDivisionCode('264')).toBe(false);
   });
 });

@@ -207,3 +207,69 @@ export function parseSearchQuery(raw: string | null): string | null {
   if (q.length === 0 || [...q].length > SEARCH_QUERY_MAX_LENGTH) return null;
   return q;
 }
+
+// --- 업종 목록 (F-08 지표 비교, F-15 회사 목록, FS 6-6 2차) ---
+
+// 업종 회사 목록 정렬 키 (FS 5-4), 지표 목록 정렬 키 (FS 5-5)
+export const INDUSTRY_COMPANY_SORTS: readonly string[] = ['name', 'market_cap'];
+export const INDUSTRY_METRIC_SORTS: readonly string[] = [
+  'name',
+  'debt_ratio',
+  'operating_margin',
+  'revenue_growth',
+];
+
+// 업종 목록 상태 (FS 6-6). 필터가 없어서 정렬·쪽·개수만 가진다
+export interface ListState {
+  sort: string;
+  dir: SortDir;
+  page: number;
+  size: ScreenerSize;
+}
+
+export const DEFAULT_LIST_STATE: ListState = { sort: 'name', dir: 'asc', page: 1, size: 10 };
+
+// 링크 모드 컴포넌트(Pagination·PageSizeSelect)에 넘기는 값. 함수는 서버→클라이언트 경계를 못 넘으니 데이터만 넘긴다
+export interface ListLink {
+  path: string;
+  state: ListState;
+}
+
+// 중분류 코드는 두 자리 숫자 (FS 5-3~5-5)
+export function isDivisionCode(text: string): boolean {
+  return /^[0-9]{2}$/.test(text);
+}
+
+/** 업종 목록용 파싱 (lenient, FS 6-6). sort는 sorts 안의 값만 받고, 나머지는 스크리너와 같은 규칙. */
+export function parseListParams(raw: RawParams, sorts: readonly string[]): ListState {
+  const d = DEFAULT_LIST_STATE;
+  return {
+    sort: optional(stringOf(raw, 'sort'), (t) => sorts.find((s) => s === t) ?? null, d.sort) ?? d.sort,
+    dir: optional(stringOf(raw, 'dir'), parseDir, d.dir) ?? d.dir,
+    page: optional(stringOf(raw, 'page'), parsePage, d.page) ?? d.page,
+    size: optional(stringOf(raw, 'size'), parseSize, d.size) ?? d.size,
+  };
+}
+
+/** 목록 상태를 URL 쿼리로 만든다 (앞의 ?는 없음). 기본값인 키는 생략한다 (FS 6-6). */
+export function toListQuery(state: ListState): string {
+  const d = DEFAULT_LIST_STATE;
+  const parts: string[] = [];
+  if (state.sort !== d.sort) parts.push(`sort=${state.sort}`);
+  if (state.dir !== d.dir) parts.push(`dir=${state.dir}`);
+  if (state.page !== d.page) parts.push(`page=${state.page}`);
+  if (state.size !== d.size) parts.push(`size=${state.size}`);
+  return parts.join('&');
+}
+
+/** 목록 주소. 쿼리가 없으면 경로만 준다 (기본 상태). */
+export function listHref(path: string, state: ListState): string {
+  const query = toListQuery(state);
+  return query ? `${path}?${query}` : path;
+}
+
+/** 열 제목을 눌렀을 때 다음 상태 (FS 6-6): 같은 열이면 방향을 뒤집고, 다른 열이면 asc. 쪽은 1쪽으로. */
+export function nextListSort(state: ListState, key: string): ListState {
+  const dir: SortDir = key === state.sort && state.dir === 'asc' ? 'desc' : 'asc';
+  return { ...state, sort: key, dir, page: 1 };
+}

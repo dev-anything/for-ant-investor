@@ -23,7 +23,7 @@
 - [x] 6. MVP 마무리 (표본 점검, 20종목 일치율, 16000 재기동, LAN·Tailscale 접속 확인)
 - [x] 7a. F-08 `v_industry_medians` 속도 측정 + 마이그레이션 SQL 5-3~5-5 → **Admin이 사용자 확인 후 적용**
 - [x] 7b. F-08 `industry.ts`·`Gauge` 가운데 값·`ReportCard` 변경
-- [ ] 7c. F-08 링크 모드(`SortHeaderLink`·`DataTable`·`Pagination`·`PageSizeSelect`)·`params.ts` 목록 함수·`/industries/[division]/compare`
+- [x] 7c. F-08 링크 모드(`SortHeaderLink`·`DataTable`·`Pagination`·`PageSizeSelect`)·`params.ts` 목록 함수·`/industries/[division]/compare`
 - [x] 8. F-09 `ValuationSection`
 - [x] 9. F-14 `dividend.ts`·`DividendCard`
 - [x] 10a. F-17 사전 확인 (DART `list.json` 실제 응답, PRD 11장 19·20번)

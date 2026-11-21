@@ -6,9 +6,17 @@ export const DISCLOSURE_COUNT = 5;
 export const DISCLOSURE_LOOKBACK_DAYS = 365;
 // DART list.json 한 번에 받는 최대 건수 (CLAUDE.md 공시검색 절)
 export const DART_PAGE_COUNT = 100;
-// 2026-11-21 확인: `pblntf_ty=D`가 지분공시(임원·주요주주 소유보고, 대량보유, 공개매수 등)만 준다.
+// 2026-11-21 확인: `pblntf_ty=D`(DART 공시유형 D)가 지분공시(임원·주요주주 소유보고, 대량보유 보고 등)만 준다.
 // 응답 행에는 공시유형 필드가 없어서, 지분공시 집합은 이 파라미터로 따로 받아 rcept_no로 뺀다.
 export const OWNERSHIP_PBLNTF_TYPE = 'D';
+
+// 로그에 남겨도 되는 오류 (FS 3-3). 메시지는 HTTP 상태 코드나 DART status뿐이라 키·요청 URL이 들어가지 않는다
+export class DartStatusError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DartStatusError';
+  }
+}
 
 export type DisclosureRow = {
   rceptNo: string;
@@ -59,7 +67,7 @@ export function parseDartList(body: unknown): DartListPage {
   if (!isRecord(body)) throw new Error('DART 응답 모양이 달라(본문)');
   const status = body.status;
   if (status === DART_NO_DATA) return { totalCount: 0, rows: [] };
-  if (status !== DART_OK) throw new Error(`DART 상태 ${String(status)}`);
+  if (status !== DART_OK) throw new DartStatusError(`DART 상태 ${String(status)}`);
 
   const totalCount = body.total_count;
   if (typeof totalCount !== 'number') throw new Error('DART 응답 모양이 달라(total_count)');
