@@ -29,6 +29,10 @@ web/.env*
 supabase/.temp/
 supabase/.branches/
 
+# 로컬 실행 (scripts/run-web.sh, DEV_PLAN 0c)
+web.log
+web/.run-web.pid
+
 # 기타
 .DS_Store
 Thumbs.db

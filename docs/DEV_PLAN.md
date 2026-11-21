@@ -8,7 +8,7 @@
 
 - [x] 0a. `web/` 프로젝트 생성 (Next.js·TS·Tailwind·Vitest·ESLint, `.env` 로딩, `.gitignore`)
 - [x] 0b. DB 타입 생성(Admin) + 서버 클라이언트 + `copy.ts`·`format.ts`(+테스트) + `AppHeader`·`SiteFooter`·`layout` + DB 1행 조회 확인
-- [ ] 0c. 로컬 실행 스크립트 (포트 16000, `0.0.0.0`) + 빌드·기동·키 번들 검사
+- [x] 0c. 로컬 실행 스크립트 (포트 16000, `0.0.0.0`) + 빌드·기동·키 번들 검사
 - [ ] 0d. 방화벽 (LAN + Tailscale만 허용) — **사용자 sudo 필요**
 - [ ] 1a. F-01 마이그레이션 SQL `search_stocks` 작성 → **Admin이 사용자 확인 후 적용** → SQL 검증
 - [ ] 1b. F-01 `/api/search`·`SearchBox`·`/` 화면
