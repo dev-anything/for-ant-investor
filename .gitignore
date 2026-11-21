@@ -20,6 +20,10 @@ out/
 .vercel/
 *.tsbuildinfo
 next-env.d.ts
+web/node_modules/
+web/.next/
+web/.vercel/
+web/.env*
 
 # Supabase CLI 로컬 파일
 supabase/.temp/
