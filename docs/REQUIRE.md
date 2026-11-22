@@ -11,7 +11,7 @@
 | R3 | **완료** | 마이그레이션 적용 승인 (1a·5a·7a·14a·16a·18a 모두 적용 완료 2026-11-21. 16a 트리거는 사용자 결정으로 오류 처리 추가 — 설정 행 생성이 실패해도 가입은 진행) | 해당 단계 |
 | R4 | **완료** | NAVER API HUB 신청·키 발급 → `.env`의 `NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`, 네이버 BI 가이드 로고 파일 제공 | 11a·11b |
 | R5 | **완료** | 2026-11-22 확인: HUB 응답 필드·`<b>`·`&quot;`·`pubDate`(`Sun, 22 Nov 2026 00:38:00 +0900`) 문서와 일치, 따옴표 연산자 효과 없음·`-제외어`는 동작하는 듯(지금 안 씀), 첫 화면 검색어 `경제 정책` 유지(며칠 더 지켜봄), 짧은 종목명 245개(9.5%, 기아·LG·SK 등 포함 — 실제로 다른 기사 섞임 확인), 푸터 네이버 문구 추가, BI 로고 `web/public/NAVER_OPENAPI_LOGO.png`(사용자가 가이드 이미지에서 잘라 넣음) 연결 | 11a·11b |
-| R6 | 키 완료 · 모델 대기 | OpenRouter 키 확인(무료 등급, 2026-11-22). `web/lib/chat.ts`의 `CHAT_MODEL` 무료 모델 결정 남음 | 14b |
+| R6 | **완료** | OpenRouter 키 확인(무료 등급) · `web/lib/chat.ts`의 `CHAT_MODEL` = `google/gemma-4-26b-a4b-it:free` (2026-11-22 사용자 결정). 연결 당일 무료 공급처가 429(일시 요청 제한)라 실제 응답 형식 검사는 막힘이 풀린 뒤 다시 확인 | 14b |
 | R7 | **완료** | Supabase: Site URL·Redirect URLs·커스텀 SMTP(Gmail)·Magic Link·Confirm signup 템플릿(token_hash) 설정, 매직링크 로그인·가입 트리거 확인 (2026-11-22). 템플릿은 커스텀 SMTP를 켠 뒤에만 고칠 수 있음 | 16a |
 | R8 | **완료** | `.env`에 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 추가 | 16a·16b |
 | R9 | **완료** | GitHub Secrets `GMAIL_ADDRESS`·`GMAIL_APP_PASSWORD`·`SITE_URL` 등록 (2026-11-22). Gmail SMTP 하루 약 500통 | 18c |
@@ -25,7 +25,7 @@
 | F-11 로그인·F-12 추적·마이페이지 | R7·R8 | 로그인 메뉴만 꺼짐 (`/api/me` → 로그인 안 함), 나머지 정상 |
 | F-13 알림 메일 | R9·R10 (+ 로그인) | 메일 단계가 변수 이름만 남기고 정상 종료 |
 | F-18 경제 기사 | R4·R5 | 기사 칸만 "지금은 기사를 불러올 수 없어." |
-| F-10 챗봇 | R6 + `web/lib/chat.ts`의 `CHAT_MODEL` 값 | 챗봇만 꺼짐 (규칙 6 문구) |
+| F-10 챗봇 | R6 (완료) | 챗봇만 꺼짐 (규칙 6 문구) |
 
 ## 브라우저 수동 확인 (curl로 확인 못 한 것)
 
