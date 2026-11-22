@@ -70,8 +70,8 @@ OpenRouter 무료 모델을 웹(OpenRouter Chat 화면 등)에서 직접 시험�
 
 | 모델 | 결과 |
 | --- | --- |
-| `google/gemma-4-26b-a4b-it:free` | 429 (무료 공급처 일시 제한) — 여러 번 시도 모두 실패. 현재 `CHAT_MODEL`에 연결된 값 |
-| `nvidia/nemotron-3.5-lightning:free` | 추론 켬: 6~68초 (5초 넘음). 추론 끔: 0.4~0.8초, 5개 모두 형식 통과. 3번에서 `not_condition: true`가 같이 와서 틀림 |
+| `google/gemma-4-26b-a4b-it:free` | 429 (무료 공급처 일시 제한) — 여러 번 시도 모두 실패. 탈락 |
+| `nvidia/nemotron-3.5-lightning:free` | 추론 켬: 6~68초 (5초 넘음). 추론 끔: 0.4~0.8초, 5개 모두 형식 통과. 3번에서 `not_condition: true`가 같이 와서 틀림 → **채택 (2026-11-22, 추론 끔)** |
 | `inclusionai/ling-3.2-flash:free` | 429 (무료 공급처 일시 제한) — 두 번 시도 모두 실패 |
 
 모델을 정하면 `web/lib/chat.ts`의 `CHAT_MODEL`만 바꾸면 된다. 추론을 꺼야 하는 모델이면 `web/lib/data/chat.ts` 요청 본문에 `reasoning: { enabled: false }`를 넣는다.

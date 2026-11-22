@@ -8,10 +8,10 @@ export const CHAT_DAILY_LIMIT = 40;
 // FS 12장 동작 기본안 3번: 입력 글자 상한 (입력창 maxLength와 같은 값)
 export const CHAT_MAX_INPUT = 200;
 
-// OpenRouter 무료 모델 (PRD 10장 19번·R6, 2026-11-22 사용자 결정).
+// OpenRouter 무료 모델 (PRD 10장 19번·R6, 2026-11-22 사용자 결정: Nemotron, 추론 끔).
 // 빈 문자열이면 호출하지 않는다 (lib/data/chat.ts가 꺼진 것으로 본다).
 // 타입을 string으로 넓혀 빈 값 검사(lib/data/chat.ts)가 타입 오류 없이 남게 한다
-export const CHAT_MODEL: string = 'google/gemma-4-26b-a4b-it:free';
+export const CHAT_MODEL: string = 'nvidia/nemotron-3.5-lightning:free';
 
 // 지원하지 않는 조건의 종류 코드 4개 (PRD 4장 F-10 규칙 3 표)
 export const UNSUPPORTED_KINDS = ['industry', 'dividend_yield', 'price', 'other'] as const;

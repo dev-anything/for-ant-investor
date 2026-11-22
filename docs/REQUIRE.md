@@ -11,7 +11,7 @@
 | R3 | **완료** | 마이그레이션 적용 승인 (1a·5a·7a·14a·16a·18a 모두 적용 완료 2026-11-21. 16a 트리거는 사용자 결정으로 오류 처리 추가 — 설정 행 생성이 실패해도 가입은 진행) | 해당 단계 |
 | R4 | **완료** | NAVER API HUB 신청·키 발급 → `.env`의 `NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`, 네이버 BI 가이드 로고 파일 제공 | 11a·11b |
 | R5 | **완료** | 2026-11-22 확인: HUB 응답 필드·`<b>`·`&quot;`·`pubDate`(`Sun, 22 Nov 2026 00:38:00 +0900`) 문서와 일치, 따옴표 연산자 효과 없음·`-제외어`는 동작하는 듯(지금 안 씀), 첫 화면 검색어 `경제 정책` 유지(며칠 더 지켜봄), 짧은 종목명 245개(9.5%, 기아·LG·SK 등 포함 — 실제로 다른 기사 섞임 확인), 푸터 네이버 문구 추가, BI 로고 `web/public/NAVER_OPENAPI_LOGO.png`(사용자가 가이드 이미지에서 잘라 넣음) 연결 | 11a·11b |
-| R6 | **완료** | OpenRouter 키 확인(무료 등급) · `web/lib/chat.ts`의 `CHAT_MODEL` = `google/gemma-4-26b-a4b-it:free` (2026-11-22 사용자 결정). 연결 당일 무료 공급처가 429(일시 요청 제한)라 실제 응답 형식 검사는 막힘이 풀린 뒤 다시 확인 | 14b |
+| R6 | **완료** | OpenRouter 키 확인(무료 등급) · `CHAT_MODEL` = `nvidia/nemotron-3.5-lightning:free`, 요청에 `reasoning: {enabled: false}` (2026-11-22 사용자 결정. Gemma·Ling은 무료 공급처 429로 탈락, 시험 입력·결과 `docs/MODEL_TEST.md`). 알려진 한계: "배당 수익률 높은 회사"에 `not_condition: true`가 같이 와서 지원 안 함 안내 대신 "조건이 아닌 말" 문구가 나옴 | 14b |
 | R7 | **완료** | Supabase: Site URL·Redirect URLs·커스텀 SMTP(Gmail)·Magic Link·Confirm signup 템플릿(token_hash) 설정, 매직링크 로그인·가입 트리거 확인 (2026-11-22). 템플릿은 커스텀 SMTP를 켠 뒤에만 고칠 수 있음 | 16a |
 | R8 | **완료** | `.env`에 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 추가 | 16a·16b |
 | R9 | **완료** | GitHub Secrets `GMAIL_ADDRESS`·`GMAIL_APP_PASSWORD`·`SITE_URL` 등록 (2026-11-22). Gmail SMTP 하루 약 500통 | 18c |
@@ -57,7 +57,7 @@
 | 2026-11-21 | F-17 지분공시 목록이 100건을 넘으면, 그 100건의 가장 오래된 날짜 이하 공시는 거르기를 믿지 않고 목록에서 뺌 | 안전 규칙. 지분공시가 아주 많은 회사는 5개보다 적게 나올 수 있음 |
 | 2026-11-21 | F-17 조회 기간은 최근 365일 (`bgn_de` 없으면 DART가 013을 돌려줌) | 기본안. 공시가 드문 회사는 5개보다 적을 수 있음 — 사용자 확인 필요 |
 | 2026-11-21 | F-17 "공시 더 보기" 링크는 넣지 않음 | PRD 11장 20번 링크 형식 미확인, FS 9-5 기본안(숨김) |
-| 2026-11-21 | F-10 `CHAT_MODEL`은 빈 값으로 둠 → 키가 있어도 모델을 정하기 전까지 챗봇은 꺼짐 (→ 2026-11-22 사용자 결정으로 `google/gemma-4-26b-a4b-it:free` 연결, R6) | OpenRouter 무료 모델 이름·한도 미확인 (R6, PRD 10장 19번). `web/lib/chat.ts` 상수 하나만 바꾸면 됨 |
+| 2026-11-21 | F-10 `CHAT_MODEL`은 빈 값으로 둠 → 키가 있어도 모델을 정하기 전까지 챗봇은 꺼짐 (→ 2026-11-22 사용자 결정으로 `nvidia/nemotron-3.5-lightning:free` + 추론 끔 연결, R6) | OpenRouter 무료 모델 이름·한도 미확인 (R6, PRD 10장 19번). `web/lib/chat.ts` 상수 하나만 바꾸면 됨 |
 | 2026-11-21 | F-10 `/api/chat`은 Origin 헤더가 없으면 통과 (있으면 Host와 같아야 함) | 브라우저 POST는 항상 Origin을 붙임. 막으려면 `isSameOrigin` 한 줄 |
 | 2026-11-21 | 2차 배당 정확도: 표본 20종목 120칸 100% 일치 (`scripts/accuracy_check.py --dividends`, 결과 `api_check_results/accuracy_dividends_2026-11-21.md`). 2차 수용 기준 점검 PASS | PRD 9장. `check`·`not_disclosed`·013 경우는 표본에 없어 코드로만 확인 |
 | 2026-11-21 | `/industries/[division]`·`/compare`는 쿼리를 읽어서 빌드상 동적(ƒ)으로 나옴 (`revalidate = 3600`은 설정) | 응답 0.2초대라 그대로 둠 |

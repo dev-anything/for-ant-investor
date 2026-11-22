@@ -71,6 +71,8 @@ async function askModel(key: string): Promise<ChatOutput> {
       body: JSON.stringify({
         model: CHAT_MODEL,
         temperature: 0,
+        // 추론을 켜면 응답이 6~68초라 5초 제한(FS 9-9)을 넘는다. 끄면 1초 안 (2026-11-22 시험, docs/MODEL_TEST.md)
+        reasoning: { enabled: false },
         messages: [
           { role: 'system', content: buildSystemPrompt() },
           { role: 'user', content: key },
