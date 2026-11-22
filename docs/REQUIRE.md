@@ -6,16 +6,16 @@
 
 | # | 상태 | 사용자 할 일 | 관련 단계 |
 | --- | --- | --- | --- |
-| R1 | 개발 완료 뒤 (사용자 결정 2026-11-21) | 방화벽 규칙 적용(`sudo ufw …`, 아래 "방화벽" 절)과 `sudo ufw status verbose` 출력 공유, LAN·Tailscale 접속 확인 | 0d |
-| R2 | 선택 | 서버 재부팅 때 자동 기동이 필요하면 systemd 서비스 설치 (원하면 알려 줘) | 0c |
+| R1 | **완료** | 방화벽 (2026-11-22: ufw 켬, 들어오는 연결 기본 거부 + LAN `192.168.0.0/24`·`tailscale0` 전체 허용 + `41641/udp`. 기존 443·15000·15001·15004·22 Anywhere 규칙은 그대로) | 0d |
+| R2 | **완료** | systemd 서비스 `finradar-web` 설치 (2026-11-22, `/etc/systemd/system/finradar-web.service`, 재부팅 자동 기동·죽으면 5초 뒤 재시작). 이후 `run-web.sh start` 대신 `npm run build` → `sudo systemctl restart finradar-web`, 로그 `journalctl -u finradar-web` | 0c |
 | R3 | **완료** | 마이그레이션 적용 승인 (1a·5a·7a·14a·16a·18a 모두 적용 완료 2026-11-21. 16a 트리거는 사용자 결정으로 오류 처리 추가 — 설정 행 생성이 실패해도 가입은 진행) | 해당 단계 |
-| R4 | 대기 | NAVER API HUB 신청·키 발급 → `.env`의 `NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`, 네이버 BI 가이드 로고 파일 제공 | 11a·11b |
-| R5 | 대기 | 네이버 키 도착 뒤 PRD 11장 15~18·21번 확인, 출처 푸터 네이버 문구 확정 여부 결정 | 11a·11b |
-| R6 | 대기 | OpenRouter 키 → `.env`의 `OPENROUTER_API_KEY`, 무료 모델·하루 한도 재확인 | 14b |
-| R7 | 대기 | Supabase 대시보드: Site URL·Redirect URLs·Magic Link 템플릿(token_hash)·커스텀 SMTP(Gmail) | 16a |
-| R8 | 대기 | `.env`에 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 추가 | 16a·16b |
-| R9 | 대기 | Gmail 앱 비밀번호, GitHub Secrets `GMAIL_ADDRESS`·`GMAIL_APP_PASSWORD`·`SITE_URL` 등록, Gmail 하루 발송 한도 확인 | 18c |
-| R10 | 대기 | `SITE_URL`(메일 링크 접속 주소) 결정 — 기본안 Tailscale 주소 `http://100.124.240.114:16000` | 16a·18c |
+| R4 | **완료** | NAVER API HUB 신청·키 발급 → `.env`의 `NAVER_API_HUB_KEY_ID`·`NAVER_API_HUB_KEY`, 네이버 BI 가이드 로고 파일 제공 | 11a·11b |
+| R5 | **완료** | 2026-11-22 확인: HUB 응답 필드·`<b>`·`&quot;`·`pubDate`(`Sun, 22 Nov 2026 00:38:00 +0900`) 문서와 일치, 따옴표 연산자 효과 없음·`-제외어`는 동작하는 듯(지금 안 씀), 첫 화면 검색어 `경제 정책` 유지(며칠 더 지켜봄), 짧은 종목명 245개(9.5%, 기아·LG·SK 등 포함 — 실제로 다른 기사 섞임 확인), 푸터 네이버 문구 추가, BI 로고 `web/public/NAVER_OPENAPI_LOGO.png`(사용자가 가이드 이미지에서 잘라 넣음) 연결 | 11a·11b |
+| R6 | 키 완료 · 모델 대기 | OpenRouter 키 확인(무료 등급, 2026-11-22). `web/lib/chat.ts`의 `CHAT_MODEL` 무료 모델 결정 남음 | 14b |
+| R7 | **완료** | Supabase: Site URL·Redirect URLs·커스텀 SMTP(Gmail)·Magic Link·Confirm signup 템플릿(token_hash) 설정, 매직링크 로그인·가입 트리거 확인 (2026-11-22). 템플릿은 커스텀 SMTP를 켠 뒤에만 고칠 수 있음 | 16a |
+| R8 | **완료** | `.env`에 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 추가 | 16a·16b |
+| R9 | **완료** | GitHub Secrets `GMAIL_ADDRESS`·`GMAIL_APP_PASSWORD`·`SITE_URL` 등록 (2026-11-22). Gmail SMTP 하루 약 500통 | 18c |
+| R10 | **완료** | `SITE_URL` = `http://myserver.tail04eb49.ts.net:16000` (2026-11-22 사용자 결정, Tailscale MagicDNS 이름). Vercel로 옮기면 Supabase Site URL·Redirect URLs·Secret `SITE_URL` 세 곳만 바꾼다 | 16a·18c |
 | R11 | 대기 | PRD 10장·FS 12장 기본 문구 확인 + 아래 "먼저 처리한 결정" 중 "사용자 확인 필요" 항목 결정, 아래 "브라우저 수동 확인" 목록 | 6·15·19 |
 
 ## 키를 넣은 뒤 켜지는 기능
@@ -65,6 +65,9 @@
 | 2026-11-21 | F-13 처음 수집된 회사(전년 자료 없음)는 알리지 않음 | 첫 적재 때 수천 건 알림 방지 |
 | 2026-11-21 | F-13 알림 문구의 증감률은 소수 1자리 ("전년보다 16.7% 증가") | PRD 3-8 기본 규칙. PRD F-13 예시는 정수 — 사용자 확인 필요 |
 | 2026-11-21 | Tailwind는 표준 `@tailwindcss/postcss` 방식, `next.config.ts`의 `loadEnvConfig`에 `forceReload` 인자 추가 | 빌드 워커가 루트 `.env`를 못 읽는 문제 |
+| 2026-11-22 | **Tailscale IP 주소(`http://100.124.240.114:16000`)로 접속하면 로그인이 안 됨** — Supabase 앞단 Cloudflare가 `redirect_to`에 `100.x` IP가 든 요청을 403으로 막음(브라우저에는 CORS 오류로 보임). 이름 주소·LAN 주소는 정상 | 로그인은 이름 주소 `myserver.tail04eb49.ts.net`으로 접속. 코드 변경 없음 |
+| 2026-11-22 | 출처 푸터 네이버 문구는 웹 화면에만 넣고 알림 메일 하단(`batch/notify.py`)은 기존 첫 줄 유지 | 메일에는 네이버 데이터가 없음 |
+| 2026-11-22 | 첫 화면 기사 칸은 빌드 때 만든 페이지를 30분 캐시하므로, 빌드 시점에 기사 호출이 실패하면 최대 30분 실패 문구가 남음 | 키를 바꾼 뒤에는 다시 빌드하거나 30분 기다림 |
 
 ## 방화벽 (R1)
 
