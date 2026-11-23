@@ -6,9 +6,6 @@
 export const NEWS_PAGE_SIZE = 10;
 // PRD 5-8: start 최대 1000 → 쪽 100까지
 export const NEWS_MAX_PAGE = 100;
-// PRD 10장 24번 기본안: 짧은 종목명 기준 (한글 2글자 이하, 영문·숫자만 3글자 이하)
-export const SHORT_KOREAN_NAME_MAX = 2;
-export const SHORT_LATIN_NAME_MAX = 3;
 
 // 기사 한 줄. 표시 전 값이다 (제목은 텍스트로만 쓴다, dangerouslySetInnerHTML 금지)
 export type NewsItem = {
@@ -115,20 +112,12 @@ export function formatPubDate(pubDate: string): string {
   return `${kst.getUTCFullYear()}-${pad(kst.getUTCMonth() + 1)}-${pad(kst.getUTCDate())} ${pad(kst.getUTCHours())}:${pad(kst.getUTCMinutes())}`;
 }
 
-const HANGUL_PATTERN = /[가-힣]/;
-const LATIN_OR_DIGIT_PATTERN = /^[A-Za-z0-9]+$/;
-
 /**
- * 짧은 종목명 판정 (PRD 10장 24번 기본안). 한글이 조금이라도 들어 있으면 한글 기준(2글자 이하),
- * 아니면 영문·숫자만 3글자 이하. 빈 이름은 검색이 모든 기사를 찾으니 짧은 것으로 본다.
- * 글자 수는 코드 포인트 기준 (`[...name]`).
+ * 종목 화면 기사 검색어 `{종목명} {종목코드}` (PRD 4장 F-18, 2026-11-23 사용자 결정).
+ * 기사에 종목코드가 같이 적히는 경우가 많아 회사 기사가 더 많이 걸린다. 이름은 앞뒤 공백을 뗀다.
  */
-export function isShortName(name: string): boolean {
-  const trimmed = name.trim();
-  const length = [...trimmed].length;
-  if (length === 0) return true;
-  if (HANGUL_PATTERN.test(trimmed)) return length <= SHORT_KOREAN_NAME_MAX;
-  return LATIN_OR_DIGIT_PATTERN.test(trimmed) && length <= SHORT_LATIN_NAME_MAX;
+export function buildStockNewsQuery(name: string, shortCode: string): string {
+  return `${name.trim()} ${shortCode.trim()}`;
 }
 
 /**
@@ -140,11 +129,6 @@ export function parseNewsPage(raw: string | string[] | undefined): number {
   if (text === undefined || !/^\d+$/.test(text)) return 1;
   const page = Number(text);
   return page >= 1 && page <= NEWS_MAX_PAGE ? page : 1;
-}
-
-/** 짧은 종목명 안내의 네이버 뉴스 검색 링크 (PRD 4장 F-18). 주소 형식은 실제 화면에서 한 번 더 확인한다 */
-export function naverNewsSearchUrl(name: string): string {
-  return `https://search.naver.com/search.naver?where=news&query=${encodeURIComponent(name)}`;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

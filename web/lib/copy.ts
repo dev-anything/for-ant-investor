@@ -23,7 +23,7 @@ export const copy = {
     // FS 12장 1번 기본안: 외국회사 (화면 볼 때 확정)
     foreign: '이 종목은 외국회사라서 재무정보를 지원하지 않아.',
     // PRD 3-7, 10장 18번: 재무 데이터 없음 (최종 확정 남음)
-    noFinancials: '이 회사의 재무정보가 없어',
+    noFinancials: '이 회사의 재무정보가 없어.',
     // FS 12장 2번 기본안: 없는 종목 주소 (404)
     notFound: '이 종목을 찾을 수 없어. 검색에서 다시 찾아 줘.',
   },
@@ -317,8 +317,6 @@ export const copy = {
     stockTitle: '최근 기사',
     // /news 메타데이터 제목 (FS 9-6)
     pageMeta: '경제 기사 · 재무 레이더',
-    // 칸 위 안내 (PRD 10장 21번)
-    notice: '언론사 기사를 네이버 검색으로 그대로 보여주는 거야. 이 서비스의 의견이 아니야.',
     // 네이버 검색결과 표시 (BI 가이드 로고 파일 전까지 텍스트로 대신, 로고 파일 필요 R4)
     attributionText: '네이버 검색 결과',
     attributionLink: '네이버',
@@ -327,9 +325,6 @@ export const copy = {
     empty: '찾은 기사가 없어.',
     // 첫 화면 칸 아래 링크 (PRD 3-5)
     moreLink: '기사 더 보기 →',
-    // 짧은 종목명 안내 (PRD 10장 23번). 링크 글자는 네이버 뉴스 검색으로 간다
-    shortName: '이름이 짧아서 다른 회사 기사가 섞여. 네이버에서 직접 찾아봐',
-    shortNameLink: '네이버 뉴스 검색 →',
     // /news 이전·다음 (total을 모를 때 쓰는 링크)
     prevPage: '‹ 이전',
     nextPage: '다음 ›',

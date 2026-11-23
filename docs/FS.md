@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
-| 갱신일 | 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
+| 갱신일 | 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
 | 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 8장, 2차(F-08·F-09·F-14·F-17·F-18·F-15·F-16·F-10)·확장(F-11·F-12·F-13)은 9장**에 같은 깊이로 적는다. 외부 API 응답처럼 **아직 확인하지 않은 것**은 "확인 뒤 정함"으로 남기고 PRD 11장 번호를 단다 |
@@ -80,7 +80,7 @@ for-ant-investor/
 │  │  ├─ supabase/browser.ts        # (확장) 브라우저 클라이언트 (publishable 키, 로그인·로그아웃만)
 │  │  ├─ supabase/types.ts          # DB 타입 (생성 파일)
 │  │  ├─ data/                      # 서버 조회 함수 (stock.ts, screener.ts, search.ts, 2차 industry.ts·disclosures.ts·news.ts·chat.ts, 확장 mypage.ts)
-│  │  ├─ news-text.ts               # (2차) 기사 제목 정리·도메인·짧은 종목명 판정 (F-18)
+│  │  ├─ news-text.ts               # (2차) 기사 제목 정리·도메인·기사 검색어 (F-18)
 │  │  ├─ disclosure.ts              # (2차) 공시 거르기·원문 링크 (F-17)
 │  │  ├─ industry.ts                # (2차) 업종 가운데 값 비교 (F-08·F-09)
 │  │  ├─ dividend.ts                # (2차) 배당 표 칸 만들기 (F-14)
@@ -588,9 +588,8 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | `newsDomain(originallink, link)` | `originallink` 호스트에서 앞 `www.`만 뗌. 없거나 잘못된 주소면 `link` 호스트 |
 | `newsHref(originallink, link)` | 원문 링크 (`originallink`, 없으면 `link`). `http:`·`https:`가 아니면 null (줄을 링크 없이) |
 | `formatPubDate(pubDate)` | RFC 822 형식 → 한국 시간 `YYYY-MM-DD HH:mm` (형식은 PRD 11장 16번 실제 응답으로 확인) |
-| `isShortName(name)` | 한글 2글자 이하, 또는 영문·숫자만 3글자 이하 → true (PRD 10장 24번, 기준 상수로) |
+| `buildStockNewsQuery(name, shortCode)` | 종목 화면 기사 검색어 `{종목명} {종목코드}` (이름 앞뒤 공백 뗌, 예 `대상 001680`). 2026-11-23 사용자 결정 (PRD 4장 F-18) |
 | `parseNewsPage(searchParams)` | 1~`NEWS_MAX_PAGE` 정수, 잘못된 값은 1. `NEWS_PAGE_SIZE = 10`, `NEWS_MAX_PAGE = 100` (`start` ≤ 1000, PRD 10장 29번) |
-| `naverNewsSearchUrl(name)` | 짧은 종목명 안내의 네이버 뉴스 검색 링크 (형식은 구현 때 확인, PRD F-18) |
 
 ### 6-14. (2차) `lib/disclosure.ts` — 공시 (PRD 4장 F-17)
 
@@ -702,7 +701,7 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | status | 보여주는 것 |
 | --- | --- |
 | `ok` | StockHeader + ReportCard + ResultsCharts |
-| `no_financials` | StockHeader + `EmptyState` "이 회사의 재무정보가 없어" (PRD 3-7) |
+| `no_financials` | StockHeader + `EmptyState` "이 회사의 재무정보가 없어." (PRD 3-7) |
 | `foreign` | StockHeader + `EmptyState` (문구는 12장 1번) |
 | 없음 | `notFound()` → `not-found.tsx` (문구는 12장 2번) |
 
@@ -840,7 +839,7 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | status | 보여주는 것 (8-2 표를 대체) |
 | --- | --- |
 | `ok` | StockHeader(+ReadingTour) + ReportCard + ResultsCharts + ValuationSection + DividendCard + StockFeedSection |
-| `no_financials` | StockHeader + `EmptyState` "이 회사의 재무정보가 없어" + StockFeedSection (PRD 10장 26번). ReadingTour 없음 |
+| `no_financials` | StockHeader + `EmptyState` "이 회사의 재무정보가 없어." + StockFeedSection (PRD 10장 26번). ReadingTour 없음 |
 | `foreign` | StockHeader + `EmptyState` (12장 1번). StockFeedSection·ReadingTour 없음 |
 
 - `data-tour` 속성 위치: `sales` = 매출액 그래프 하나, `profit` = 영업이익·순이익 그래프 둘을 감싼 요소 (`ResultsCharts` 안에서 두 그래프를 한 묶음으로 감싼다. 금융회사도 같음), `debt` = 부채비율 `MetricRow` **또는** 그 자리를 대신한 완전 자본잠식 상자, `valuation` = `ValuationSection` 전체, `dividend` = `DividendCard` 전체.
@@ -971,7 +970,7 @@ type NewsResult = { status: 'ok'; items: NewsItem[]; total: number | null } | { 
 function searchNews(p: { query: string; display: number; start: number; sort: 'date' | 'sim' }): Promise<NewsResult>
 function getHomeNews(): Promise<NewsResult>            // HOME_NEWS_QUERY, display 5, start 1, date — 1800초
 function getNewsPage(page: number): Promise<NewsResult> // display 10, start (page−1)×10+1 — 1800초
-function getStockNews(name: string): Promise<NewsResult> // query = itms_nm, display 5, date — 3600초
+function getStockNews(name: string, shortCode: string): Promise<NewsResult> // query = `{name} {shortCode}` (buildStockNewsQuery), display 5, date — 3600초
 ```
 
 - `GET https://naverapihub.apigw.ntruss.com/search/v1/news?query&display&start&sort`, 헤더 `X-NCP-APIGW-API-KEY-ID`·`X-NCP-APIGW-API-KEY`, 5초 제한. 키가 없으면 부르지 않고 `error`.
@@ -987,16 +986,16 @@ function getStockNews(name: string): Promise<NewsResult> // query = itms_nm, dis
 | --- | --- |
 | `NewsList` | `<ul>` 기사 줄 (세 곳 공통). 줄: `{title} · {domain} · {time}`, `href`가 있으면 줄 전체 `<a target="_blank" rel="noopener noreferrer">`. 제목은 **텍스트 노드로만** (`dangerouslySetInnerHTML` 금지). 줄 사이에 다른 요소를 넣지 않는다. 썸네일·요약 없음 |
 | `NaverAttribution` | 네이버 로고(BI 가이드 파일, `public/`에 둠 — 사용 조건은 PRD 11장 15번) + 네이버 링크. 기사 영역마다 하나 |
-| `NewsBlock` | 칸 제목 + 안내 "언론사 기사를 네이버 검색으로 그대로 보여주는 거야. 이 서비스의 의견이 아니야." + `NaverAttribution` + 결과(`NewsList` / 실패 "지금은 기사를 불러올 수 없어." / 0건 "찾은 기사가 없어.") |
+| `NewsBlock` | 칸 제목 + `NaverAttribution` (안내 문구는 2026-11-23 폐지) + 결과(`NewsList` / 실패 "지금은 기사를 불러올 수 없어." / 0건 "찾은 기사가 없어.") |
 | `HomeNews` | `/` 바로가기 줄 아래. `NewsBlock`(제목 "경제 기사", `getHomeNews`) + `기사 더 보기 →`(`/news`) |
-| `StockNews` | `StockFeedSection` 왼쪽. `isShortName(name)`이면 `ShortNameNotice`(제목 + "이름이 짧아서 다른 회사 기사가 섞여. 네이버에서 직접 찾아봐 →" + `naverNewsSearchUrl` 새 탭)만, 아니면 `NewsBlock`(제목 "최근 기사", `getStockNews`) |
-| `StockFeedSection` | 배당 카드 아래 `grid` PC 2열(왼쪽 기사·오른쪽 공시), 좁은 화면 1열(기사 위). 칸마다 `<Suspense fallback={<Skeleton/>}>` |
+| `StockNews` | `StockFeedSection` 왼쪽. props `{ name, shortCode }`. 모든 종목이 `NewsBlock`(제목 "최근 기사", `getStockNews(name, shortCode)`)을 쓴다. `ShortNameNotice`는 2026-11-23 삭제 |
+| `StockFeedSection` | props `{ name, shortCode, corpCode }`. 배당 카드 아래 `grid` PC 2열(왼쪽 기사·오른쪽 공시), 좁은 화면 1열(기사 위). 칸마다 `<Suspense fallback={<Skeleton/>}>` |
 
 **`/news` (서버, `revalidate = 1800`)**
 
 ```
 경제 기사
-(안내 문구) (네이버 로고·링크)
+(네이버 로고·링크)
 · 제목 · 도메인 · 2026-11-20 09:12
 … 10개
 ‹ 1 2 3 … ›
@@ -1253,7 +1252,7 @@ function getStockNews(name: string): Promise<NewsResult> // query = itms_nm, dis
 | `filters.test.ts` | `toggleFilter`: 추가·해제·4번째·부딪힘 10쌍 양방향·13↔14 교체. `evidenceColumns` 중복 제거·순서. `fillYears` |
 | `insights.test.ts` | 8개 문장 템플릿, 3개 자르기, 모르는 id 무시 |
 | `params.test.ts` | 잘못된 `f`(0, 21, 문자, 4개, 부딪힘, 13+14)·`size`·`page`·`sort` 바로잡기, `toQuery` 왕복 |
-| `news-text.test.ts` (2차) | `cleanNewsTitle`: `<b>` 제거, `&quot;`·`&amp;`·`&#39;` 디코딩, 태그가 아닌 `<` 글자 유지. `newsDomain`: `www.` 떼기, `originallink` 빈 값 → `link`. `formatPubDate` 한국 시간 변환. `isShortName` 경계 (한글 2·3글자, 영문 3·4글자, 영문+한글 섞임). `parseNewsPage` 범위 |
+| `news-text.test.ts` (2차) | `cleanNewsTitle`: `<b>` 제거, `&quot;`·`&amp;`·`&#39;` 디코딩, 태그가 아닌 `<` 글자 유지. `newsDomain`: `www.` 떼기, `originallink` 빈 값 → `link`. `formatPubDate` 한국 시간 변환. `buildStockNewsQuery`: `{종목명} {종목코드}` 조립, 이름 앞뒤 공백 뗌, 영문·숫자 코드 그대로. `parseNewsPage` 범위 |
 | `chat.test.ts` (2차) | `normalizeChatInput`: 앞뒤 공백, 연속 공백, 대소문자 → 같은 캐시 키. `parseChatOutput`: JSON 아님·모양 틀림 → null, 21번·0번·모르는 코드·중복 → 그 항목만 버림(순서 유지). `applyChatRules`: 13+14 → 14, 부딪힘 → 빈 필터 + `conflict`, 4개 → 앞 3개 + `truncated`, `notCondition` → 빈 필터. `CHAT_EXAMPLES` 3개가 PRD 필터(13+1, 8, 20)와 같음 |
 | `chat-isolation.test.ts` (2차) | `app/api/chat/route.ts`·`lib/data/chat.ts`를 텍스트로 읽어 `data/news`·`news-text` import가 **없는지** (PRD F-18 AI 활용 금지) |
 | `industry.test.ts` (2차) | `compareToIndustry`: 업종 없음, n=2(too_few)·n=3(ok), median null, 소수 1자리 반올림 뒤 같음 → `same`, value null → `relation` null |

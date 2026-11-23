@@ -54,7 +54,7 @@ export default async function StockPage({ params }: StockPageProps) {
         <>
           <EmptyState message={copy.stock.noFinancials} />
           {/* PRD 10장 26번: 재무 없음 화면에도 기사·공시 칸은 둔다 */}
-          <StockFeedSection name={page.stock.name} corpCode={page.corpCode} />
+          <StockFeedSection name={page.stock.name} shortCode={page.stock.shortCode} corpCode={page.corpCode} />
         </>
       )}
       {page.status === 'ok' && page.summary && (
@@ -70,7 +70,7 @@ export default async function StockPage({ params }: StockPageProps) {
             dividends={page.dividends}
             displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
           />
-          <StockFeedSection name={page.stock.name} corpCode={page.corpCode} />
+          <StockFeedSection name={page.stock.name} shortCode={page.stock.shortCode} corpCode={page.corpCode} />
         </>
       )}
     </div>

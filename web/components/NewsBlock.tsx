@@ -4,7 +4,7 @@ import type { NewsResult } from '@/lib/news-text';
 import { NaverAttribution } from '@/components/NaverAttribution';
 import { NewsList } from '@/components/NewsList';
 
-// FS 9-6 NewsBlock: 칸 제목 + 안내 + 네이버 표시 + 결과(목록 / 실패 / 0건). 서버 컴포넌트
+// FS 9-6 NewsBlock: 칸 제목 + 네이버 표시 + 결과(목록 / 실패 / 0건). 서버 컴포넌트
 // titleTag: /news는 페이지 제목이라 h1, 나머지 칸은 h2
 export function NewsBlock({
   title,
@@ -25,7 +25,6 @@ export function NewsBlock({
       <Heading id={headingId} className="text-lg font-bold text-neutral-900">
         {title}
       </Heading>
-      <p className="mt-2 text-sm text-neutral-700">{copy.news.notice}</p>
       <NaverAttribution />
 
       {result.status === 'error' && <p className="mt-4 text-sm text-neutral-700">{copy.news.error}</p>}

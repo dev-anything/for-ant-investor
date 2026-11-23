@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildStockNewsQuery,
   cleanNewsTitle,
   formatPubDate,
-  isShortName,
-  naverNewsSearchUrl,
   newsDomain,
   newsHref,
   NEWS_MAX_PAGE,
@@ -110,32 +109,17 @@ describe('formatPubDate (한국 시간 YYYY-MM-DD HH:mm)', () => {
   });
 });
 
-describe('isShortName (PRD 10장 24번: 한글 2글자 이하, 영문·숫자 3글자 이하)', () => {
-  it('한글 2글자는 짧다', () => {
-    expect(isShortName('한솔')).toBe(true);
+describe('buildStockNewsQuery (PRD 4장 F-18: 종목명 + 종목코드)', () => {
+  it('종목명과 종목코드를 공백 하나로 잇는다', () => {
+    expect(buildStockNewsQuery('대상', '001680')).toBe('대상 001680');
   });
 
-  it('한글 3글자는 짧지 않다', () => {
-    expect(isShortName('현대차')).toBe(false);
+  it('종목명 앞뒤 공백은 뗀다', () => {
+    expect(buildStockNewsQuery('  삼성전자 ', '005930')).toBe('삼성전자 005930');
   });
 
-  it('영문·숫자 3글자는 짧다', () => {
-    expect(isShortName('LG')).toBe(true);
-    expect(isShortName('CJ1')).toBe(true);
-  });
-
-  it('영문·숫자 4글자는 짧지 않다', () => {
-    expect(isShortName('NAVER')).toBe(false);
-    expect(isShortName('SK이노')).toBe(false);
-  });
-
-  it('한글이 섞인 이름은 한글 기준을 쓴다 (전체 3글자면 짧지 않다)', () => {
-    expect(isShortName('S오일')).toBe(false);
-    expect(isShortName('K오')).toBe(true);
-  });
-
-  it('공백만 있거나 빈 이름은 짧은 것으로 본다', () => {
-    expect(isShortName('   ')).toBe(true);
+  it('영문·숫자가 섞인 종목코드는 그대로 쓴다', () => {
+    expect(buildStockNewsQuery('대신증권우', '0220W0')).toBe('대신증권우 0220W0');
   });
 });
 
@@ -163,12 +147,6 @@ describe('parseNewsPage (PRD 10장 29번: 1~100, 잘못된 값은 1)', () => {
 
   it('같은 키가 여러 번 오면 첫 값만 쓴다', () => {
     expect(parseNewsPage(['4', '9'])).toBe(4);
-  });
-});
-
-describe('naverNewsSearchUrl', () => {
-  it('종목명을 인코딩해 네이버 뉴스 검색 주소를 만든다', () => {
-    expect(naverNewsSearchUrl('LG')).toBe('https://search.naver.com/search.naver?where=news&query=LG');
   });
 });
 
