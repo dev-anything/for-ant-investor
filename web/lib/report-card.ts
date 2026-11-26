@@ -5,8 +5,8 @@ import type { YearRow } from '@/lib/data/stock';
 import type { GaugeKey } from '@/lib/gauge';
 import { formatPercent } from '@/lib/format';
 
-// PRD 4장 F-05 지표 3개 (화면 순서)
-export const REPORT_METRIC_KEYS: readonly GaugeKey[] = ['debt_ratio', 'operating_margin', 'revenue_growth'];
+// PRD 4장 F-05 지표 3개 (화면 순서). 매출 → 영업이익 → 빚 순서다
+export const REPORT_METRIC_KEYS: readonly GaugeKey[] = ['revenue_growth', 'operating_margin', 'debt_ratio'];
 
 // 지표 키 → 연도 행의 값 필드
 const METRIC_FIELD: Record<GaugeKey, (row: YearRow) => number | null> = {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { YearRow } from '@/lib/data/stock';
-import { formatValueLine, latestValue, metricValues } from '@/lib/report-card';
+import { REPORT_METRIC_KEYS, formatValueLine, latestValue, metricValues } from '@/lib/report-card';
 
 // 테스트용 연도 행. 필요한 값만 덮어쓴다
 function row(fiscalYear: number, overrides: Partial<YearRow> = {}): YearRow {
@@ -22,6 +22,12 @@ function row(fiscalYear: number, overrides: Partial<YearRow> = {}): YearRow {
     ...overrides,
   };
 }
+
+describe('REPORT_METRIC_KEYS', () => {
+  it('화면 순서는 매출 증가율 → 영업이익률 → 부채비율이다', () => {
+    expect(REPORT_METRIC_KEYS).toEqual(['revenue_growth', 'operating_margin', 'debt_ratio']);
+  });
+});
 
 describe('metricValues', () => {
   it('지표 키에 맞는 연도 행 필드를 오래된 순서 그대로 뽑는다', () => {
