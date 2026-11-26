@@ -38,3 +38,15 @@ web/.run-web.pid
 Thumbs.db
 *.log
 logs/
+
+# 루트 개인 메모
+/command.md
+
+# 외부 스킬 설치 복사본 (design-system 등, 원본은 설치처에서 다시 받음)
+.agents/
+.claude/skills/
+
+# Claude Code 로컬 설정·작업 복사본
+.claude/settings.local.json
+.claude/*.local.*
+.claude/worktrees/
