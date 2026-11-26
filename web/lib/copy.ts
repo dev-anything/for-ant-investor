@@ -380,30 +380,71 @@ export const copy = {
     mypage: '마이페이지',
     logout: '로그아웃',
     logoutFailed: '로그아웃하지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
-    dialogTitle: '이메일로 로그인',
+    // 로그인 창의 세 화면 제목 (PRD F-11)
+    title: { login: '로그인', signup: '회원가입', reset: '비밀번호 설정·재설정' },
     // 창을 여는 이유별 안내 (FS 9-11). 로그인 화면이라 존댓말
     reason: {
       // FS 9-11: 종목 추적 안내는 반말 (PRD F-12 문구)
       watch: '로그인하면 종목을 추적할 수 있어.',
-      expired: '로그인 링크가 만료되었습니다. 다시 받아 주세요.',
+      expired: '메일 링크가 만료되었습니다. 다시 받아 주세요.',
       // FS 12장 9번
       required: '로그인이 필요합니다.',
     },
-    inputLabel: '이메일 주소를 입력해 주세요',
-    inputPlaceholder: '이메일 주소를 입력해 주세요',
-    submit: '로그인 링크 받기',
-    sending: '보내는 중입니다.',
-    // PRD 10장 17번: 로그인 창 개인정보 안내 (사용자 확인 전 기본안)
-    privacy: '이메일 주소는 로그인과 알림 발송에만 사용합니다.',
-    // PRD F-11 보낸 뒤 문구
-    sent: '로그인 링크를 보냈습니다. 메일함을 확인해 주세요.',
-    sentNote: '메일이 오지 않으면 스팸함을 확인해 주세요.',
-    resend: '링크 다시 보내기',
+    emailLabel: '이메일 주소',
+    emailPlaceholder: '이메일 주소를 입력해 주세요',
+    passwordLabel: '비밀번호',
+    newPasswordLabel: '새 비밀번호',
+    confirmLabel: '비밀번호 확인',
+    passwordHint: (min: number) => `${min}자 이상`,
+    submit: { login: '로그인', signup: '가입하기', reset: '설정 메일 받기' },
+    pending: '처리 중입니다.',
+    // 화면 전환 버튼
+    toSignup: '회원가입',
+    toReset: '비밀번호 설정·재설정',
+    toLogin: '로그인으로 돌아가기',
+    // PRD 10장 17번: 개인정보 안내
+    privacy: '이메일 주소와 비밀번호(암호화해 저장)를 수집하며, 로그인과 알림 발송에만 사용합니다.',
+    resetNote: '가입한 이메일로 비밀번호를 설정할 수 있는 링크를 보내 드립니다.',
+    // PRD F-11 보낸 뒤 문구. 가입 여부를 알려주지 않는 표현을 쓴다
+    signupSent: '확인 메일을 보냈습니다. 메일의 링크를 누르면 가입이 끝납니다.',
+    signupSentNote:
+      '메일이 오지 않으면 스팸함을 확인해 주세요. 이미 가입한 이메일이면 메일이 가지 않으니 비밀번호 설정·재설정을 이용해 주세요.',
+    resetSent: '가입한 이메일이면 비밀번호 설정 메일이 갑니다. 메일함을 확인해 주세요.',
+    resetSentNote: '메일이 오지 않으면 스팸함을 확인해 주세요.',
+    resend: '메일 다시 보내기',
     resendWait: (seconds: number) => `${seconds}초 뒤에 다시 보낼 수 있습니다.`,
+    // 로그인 실패 (PRD F-11)
+    loginFailure: {
+      invalid: '이메일 또는 비밀번호가 맞지 않습니다.',
+      unconfirmed: '가입 확인 메일의 링크를 먼저 눌러 주세요.',
+      failed: '로그인하지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+    },
     // FS 12장 7번: 발송 실패
-    sendFailed: '로그인 링크를 보내지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+    sendFailed: '메일을 보내지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
     // FS 12장 8번: 이메일 형식 오류 (보내기 전 브라우저 검사)
     invalidEmail: '이메일 주소를 확인해 주세요.',
+    emptyPassword: '비밀번호를 입력해 주세요.',
+    passwordProblem: {
+      too_short: '비밀번호는 8자 이상이어야 합니다.',
+      too_long: '비밀번호가 너무 깁니다.',
+      mismatch: '두 비밀번호가 서로 다릅니다.',
+    },
+    weakPassword: '사용할 수 없는 비밀번호입니다. 더 어려운 비밀번호를 입력해 주세요.',
+    // 새 비밀번호 화면 `/reset-password` (PRD F-11)
+    resetPage: {
+      pageTitle: '새 비밀번호 설정 · 재무 레이더',
+      title: '새 비밀번호 설정',
+      submit: '비밀번호 저장',
+      done: '비밀번호를 저장했습니다.',
+      home: '홈으로',
+      mypage: '마이페이지로',
+      failure: {
+        same: '지금 비밀번호와 다른 비밀번호를 입력해 주세요.',
+        weak: '사용할 수 없는 비밀번호입니다. 더 어려운 비밀번호를 입력해 주세요.',
+        expired: '비밀번호 설정 메일을 다시 받아 주세요.',
+        failed: '비밀번호를 저장하지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+      },
+    },
     close: '닫기',
     // PRD F-11 탈퇴 확인 문구 (마이페이지 계정 칸, 17b에서 사용)
     deleteConfirm: '탈퇴하면 추적 종목과 알림 기록이 모두 지워집니다. 탈퇴할까요?',

@@ -2,10 +2,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildLoginRedirect,
+  checkNewPassword,
   isEmailFormat,
   isSameOrigin,
   isWatchCodeFormat,
+  loginFailureKind,
+  parseMailLinkType,
   parseMeResponse,
+  passwordUpdateFailureKind,
   readEmailOptInBody,
   readWatchCodeBody,
   safeNextPath,
@@ -204,5 +208,68 @@ describe('readEmailOptInBody', () => {
     expect(readEmailOptInBody({})).toBeNull();
     expect(readEmailOptInBody(null)).toBeNull();
     expect(readEmailOptInBody(true)).toBeNull();
+  });
+});
+
+describe('checkNewPassword', () => {
+  it('8자이고 두 값이 같으면 통과한다', () => {
+    expect(checkNewPassword('abcd1234', 'abcd1234')).toBeNull();
+  });
+  it('7자는 짧다고 알린다', () => {
+    expect(checkNewPassword('abcd123', 'abcd123')).toBe('too_short');
+  });
+  it('빈 값은 짧다고 알린다', () => {
+    expect(checkNewPassword('', '')).toBe('too_short');
+  });
+  it('문자 조합 조건은 없다 (숫자만 8자 통과)', () => {
+    expect(checkNewPassword('12345678', '12345678')).toBeNull();
+  });
+  it('72바이트는 통과하고 73바이트는 길다고 알린다', () => {
+    expect(checkNewPassword('a'.repeat(72), 'a'.repeat(72))).toBeNull();
+    expect(checkNewPassword('a'.repeat(73), 'a'.repeat(73))).toBe('too_long');
+  });
+  it('한글은 바이트 수로 상한을 본다 (25자 = 75바이트)', () => {
+    expect(checkNewPassword('가'.repeat(25), '가'.repeat(25))).toBe('too_long');
+  });
+  it('두 값이 다르면 알린다', () => {
+    expect(checkNewPassword('abcd1234', 'abcd1235')).toBe('mismatch');
+  });
+});
+
+describe('loginFailureKind', () => {
+  it('invalid_credentials는 invalid다', () => {
+    expect(loginFailureKind('invalid_credentials')).toBe('invalid');
+  });
+  it('email_not_confirmed는 unconfirmed다', () => {
+    expect(loginFailureKind('email_not_confirmed')).toBe('unconfirmed');
+  });
+  it('그 밖의 코드와 코드 없음은 failed다', () => {
+    expect(loginFailureKind('over_request_rate_limit')).toBe('failed');
+    expect(loginFailureKind(undefined)).toBe('failed');
+  });
+});
+
+describe('passwordUpdateFailureKind', () => {
+  it('같은 비밀번호·약한 비밀번호를 구분한다', () => {
+    expect(passwordUpdateFailureKind('same_password')).toBe('same');
+    expect(passwordUpdateFailureKind('weak_password')).toBe('weak');
+  });
+  it('세션이 없거나 재인증이 필요하면 expired다', () => {
+    expect(passwordUpdateFailureKind('AuthSessionMissingError')).toBe('expired');
+    expect(passwordUpdateFailureKind('reauthentication_needed')).toBe('expired');
+  });
+  it('모르는 코드는 failed다', () => {
+    expect(passwordUpdateFailureKind('unexpected_failure')).toBe('failed');
+  });
+});
+
+describe('parseMailLinkType', () => {
+  it('email과 recovery만 받는다', () => {
+    expect(parseMailLinkType('email')).toBe('email');
+    expect(parseMailLinkType('recovery')).toBe('recovery');
+  });
+  it('그 밖의 종류와 null은 null이다', () => {
+    expect(parseMailLinkType('invite')).toBeNull();
+    expect(parseMailLinkType(null)).toBeNull();
   });
 });

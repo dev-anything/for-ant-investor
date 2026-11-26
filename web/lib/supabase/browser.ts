@@ -2,7 +2,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { readSupabasePublicEnv } from '@/lib/supabase/env';
 
-// FS 9-10: 브라우저 클라이언트. 로그인 링크 요청(signInWithOtp)과 로그아웃(signOut)에만 쓴다.
+// FS 9-10: 브라우저 클라이언트. 로그인·가입·비밀번호 설정(`lib/auth-client.ts`)과 로그아웃(signOut)에만 쓴다.
 // 사용자 테이블은 브라우저에서 직접 읽지 않고 API Route를 거친다 (PRD 7-4).
 let cached: SupabaseClient | null = null;
 

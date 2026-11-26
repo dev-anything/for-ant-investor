@@ -1,23 +1,38 @@
 'use client';
 
-// FS 9-11 LoginDialog: 이메일 매직링크 요청 창 (HTML dialog, PRD F-11 존댓말).
-// 열 때마다 새로 마운트해서 상태(입력·보냄·재전송 대기)가 이전 열림에 남지 않게 한다.
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { buildLoginRedirect, isEmailFormat } from '@/lib/auth';
+// FS 9-11 LoginDialog: 로그인·회원가입·비밀번호 설정 창 (HTML dialog, PRD F-11 존댓말).
+// 열 때마다 새로 마운트해서 입력·보냄 상태가 이전 열림에 남지 않게 한다.
+import { useEffect, useId, useRef, useState } from 'react';
+import { LoginForm } from '@/components/LoginForm';
+import { PasswordMailForm } from '@/components/PasswordMailForm';
+import { SignupForm } from '@/components/SignupForm';
+import { buildLoginRedirect, isWatchCodeFormat, RESET_PASSWORD_PATH } from '@/lib/auth';
+import { registerWatchAfterLogin } from '@/lib/auth-client';
 import { copy } from '@/lib/copy';
-import { getBrowserClient } from '@/lib/supabase/browser';
-
-// PRD F-11: "링크 다시 보내기"는 60초 뒤에 누를 수 있다
-const RESEND_WAIT_SECONDS = 60;
 
 export type LoginReason = 'watch' | 'expired' | 'required';
 
-type SendState = 'input' | 'sending' | 'sent' | 'failed';
+type Mode = 'login' | 'signup' | 'reset';
+
+// 화면마다 갈 수 있는 다른 화면
+const MODE_LINKS: Record<Mode, { mode: Mode; label: string }[]> = {
+  login: [
+    { mode: 'signup', label: copy.auth.toSignup },
+    { mode: 'reset', label: copy.auth.toReset },
+  ],
+  signup: [
+    { mode: 'login', label: copy.auth.toLogin },
+    { mode: 'reset', label: copy.auth.toReset },
+  ],
+  reset: [{ mode: 'login', label: copy.auth.toLogin }],
+};
+
+const LINK_CLASS = 'text-sm text-neutral-600 underline-offset-2 hover:text-neutral-900 hover:underline';
 
 interface LoginDialogProps {
   onClose: () => void;
   reason?: LoginReason;
-  // 추적 종목 코드 (로그인 뒤 자동 등록용, FS 9-12). 형식이 틀리면 buildLoginRedirect가 뺀다
+  // 추적 종목 코드 (로그인 뒤 자동 등록용, FS 9-12)
   watch?: string;
 }
 
@@ -32,133 +47,66 @@ function currentNextPath(): string {
 export function LoginDialog({ onClose, reason, watch }: LoginDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
-  const inputId = useId();
-  const errorId = useId();
-
+  const [mode, setMode] = useState<Mode>('login');
+  // 화면을 바꿔도 입력한 이메일은 남긴다
   const [email, setEmail] = useState('');
-  const [sendState, setSendState] = useState<SendState>('input');
-  const [formError, setFormError] = useState<string | null>(null);
-  const [remaining, setRemaining] = useState(0);
 
-  // 마운트되면 모달로 연다. 초점은 첫 입력창에 간다 (dialog 기본 동작)
+  // 마운트되면 모달로 연다. 초점은 첫 조작 요소에 간다 (dialog 기본 동작)
   useEffect(() => {
     const dialog = dialogRef.current;
     if (dialog !== null && !dialog.open) dialog.showModal();
   }, []);
 
-  // 재전송 대기 1초 단위 카운트다운
-  useEffect(() => {
-    if (remaining <= 0) return;
-    const timer = window.setTimeout(() => setRemaining((seconds) => seconds - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [remaining]);
-
-  async function send(): Promise<void> {
-    const value = email.trim();
-    // FS 12장 8번: 형식이 틀리면 요청 자체를 보내지 않는다
-    if (!isEmailFormat(value)) {
-      setFormError(copy.auth.invalidEmail);
-      return;
+  // 로그인 성공: 추적 등록 뒤 화면을 새로 읽는다 (상단 메뉴·추적 버튼이 로그인 상태를 다시 묻게)
+  async function finishLogin(): Promise<void> {
+    const next = new URL(currentNextPath(), window.location.origin);
+    if (watch !== undefined && isWatchCodeFormat(watch) && (await registerWatchAfterLogin(watch))) {
+      // 20개 상한 문구는 `WatchButton`이 쿼리를 읽어 보여준다 (FS 9-12)
+      next.searchParams.set('watch', 'limit');
     }
-    setFormError(null);
-    const client = getBrowserClient();
-    // 로그인 기능이 꺼져 있으면 보낼 수 없다 (FS 9-10)
-    if (client === null) {
-      setSendState('failed');
-      return;
-    }
-    setSendState('sending');
-    try {
-      const { error } = await client.auth.signInWithOtp({
-        email: value,
-        options: {
-          emailRedirectTo: buildLoginRedirect(window.location.origin, currentNextPath(), watch),
-          shouldCreateUser: true,
-        },
-      });
-      if (error) {
-        console.warn('로그인 링크 요청 실패', error.name);
-        setSendState('failed');
-        return;
-      }
-    } catch (error: unknown) {
-      console.warn('로그인 링크 요청 중 오류', error instanceof Error ? error.name : '');
-      setSendState('failed');
-      return;
-    }
-    setSendState('sent');
-    setRemaining(RESEND_WAIT_SECONDS);
+    window.location.replace(next.href);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
-    if (sendState === 'sending') return;
-    void send();
-  }
-
-  const isSent = sendState === 'sent';
-  const reasonText = reason !== undefined ? copy.auth.reason[reason] : null;
+  const reasonText = reason !== undefined && mode !== 'reset' ? copy.auth.reason[reason] : null;
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
       onClose={onClose}
-      className="w-[calc(100%-2rem)] max-w-sm rounded-lg bg-white p-6 text-neutral-900 shadow-lg backdrop:bg-black/40"
+      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-lg bg-white p-6 text-left text-neutral-900 shadow-lg backdrop:bg-black/40"
     >
       <h2 id={titleId} className="text-lg font-bold">
-        {copy.auth.dialogTitle}
+        {copy.auth.title[mode]}
       </h2>
 
-      {isSent ? (
-        <div className="mt-4 space-y-2 text-sm">
-          <p>{copy.auth.sent}</p>
-          <p className="text-neutral-600">{copy.auth.sentNote}</p>
-          <button
-            type="button"
-            onClick={() => void send()}
-            disabled={remaining > 0}
-            className="mt-2 w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:text-neutral-400"
-          >
-            {remaining > 0 ? copy.auth.resendWait(remaining) : copy.auth.resend}
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-3">
-          {reasonText !== null && <p className="text-sm text-neutral-700">{reasonText}</p>}
-          <label htmlFor={inputId} className="sr-only">
-            {copy.auth.inputLabel}
-          </label>
-          <input
-            id={inputId}
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder={copy.auth.inputPlaceholder}
-            aria-invalid={formError !== null}
-            aria-describedby={formError !== null ? errorId : undefined}
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none"
+      <div className="mt-4 space-y-3">
+        {reasonText !== null && <p className="text-sm text-neutral-700">{reasonText}</p>}
+        {mode === 'login' && <LoginForm email={email} onEmailChange={setEmail} onLoggedIn={finishLogin} />}
+        {mode === 'signup' && (
+          <SignupForm
+            email={email}
+            onEmailChange={setEmail}
+            getRedirectTo={() => buildLoginRedirect(window.location.origin, currentNextPath(), watch)}
+            onLoggedIn={finishLogin}
           />
-          {formError !== null && (
-            <p id={errorId} className="text-sm text-neutral-900">
-              {formError}
-            </p>
-          )}
-          {sendState === 'failed' && <p className="text-sm text-neutral-900">{copy.auth.sendFailed}</p>}
-          <p className="text-xs text-neutral-500">{copy.auth.privacy}</p>
-          <button
-            type="submit"
-            disabled={sendState === 'sending'}
-            className="w-full rounded bg-neutral-900 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-400"
-          >
-            {sendState === 'sending' ? copy.auth.sending : copy.auth.submit}
-          </button>
-        </form>
-      )}
+        )}
+        {mode === 'reset' && (
+          <PasswordMailForm
+            email={email}
+            onEmailChange={setEmail}
+            getRedirectTo={() => buildLoginRedirect(window.location.origin, RESET_PASSWORD_PATH)}
+          />
+        )}
+      </div>
 
-      <div className="mt-4 text-right">
-        <button type="button" onClick={onClose} className="text-sm text-neutral-600 hover:text-neutral-900">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        {MODE_LINKS[mode].map((link) => (
+          <button key={link.mode} type="button" onClick={() => setMode(link.mode)} className={LINK_CLASS}>
+            {link.label}
+          </button>
+        ))}
+        <button type="button" onClick={onClose} className={`ml-auto ${LINK_CLASS}`}>
           {copy.auth.close}
         </button>
       </div>

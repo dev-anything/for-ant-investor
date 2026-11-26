@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
-| 갱신일 | 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
+| 갱신일 | 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
 | 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 8장, 2차(F-08·F-09·F-14·F-17·F-18·F-15·F-16·F-10)·확장(F-11·F-12·F-13)은 9장**에 같은 깊이로 적는다. 외부 API 응답처럼 **아직 확인하지 않은 것**은 "확인 뒤 정함"으로 남기고 PRD 11장 번호를 단다 |
@@ -32,7 +32,7 @@
 | 데이터 흐름 | 웹앱은 **Supabase만** 읽는다. 공공 API(KRX·시세·DART)는 부르지 않는다 (배치 담당). **예외 (2차):** F-17 DART 공시검색 `list.json`, F-18 네이버 뉴스 검색(HUB)은 서버에서 직접 부르고 Next.js 캐시에만 둔다. DB에 저장하지 않는다 (PRD 5-8) |
 | 첫 화면 | 페이지의 첫 데이터는 **서버 컴포넌트에서 직접 조회**한다 |
 | 브라우저에서 바뀌는 것 | 검색 자동완성, 스크리너 결과 변경, 챗봇만 **API Route**. (2차) 업종 목록·지표 비교 목록의 정렬·페이지는 URL 쿼리 링크 + 서버 다시 그리기 (`/news`와 같음, API Route 없음). (확장) 로그인 사용자 정보·추적·설정·알림 읽음·탈퇴·수신 거부도 API Route (9-10) |
-| 공개 화면과 로그인 | (확장) 공개 화면(`/`, 종목, 스크리너, 업종, `/news`)은 **쿠키를 읽지 않는다** → 캐시(`revalidate`)가 그대로 유지된다. 로그인에 따라 바뀌는 부분(상단 로그인 메뉴, "추적하기" 버튼)은 클라이언트 컴포넌트가 화면이 뜬 뒤 API Route로 따로 묻는다. 쿠키를 읽는 서버 화면은 `/mypage`·`/auth/callback`뿐 |
+| 공개 화면과 로그인 | (확장) 공개 화면(`/`, 종목, 스크리너, 업종, `/news`)은 **쿠키를 읽지 않는다** → 캐시(`revalidate`)가 그대로 유지된다. 로그인에 따라 바뀌는 부분(상단 로그인 메뉴, "추적하기" 버튼)은 클라이언트 컴포넌트가 화면이 뜬 뒤 API Route로 따로 묻는다. 쿠키를 읽는 서버 화면은 `/mypage`·`/reset-password`·`/auth/callback`뿐 |
 | 복잡한 조회 | 순위·정렬·페이지가 얽힌 조회는 **DB 함수(RPC)** 로 DB에서 처리 (5장) |
 | 판정 위치 | 필터·문장·금융회사·자본잠식 판정은 **배치가 저장한 값**을 읽는다. 웹앱은 다시 판정하지 않는다. 웹앱이 계산하는 것은 화면 표시용(화살표·눈금 위치·숫자 포맷)뿐 |
 | 문구 | 사용자에게 보이는 문구는 **`lib/copy.ts` 한 파일**에 모은다. 컴포넌트에 문구를 직접 쓰지 않는다 |
@@ -61,7 +61,8 @@ for-ant-investor/
 │  │  ├─ industries/[division]/compare/page.tsx # (2차) 지표 비교 목록 (F-08)
 │  │  ├─ mypage/page.tsx            # (확장) 마이페이지 (F-12·F-13, 쿠키 읽음)
 │  │  ├─ unsubscribe/page.tsx       # (확장) 수신 거부 확인 화면 (F-13)
-│  │  ├─ auth/callback/route.ts     # (확장) 매직링크 도착 → 세션 생성 → watch 처리 → next (F-11·F-12)
+│  │  ├─ reset-password/page.tsx    # (확장) 새 비밀번호 설정 (F-11, 쿠키 읽음)
+│  │  ├─ auth/callback/route.ts     # (확장) 인증 메일 링크 도착 → 세션 생성 → watch 처리 → next (F-11·F-12)
 │  │  └─ api/
 │  │     ├─ search/route.ts         # GET 연관검색어 (F-01)
 │  │     ├─ screener/route.ts       # GET 스크리너 결과 (F-07)
@@ -77,7 +78,7 @@ for-ant-investor/
 │  ├─ lib/
 │  │  ├─ supabase/server.ts         # 서버용 클라이언트 (server-only)
 │  │  ├─ supabase/session.ts        # (확장) 로그인 세션 서버 클라이언트 (@supabase/ssr, 쿠키, server-only)
-│  │  ├─ supabase/browser.ts        # (확장) 브라우저 클라이언트 (publishable 키, 로그인·로그아웃만)
+│  │  ├─ supabase/browser.ts        # (확장) 브라우저 클라이언트 (publishable 키, 로그인·가입·비밀번호·로그아웃만)
 │  │  ├─ supabase/types.ts          # DB 타입 (생성 파일)
 │  │  ├─ data/                      # 서버 조회 함수 (stock.ts, screener.ts, search.ts, 2차 industry.ts·disclosures.ts·news.ts·chat.ts, 확장 mypage.ts)
 │  │  ├─ news-text.ts               # (2차) 기사 제목 정리·도메인·기사 검색어 (F-18)
@@ -160,7 +161,7 @@ export function db() {
   - 안쪽 함수: 호출 → 성공(DART `000`·`013`, HUB 200, AI 출력 모양 맞음)이면 값 반환, 그 밖이면 **throw** (throw한 결과는 캐시되지 않음).
   - 바깥 함수: 안쪽을 부르고 throw를 잡아 `{ status: 'error' }`로 바꾼다 (페이지를 죽이지 않음). 로그에는 상태 코드·DART `status`만.
   - 캐시 키: 공시 `corp_code`, 종목 기사 종목명, 일반 기사 페이지 번호, AI 정규화 문장.
-- (확장) `/mypage`·`/auth/callback`·확장 API Route는 캐시하지 않는다 (`dynamic`, 응답 `Cache-Control: private, no-store`).
+- (확장) `/mypage`·`/reset-password`·`/auth/callback`·확장 API Route는 캐시하지 않는다 (`dynamic`, 응답 `Cache-Control: private, no-store`).
 
 ---
 
@@ -579,6 +580,10 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | `safeNextPath(next)` | `/`로 시작하고 `//`·`/\`로 시작하지 않으며 `URL` 해석 결과 호스트가 바뀌지 않으면 그대로, 그 밖·빈 값은 `/` (PRD F-11) |
 | `isWatchCodeFormat(code)` | `^[0-9A-Z]{6}$` (영문 섞인 코드 `0220W0` 포함). 검색 대상 여부는 DB로 따로 확인 |
 | `buildLoginRedirect(origin, next, watch?)` | `{origin}/auth/callback?next={encode(next)}[&watch={code}]` — 항상 `?next=`를 붙인다 (9-11 메일 템플릿이 `&`로 이어 붙임) |
+| `checkNewPassword(password, confirm)` | 8자(코드 포인트) 미만 `too_short`, 72바이트 초과 `too_long`, 두 값이 다르면 `mismatch`, 그 밖 `null` |
+| `loginFailureKind(code)` | `invalid_credentials` → `invalid`, `email_not_confirmed` → `unconfirmed`, 그 밖 `failed` |
+| `passwordUpdateFailureKind(code)` | `same_password` → `same`, `weak_password` → `weak`, 세션 없음·만료·재인증 필요 → `expired`, 그 밖 `failed` |
+| `parseMailLinkType(type)` | `email`(가입 확인)·`recovery`(비밀번호 설정)만, 그 밖 `null` |
 
 ### 6-13. (2차) `lib/news-text.ts` — 기사 (PRD 4장 F-18)
 
@@ -1106,9 +1111,9 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 
 | 파일 | 내용 |
 | --- | --- |
-| `lib/supabase/session.ts` | `@supabase/ssr` `createServerClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, { cookies })`. `server-only`. Route Handler·`/mypage`에서만 |
-| `lib/supabase/browser.ts` | `createBrowserClient(…)`. **로그인 링크 요청(`signInWithOtp`)과 로그아웃(`signOut`)에만** 쓴다. 사용자 테이블은 브라우저에서 직접 읽지 않고 API Route를 거친다 (PRD 7-4) |
-| `proxy.ts` | 세션 쿠키 갱신 (`@supabase/ssr` 안내 방식). `matcher`: `/mypage`, `/auth/:path*`, `/api/me`, `/api/watchlist`, `/api/settings`, `/api/notifications/:path*`, `/api/account/:path*` — **공개 화면은 넣지 않는다** (캐시 유지) |
+| `lib/supabase/session.ts` | `@supabase/ssr` `createServerClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, { cookies })`. `server-only`. Route Handler·`/mypage`·`/reset-password`에서만 |
+| `lib/supabase/browser.ts` | `createBrowserClient(…)`. **인증 요청(`lib/auth-client.ts`: 로그인·가입·재발송·설정 메일·비밀번호 저장)과 로그아웃(`signOut`)에만** 쓴다. 사용자 테이블은 브라우저에서 직접 읽지 않고 API Route를 거친다 (PRD 7-4) |
+| `proxy.ts` | 세션 쿠키 갱신 (`@supabase/ssr` 안내 방식). `matcher`: `/mypage`, `/reset-password`, `/auth/:path*`, `/api/me`, `/api/watchlist`, `/api/settings`, `/api/notifications/:path*`, `/api/account/:path*` — **공개 화면은 넣지 않는다** (캐시 유지) |
 
 - 서버에서 사용자 확인은 `supabase.auth.getUser()` (쿠키만 믿는 `getSession` 쓰지 않음).
 
@@ -1120,29 +1125,37 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 
 **규칙·문구:** PRD 4장 F-11 (존댓말), 10장 17번.
 
-**`LoginDialog` (클라이언트)** — HTML `<dialog>` (`showModal`, Esc로 닫힘, 초점은 입력창). `AuthMenu`·`WatchButton`·`/mypage` 보호에서 연다. props `watch?: string`, `reason?: 'watch' | 'expired' | 'required'`.
+**`LoginDialog` (클라이언트)** — HTML `<dialog>` (`showModal`, Esc로 닫힘, 가운데 정렬 `m-auto`). `AuthMenu`·`WatchButton`에서 연다. props `watch?: string`, `reason?: 'watch' | 'expired' | 'required'`. 화면 3개(`login`·`signup`·`reset`)를 상태로 바꾸고, 입력한 이메일은 화면을 바꿔도 남긴다. `reason` 문구는 `login`·`signup` 화면에만 보인다.
 
-| 상태 | 표시 |
+| 파일 | 내용 |
 | --- | --- |
-| 입력 | 제목 "이메일로 로그인", (reason 문구: `watch` → "로그인하면 종목을 추적할 수 있어." / `expired` → "로그인 링크가 만료되었습니다. 다시 받아 주세요." / `required` → 12장 9번) + 입력창(`type=email`, 안내 글 PRD) + 개인정보 안내(PRD 10장 17번) + [로그인 링크 받기] |
-| 보내는 중 | 버튼 비활성 |
-| 보냄 | "로그인 링크를 보냈습니다. 메일함을 확인해 주세요." + "메일이 오지 않으면 스팸함을 확인해 주세요." + [링크 다시 보내기] (60초 뒤 활성, 남은 초 표시) |
-| 실패 | 12장 7번 (형식 오류는 12장 8번, 보내기 전에 브라우저 검사) |
+| `LoginForm` | 이메일 + 비밀번호 → `signInWithPassword`. 보내기 전 이메일 형식·빈 비밀번호만 검사 |
+| `SignupForm` | 이메일 + 비밀번호 2번 + 개인정보 안내 → `checkNewPassword` → `signUp({ email, password, options: { emailRedirectTo: buildLoginRedirect(origin, 현재 경로, watch) } })` → `MailSentPanel` (재발송 `auth.resend({ type: 'signup' })`). `user_already_exists`도 보냄 화면. 세션이 바로 오면(메일 확인이 꺼진 설정) 로그인 성공 처리 |
+| `PasswordMailForm` | 이메일 → `resetPasswordForEmail(email, { redirectTo: buildLoginRedirect(origin, '/reset-password') })` → `MailSentPanel` |
+| `MailSentPanel` | 안내 두 줄 + [메일 다시 보내기] (60초 뒤 활성, 남은 초 표시) |
+| `AuthFields` | 입력칸·제출 버튼·오류 줄 (`/reset-password`와 공용) |
+| `lib/auth-client.ts` | 위 요청 함수. 던지지 않고 결과 값을 돌려주며 로그에는 오류 코드만 |
 
-- 요청: `browser.auth.signInWithOtp({ email, options: { emailRedirectTo: buildLoginRedirect(location.origin, 현재 경로, watch), shouldCreateUser: true } })`.
+- **로그인 성공:** `watch`가 있으면 `POST /api/watchlist` → 409면 `?watch=limit` → `window.location.replace(현재 경로)` (상단 메뉴·추적 버튼이 상태를 다시 읽음).
 
-**매직링크 방식 — 다른 기기에서 열어도 되게 (PRD F-12)**
+**`/reset-password` (서버, `dynamic`, noindex)** — `getUser()` 없으면 `redirect('/?login=required')`. 있으면 `ResetPasswordForm`: 새 비밀번호 2번 → `checkNewPassword` → `updateUser({ password })` → 완료 문구 + 홈·마이페이지 링크.
 
-- 브라우저 PKCE(`?code=` 교환)는 링크를 **요청한 브라우저**에서만 열린다. 그래서 메일 링크는 `token_hash` 방식으로 만든다: Supabase 대시보드 Magic Link 메일 템플릿의 링크를 `{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email`로 바꾼다 (`RedirectTo`에는 항상 `?next=`가 있음, 6-12). 템플릿 변수·동작은 구현 때 Supabase 문서로 확인.
-- 메일 제목·본문은 PRD F-11 문구로 템플릿에 넣는다 (사용자가 대시보드에서, 또는 함께 설정).
-- Supabase 설정 (사용자): Site URL = 배포 주소, Redirect URLs = `{배포 주소}/auth/callback**`·`http://localhost:3000/auth/callback**`, 커스텀 SMTP = Gmail.
+**인증 메일 링크 — 다른 기기에서 열어도 되게 (PRD F-12)**
 
-**`GET /auth/callback?next=&watch=&token_hash=&type=email` (Route Handler)**
+- 브라우저 PKCE(`?code=` 교환)는 링크를 **요청한 브라우저**에서만 열린다. 그래서 메일 링크는 `token_hash` 방식으로 만든다 (Supabase 대시보드 템플릿, `RedirectTo`에는 항상 `?next=`가 있음, 6-12).
+  - Confirm signup: `{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email`
+  - Reset Password: `{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery`
+  - Magic Link 템플릿은 더 쓰지 않는다.
+- 메일 제목·본문은 PRD F-11 문구로 템플릿에 넣는다 (사용자가 대시보드에서).
+- Supabase 설정 (사용자): Confirm email 켜기, 최소 비밀번호 길이 8, Site URL = 배포 주소, Redirect URLs = `{배포 주소}/auth/callback**`·`http://localhost:3000/auth/callback**`, 커스텀 SMTP = Gmail.
 
-1. `next = safeNextPath(next)`.
-2. `session.auth.verifyOtp({ token_hash, type: 'email' })` → 실패하면 `redirect({next}?login=expired)` (`AuthMenu`가 쿼리를 보고 `LoginDialog reason='expired'`를 연다, 연 뒤 쿼리 제거).
-3. `watch`가 있으면 9-12 "로그인 뒤 자동 등록".
-4. `redirect(next)`.
+**`GET /auth/callback?next=&watch=&token_hash=&type=` (Route Handler)**
+
+1. `next = safeNextPath(next)`, `type = parseMailLinkType(type)`.
+2. `session.auth.verifyOtp({ token_hash, type })` → 실패·값 없음이면 `redirect({next}?login=expired)` (`next`가 `/reset-password`면 `/?login=expired`). `AuthMenu`가 쿼리를 창 상태로 옮겨 `LoginDialog reason='expired'`를 열고 쿼리를 지운다 (같은 값은 한 번만 반영).
+3. `type`이 `recovery`면 `next`와 상관없이 `/reset-password`로.
+4. `watch`가 있으면 9-12 "로그인 뒤 자동 등록".
+5. `redirect(next)`.
 
 **탈퇴 — `POST /api/account/delete`**
 
@@ -1171,7 +1184,7 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 | `POST { code }` | 형식 400, 검색 대상 아님·외국회사 404. `insert { user_id, srtn_cd, crno }` (`crno`는 `stocks`). 이미 있음(PK 충돌 `23505`) → 201로 같게. 트리거 상한(`P0001`) → 409 `{ "error": "limit" }` |
 | `DELETE { code }` | `delete` `eq('srtn_cd')` → 204 (없어도 204) |
 
-**로그인 뒤 자동 등록 (`/auth/callback` 3번)** — `isWatchCodeFormat(watch)` → 검색 대상·외국회사 아님 확인 → 위 POST와 같은 insert. 상한이면 `next`에 `?watch=limit`를 붙인다. 그 밖 실패는 조용히 넘어가고 `next`로 (로그인 자체는 성공).
+**로그인 뒤 자동 등록 (`/auth/callback` 4번, 가입 확인 링크. 로그인 창에서 바로 로그인한 경우는 9-11의 `POST /api/watchlist`)** — `isWatchCodeFormat(watch)` → 검색 대상·외국회사 아님 확인 → 위 POST와 같은 insert. 상한이면 `next`에 `?watch=limit`를 붙인다. 그 밖 실패는 조용히 넘어가고 `next`로 (로그인 자체는 성공).
 
 **`/mypage` (서버, `dynamic`)**
 
@@ -1260,7 +1273,7 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 | `tour.test.ts` (2차) | `buildTourSteps`: 5개 모두 → 1/5~5/5, 금융회사(`sales`·`debt` 없음) → 3단계 + `profit` 금융회사 문구, 중간 하나 빠짐 → 번호 다시 매김 |
 | `params.test.ts` 추가 (2차) | `parseListParams`: 허용 밖 `sort` → `name`, `size`·`page` 바로잡기, `toListQuery` 왕복. `isDivisionCode` |
 | `gauge.test.ts` 추가 (2차) | `per` 범위 밖(80배 → `high`), `pbr` 기준선 1 |
-| `auth.test.ts` (확장) | `safeNextPath`: `/stocks/005930` 통과, `//evil.com`·`/\evil.com`·`https://…`·빈 값·`/`로 시작 안 함 → `/`. `isWatchCodeFormat`: `005930`·`0220W0` 통과, 5·7자리·소문자·기호 거부. `buildLoginRedirect` 항상 `?next=` 포함 (검색 대상 여부는 DB 조회라 수동 확인) |
+| `auth.test.ts` (확장) | `safeNextPath`: `/stocks/005930` 통과, `//evil.com`·`/\evil.com`·`https://…`·빈 값·`/`로 시작 안 함 → `/`. `isWatchCodeFormat`: `005930`·`0220W0` 통과, 5·7자리·소문자·기호 거부. `buildLoginRedirect` 항상 `?next=` 포함. `checkNewPassword`(7·8자, 72·73바이트, 불일치)·`loginFailureKind`·`passwordUpdateFailureKind`·`parseMailLinkType` (검색 대상 여부는 DB 조회라 수동 확인) |
 | `batch/tests/test_notify.py` (확장, `python3 -m unittest`) | `results_body` 일반·금융회사, `audit_changed`(한 행만 다름·빈 의견·감사인만 바뀜), `mail_subject` 4가지, `dedupe_key` 모양 |
 | `disclosure.test.ts` (2차) | 지분공시 빼기, 순서 유지, 5개 자르기, 5개 미만, `dartViewerUrl`, `formatRceptDt` |
 | `rules-sync.test.ts` | `../batch/rules.py`를 텍스트로 읽어 `CONFLICTS`·`FINANCIAL_BLOCKED`·`GAUGES`·`FLAT_SHARE`(3/100)를 정규식으로 뽑아 TS 상수와 같은지 비교 (배치와 웹앱 기준이 어긋나는 것을 막음) |
@@ -1296,7 +1309,7 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 | 14. F-10 | 마이그레이션 5-6(**사용자 확인 후 적용**), `chat.ts`, `/api/chat`, `ChatFilterInput`, OpenRouter 모델 고르기(PRD 10장 19번), `chat-isolation.test.ts` | PRD F-10 수용 기준 |
 | 15. 2차 마무리 | PRD 9장 표본 대조(배당 포함), 배포 | 배포 주소에서 2차 화면 동작 |
 | **확장** | | |
-| 16. F-11 | PRD 11장 11번(Gmail 한도) 확인, 마이그레이션 5-7(**사용자 확인 후 적용**), `@supabase/ssr`, `session.ts`·`browser.ts`·`proxy.ts`, `/api/me`, `AuthMenu`, `LoginDialog`, `/auth/callback`, 탈퇴. Supabase SMTP·Redirect URL·메일 템플릿 설정 (사용자와 함께) | PRD F-11 흐름(다른 기기에서 링크 열기 포함), 공개 화면 응답이 여전히 캐시됨 |
+| 16. F-11 | PRD 11장 11번(Gmail 한도) 확인, 마이그레이션 5-7(**사용자 확인 후 적용**), `@supabase/ssr`, `session.ts`·`browser.ts`·`proxy.ts`, `/api/me`, `AuthMenu`, `LoginDialog`, `/reset-password`, `/auth/callback`, 탈퇴. Supabase SMTP·Redirect URL·메일 템플릿 설정 (사용자와 함께) | PRD F-11 수용 기준(다른 기기에서 메일 링크 열기 포함), 공개 화면 응답이 여전히 캐시됨 |
 | 17. F-12 | `/api/watchlist`·`/api/settings`, `WatchButton`, 로그인 뒤 자동 등록, `/mypage`, `WatchCard`·`MiniBars` | PRD F-12 (20개 상한 문구, 목록에서 빠짐 표시) |
 | 18. F-13 | 마이그레이션 5-8(**사용자 확인 후 적용**), 알림 읽음·`NotificationList`, `/unsubscribe`·`/api/unsubscribe`, 배치 `notify.py`·`notify_mail.py`·`dart_collect`·`krx_list` 연결, `daily.yml` 단계, GitHub Secrets (사용자) | PRD F-13 (같은 변화 두 번 안 알림, 메일 한 통, GET으로는 수신 거부 안 됨) |
 
@@ -1314,7 +1327,7 @@ PRD 10장 목록에 더해, 이 문서에서 새로 생긴 문구다. 기본안�
 | 4 | 스크리너 화면 제목 | 조건으로 찾기 (메뉴 이름과 같음) |
 | 5 | (2차) 없는 업종 주소 (404) | 이 업종을 찾을 수 없어. 업종으로 둘러보기에서 다시 찾아 줘. |
 | 6 | (2차) 챗봇 제출 버튼 | 찾기 |
-| 7 | (확장) 로그인 링크 발송 실패 (존댓말) | 로그인 링크를 보내지 못했습니다. 잠시 뒤 다시 시도해 주세요. |
+| 7 | (확장) 인증 메일 발송 실패 (존댓말) | 메일을 보내지 못했습니다. 잠시 뒤 다시 시도해 주세요. |
 | 8 | (확장) 이메일 형식 오류 (존댓말) | 이메일 주소를 확인해 주세요. |
 | 9 | (확장) 로그인 없이 마이페이지 주소로 들어옴 (존댓말) | 로그인이 필요합니다. |
 | 10 | (확장) 추적·메일 설정 변경 실패 | 지금은 바꿀 수 없어. 잠시 뒤 다시 해 줘. |

@@ -1,8 +1,14 @@
-// GET /auth/callback?next=&watch=&token_hash=&type=email — 매직링크 확인 (FS 9-11, DEV_PLAN 16b).
+// GET /auth/callback?next=&watch=&token_hash=&type= — 인증 메일 링크 확인 (FS 9-11).
+// `type=email`은 가입 확인, `type=recovery`는 비밀번호 설정·재설정.
 // 메일 링크는 token_hash 방식이라 요청한 브라우저가 아닌 다른 기기에서 열어도 된다 (PKCE 아님).
 import { NextResponse } from 'next/server';
 import { errorCodeOf, PRIVATE_NO_STORE } from '@/lib/api-guard';
-import { isWatchCodeFormat, safeNextPath } from '@/lib/auth';
+import {
+  isWatchCodeFormat,
+  parseMailLinkType,
+  RESET_PASSWORD_PATH,
+  safeNextPath,
+} from '@/lib/auth';
 import { findWatchTarget, insertWatch } from '@/lib/data/watch';
 import { createSessionClient, type SessionClient } from '@/lib/supabase/session';
 
@@ -14,21 +20,23 @@ export async function GET(request: Request) {
   // 열린 리다이렉트 방지: 돌아갈 곳은 항상 safeNextPath를 거친다 (PRD F-11)
   const next = safeNextPath(url.searchParams.get('next'));
   const tokenHash = url.searchParams.get('token_hash');
-  const type = url.searchParams.get('type');
+  const type = parseMailLinkType(url.searchParams.get('type'));
   const watch = url.searchParams.get('watch');
 
   const supabase = await createSessionClient();
   // 로그인 기능이 꺼져 있으면 로그인 실패 표시 없이 돌려보낸다
   if (supabase === null) return redirectTo(request, next);
 
-  if (tokenHash === null || type !== 'email') {
-    return redirectTo(request, withLoginFlag(next, 'expired'));
-  }
-  const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email' });
-  if (error || data.user === null) {
-    // 만료·이미 쓴 링크. 화면이 LoginDialog(expired)를 연다 (9-11)
-    return redirectTo(request, withLoginFlag(next, 'expired'));
-  }
+  // 새 비밀번호 화면은 세션이 없으면 열리지 않아서, 그쪽으로 가던 링크가 실패하면 홈에서 안내한다
+  const failurePath = withLoginFlag(next === RESET_PASSWORD_PATH ? '/' : next, 'expired');
+  if (tokenHash === null || type === null) return redirectTo(request, failurePath);
+
+  const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+  // 만료·이미 쓴 링크. 화면이 LoginDialog(expired)를 연다 (9-11)
+  if (error || data.user === null) return redirectTo(request, failurePath);
+
+  // 비밀번호 설정 링크는 `next` 값과 상관없이 새 비밀번호 화면으로 보낸다
+  if (type === 'recovery') return redirectTo(request, RESET_PASSWORD_PATH);
 
   // 로그인 성공은 유지한다. 자동 등록이 실패해도 돌려보내기는 한다 (9-12)
   let destination = next;

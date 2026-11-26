@@ -44,8 +44,13 @@ export function AuthMenu() {
   const [logoutFailed, setLogoutFailed] = useState(false);
 
   const loginFlag = readLoginFlag(searchParams.get('login'));
-  // 쿼리로 연 창이 우선이다. 아니면 버튼으로 연 창
-  const opened: { reason?: LoginReason } | null = loginFlag !== null ? { reason: loginFlag } : dialog;
+  // 이미 창에 반영한 쿼리 값. 쿼리가 지워지기 전에 창을 닫아도 다시 열리지 않게 기억한다
+  const [seenFlag, setSeenFlag] = useState<LoginReason | null>(null);
+  // 쿼리는 곧 지우므로 창 상태로 옮겨 둔다. 옮기지 않으면 쿼리를 지우는 순간 창이 닫힌다 (렌더 중 상태 맞추기)
+  if (loginFlag !== seenFlag) {
+    setSeenFlag(loginFlag);
+    if (loginFlag !== null) setDialog({ reason: loginFlag });
+  }
 
   useEffect(() => {
     let active = true;
@@ -57,8 +62,7 @@ export function AuthMenu() {
     };
   }, []);
 
-  // `/auth/callback`·`/mypage`가 붙인 `?login=` 쿼리로 창을 연다 (상태로 복사하지 않고 읽어서 그린다)
-  // 쿼리는 바로 지운다. 지운 뒤에는 쿼리가 없으니 창이 다시 열리지 않는다
+  // `/auth/callback`·`/mypage`가 붙인 `?login=` 쿼리는 창을 연 뒤 바로 지운다 (새로고침 때 다시 열리지 않게)
   useEffect(() => {
     if (loginFlag === null) return;
     const params = new URLSearchParams(searchParams.toString());
@@ -117,7 +121,7 @@ export function AuthMenu() {
           {copy.auth.login}
         </button>
       )}
-      {opened !== null && <LoginDialog reason={opened.reason} onClose={() => setDialog(null)} />}
+      {dialog !== null && <LoginDialog reason={dialog.reason} onClose={() => setDialog(null)} />}
     </div>
   );
 }

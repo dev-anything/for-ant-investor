@@ -33,7 +33,7 @@ export function isWatchCodeFormat(code: string | null): code is string {
 }
 
 /**
- * 매직링크의 `emailRedirectTo`를 만든다. 항상 `?next=`를 붙인다 (메일 템플릿이 `&`로 이어 붙이기 때문).
+ * 인증 메일(가입 확인·비밀번호 설정)의 돌아갈 주소를 만든다. 항상 `?next=`를 붙인다 (메일 템플릿이 `&`로 이어 붙이기 때문).
  * `watch`는 형식이 맞을 때만 붙인다 (잘못된 값으로 자동 등록을 시도하지 않게).
  */
 export function buildLoginRedirect(origin: string, next: string, watch?: string): string {
@@ -68,7 +68,7 @@ export function isSameOrigin(
   }
 }
 
-// 이메일 형식 검사 (FS 12장 8번, PRD F-11). 보내기 전에 브라우저에서만 본다. 실제 주소 확인은 메일 링크가 한다.
+// 이메일 형식 검사 (FS 12장 8번, PRD F-11). 보내기 전에 브라우저에서만 본다. 실제 주소 확인은 가입 확인 메일이 한다.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EMAIL_MAX_LENGTH = 254; // RFC 5321 주소 최대 길이
 
@@ -112,4 +112,57 @@ export function readEmailOptInBody(body: unknown): boolean | null {
   if (typeof body !== 'object' || body === null || !('emailOptIn' in body)) return null;
   const value = body.emailOptIn;
   return typeof value === 'boolean' ? value : null;
+}
+
+/** 비밀번호 설정·재설정 메일의 링크를 누르면 가는 화면 (PRD F-11). */
+export const RESET_PASSWORD_PATH = '/reset-password';
+
+export const PASSWORD_MIN_LENGTH = 8;
+// Supabase Auth는 비밀번호를 bcrypt로 해시해서 72바이트까지만 받는다
+export const PASSWORD_MAX_BYTES = 72;
+
+export type PasswordProblem = 'too_short' | 'too_long' | 'mismatch';
+
+/** 새 비밀번호와 확인 입력을 본다 (PRD F-11). 문자 조합 조건은 없다. 문제가 없으면 null. */
+export function checkNewPassword(password: string, confirm: string): PasswordProblem | null {
+  // 글자 수는 코드 포인트 기준 (이모지 1개를 2글자로 세지 않는다)
+  if ([...password].length < PASSWORD_MIN_LENGTH) return 'too_short';
+  if (new TextEncoder().encode(password).length > PASSWORD_MAX_BYTES) return 'too_long';
+  if (password !== confirm) return 'mismatch';
+  return null;
+}
+
+export type LoginFailure = 'invalid' | 'unconfirmed' | 'failed';
+
+/** Supabase 로그인 오류 코드를 화면 안내 종류로 바꾼다. 가입 여부는 구분해 알려주지 않는다 (PRD F-11). */
+export function loginFailureKind(code: string | undefined): LoginFailure {
+  if (code === 'invalid_credentials') return 'invalid';
+  if (code === 'email_not_confirmed') return 'unconfirmed';
+  return 'failed';
+}
+
+export type PasswordUpdateFailure = 'same' | 'weak' | 'expired' | 'failed';
+
+// 세션이 없거나 오래돼 재설정 메일을 다시 받아야 하는 오류. `AuthSessionMissingError`는 코드 없이 이름만 온다
+const SESSION_EXPIRED_CODES = new Set([
+  'AuthSessionMissingError',
+  'session_not_found',
+  'session_expired',
+  'reauthentication_needed',
+]);
+
+/** Supabase 비밀번호 변경 오류 코드(코드가 없으면 오류 이름)를 화면 안내 종류로 바꾼다. */
+export function passwordUpdateFailureKind(code: string): PasswordUpdateFailure {
+  if (code === 'same_password') return 'same';
+  if (code === 'weak_password') return 'weak';
+  if (SESSION_EXPIRED_CODES.has(code)) return 'expired';
+  return 'failed';
+}
+
+/** 메일 링크의 종류. `email`은 가입 확인, `recovery`는 비밀번호 설정·재설정 (FS 9-11). */
+export type MailLinkType = 'email' | 'recovery';
+
+/** `/auth/callback`의 `type` 값을 본다. 받지 않는 종류면 null. */
+export function parseMailLinkType(type: string | null): MailLinkType | null {
+  return type === 'email' || type === 'recovery' ? type : null;
 }
