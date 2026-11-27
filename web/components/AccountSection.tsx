@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-12 계정 칸 · FS 9-11 탈퇴 확인: 로그아웃과 탈퇴 (PRD F-11, 존댓말 예외 칸, DESIGN.md 5-1).
+// FS 9-12 계정 칸 · FS 9-11 탈퇴 확인: 로그아웃과 탈퇴 (PRD F-11, 존댓말 예외 칸, DESIGN-remember 공통 컨트롤).
 // 로그아웃과 탈퇴 뒤에는 전체 이동으로 `/`에 간다. 상단 로그인 메뉴(AuthMenu)의 상태를 새로 읽게 하려고다.
 import { useEffect, useRef, useState } from 'react';
 import { copy } from '@/lib/copy';
@@ -55,14 +55,14 @@ export function AccountSection() {
       <button
         type="button"
         onClick={() => void logout()}
-        className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
+        className="rounded-md border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
       >
         {copy.auth.logout}
       </button>
       <button
         type="button"
         onClick={() => setConfirmOpen(true)}
-        className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
+        className="rounded-md border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
       >
         {copy.mypage.deleteButton}
       </button>
@@ -80,7 +80,7 @@ export function AccountSection() {
       <dialog
         ref={dialogRef}
         onClose={() => setConfirmOpen(false)}
-        className="w-[min(90vw,26rem)] rounded border border-line bg-white p-6 text-ink backdrop:bg-ink/40"
+        className="w-[min(90vw,26rem)] rounded-md border border-line bg-white p-6 text-ink backdrop:bg-ink/40"
       >
         <p className="leading-relaxed">{copy.auth.deleteConfirm}</p>
         <div className="mt-6 flex justify-end gap-2">
@@ -88,7 +88,7 @@ export function AccountSection() {
             type="button"
             onClick={() => setConfirmOpen(false)}
             disabled={deleting}
-            className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface disabled:opacity-40"
+            className="rounded-md border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface disabled:opacity-40"
           >
             {copy.mypage.deleteCancel}
           </button>
@@ -97,7 +97,7 @@ export function AccountSection() {
             type="button"
             onClick={() => void deleteAccount()}
             disabled={deleting}
-            className="rounded bg-primary px-3 py-2 text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-md bg-primary px-3 py-2.5 text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
           >
             {copy.mypage.deleteSubmit}
           </button>

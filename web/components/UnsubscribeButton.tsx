@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-13 수신 거부 확인 화면 (클라이언트): 확인 문구와 [수신 거부] 버튼 (PRD F-13, PRD 10장 34번, DESIGN.md 5-1).
+// FS 9-13 수신 거부 확인 화면 (클라이언트): 확인 문구와 [수신 거부] 버튼 (PRD F-13, PRD 10장 34번, DESIGN-remember 공통 컨트롤).
 // GET으로는 아무것도 바꾸지 않고, 버튼을 눌러야 `POST /api/unsubscribe`로 끈다.
 import { useState } from 'react';
 import { copy } from '@/lib/copy';
@@ -43,7 +43,7 @@ export function UnsubscribeButton({ token }: UnsubscribeButtonProps) {
         type="button"
         onClick={() => void unsubscribe()}
         disabled={phase === 'busy'}
-        className="mt-4 rounded bg-primary px-4 py-2 text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-4 rounded-md bg-primary px-4 py-2.5 text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
       >
         {copy.unsubscribe.submit}
       </button>

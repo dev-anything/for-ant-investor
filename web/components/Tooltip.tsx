@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 
-// FS 7장, DESIGN.md 5-4: Tooltip 버튼 트리거 + 말풍선.
+// FS 7장, DESIGN-remember: Tooltip 버튼 트리거 + 말풍선.
 // 흰 바탕 + 얇은 회색 테두리(border-line), 검정 글자(text-ink). 마우스 올림·포커스·탭으로 열리고, Esc·바깥 클릭으로 닫힌다.
 export function Tooltip({ text, label }: { text: string; label: string }) {
   const [isOpen, setIsOpen] = useState(false);

@@ -45,7 +45,7 @@ export function MailSentPanel({ message, note, onResend }: MailSentPanelProps) {
         type="button"
         onClick={() => void resend()}
         disabled={busy || remaining > 0}
-        className="mt-2 w-full rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-2 w-full rounded-md border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
       >
         {remaining > 0 ? copy.auth.resendWait(remaining) : copy.auth.resend}
       </button>

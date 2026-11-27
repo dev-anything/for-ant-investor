@@ -1,6 +1,6 @@
 'use client';
 
-// 로그인 창과 새 비밀번호 화면이 같이 쓰는 입력칸·버튼 (FS 9-11, DESIGN.md 5-1, 5-7).
+// 로그인 창과 새 비밀번호 화면이 같이 쓰는 입력칸·버튼 (FS 9-11, DESIGN-remember 공통 컨트롤).
 import { useId, type InputHTMLAttributes } from 'react';
 
 type AuthFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'className'> & {
@@ -30,7 +30,7 @@ export function AuthField({ label, value, onValueChange, hint, ...inputProps }: 
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
         aria-describedby={hint !== undefined ? hintId : undefined}
-        className="w-full rounded border border-line px-3 py-2 text-sm text-ink focus:border-ink"
+        className="w-full rounded border border-muted bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-sub"
       />
     </div>
   );
@@ -42,7 +42,7 @@ export function AuthSubmit({ label, disabled }: { label: string; disabled: boole
     <button
       type="submit"
       disabled={disabled}
-      className="w-full rounded bg-primary px-3 py-2 text-sm font-bold text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
+      className="w-full rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
     >
       {label}
     </button>
