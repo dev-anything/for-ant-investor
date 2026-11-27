@@ -38,9 +38,14 @@ function Marked({ text, query }: { text: string; query: string }) {
   );
 }
 
+interface SearchBoxProps {
+  // 헤더의 작은 검색창 여부. 표시 크기만 다르고 검색 로직은 같다 (DESIGN 4-2)
+  compact?: boolean;
+}
+
 // FS 8-1, DESIGN.md 5-2: 종목명 입력 상자와 연관검색어 목록.
-// 첫 화면 가운데 큰 테두리 검색창 (border-line, focus-visible 갈색 링, shadow 없음)
-export function SearchBox() {
+// compact는 헤더 재사용용 크기 변형이다. 요청·이동·디바운스는 그대로 둔다.
+export function SearchBox({ compact = false }: SearchBoxProps) {
   const router = useRouter();
   const inputId = useId();
   const listId = useId();
@@ -56,10 +61,11 @@ export function SearchBox() {
   const timerRef = useRef<number | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
-  // 첫 화면 진입 시 입력창에 포커스 (FS 8-1)
+  // 첫 화면의 큰 검색창만 진입 시 포커스. 헤더 작은 검색창은 페이지마다 포커스를 뺏지 않는다 (FS 8-1)
   useEffect(() => {
+    if (compact) return;
     inputRef.current?.focus();
-  }, []);
+  }, [compact]);
 
   // 떠날 때 대기 중인 디바운스와 요청을 정리한다
   useEffect(() => {
@@ -176,7 +182,11 @@ export function SearchBox() {
         onChange={(event) => handleChange(event.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={close}
-        className="w-full rounded border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+        className={
+          compact
+            ? 'h-10 w-full rounded border border-line bg-white px-3 text-sm text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2'
+            : 'w-full rounded border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2'
+        }
       />
 
       {/* 목록 상자는 항상 두고 (aria-controls 대상이 있어야 함), 내용만 필요할 때 그린다 */}

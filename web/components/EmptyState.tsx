@@ -1,6 +1,11 @@
-// FS 7장, DESIGN.md 4-6, 8-2: 데이터 없음 안내 (서버 컴포넌트, 안내 박스 스타일)
+import { Inbox } from 'lucide-react';
+
+// FS 7장, DESIGN.md 6-12: 데이터 없음 (48px 회색 아이콘 + 16px 문장)
 export function EmptyState({ message }: { message: string }) {
   return (
-    <p className="mt-6 rounded border-l-4 border-brand bg-surface px-4 py-6 text-ink">{message}</p>
+    <div className="mt-6 flex flex-col items-center gap-3 rounded-md bg-subtle px-4 py-10 text-center">
+      <Inbox size={48} strokeWidth={1.75} className="text-muted" aria-hidden="true" />
+      <p className="text-base text-ink-sub">{message}</p>
+    </div>
   );
 }

@@ -1,9 +1,11 @@
 'use client';
 
+import { Info } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 
-// FS 7장, DESIGN.md 5-4: Tooltip 버튼 트리거 + 말풍선.
-// 흰 바탕 + 얇은 회색 테두리(border-line), 검정 글자(text-ink). 마우스 올림·포커스·탭으로 열리고, Esc·바깥 클릭으로 닫힌다.
+// FS 7장, DESIGN.md 6-10: ⓘ 트리거 + 흰 팝오버.
+// 마우스 올림·포커스·탭으로 열리고, Esc·바깥 클릭으로 닫힌다 (기존 동작 유지).
+// 정식 이름을 따로 가진 copy 키가 없으므로 문구는 한 문단 그대로 14px로 둔다.
 export function Tooltip({ text, label }: { text: string; label: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLSpanElement>(null);
@@ -43,16 +45,16 @@ export function Tooltip({ text, label }: { text: string; label: string }) {
         onFocus={() => setIsOpen(true)}
         onBlur={() => setIsOpen(false)}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-line bg-white text-xs text-ink-sub hover:text-ink"
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted hover:text-ink"
       >
-        ?
+        <Info size={16} strokeWidth={2} aria-hidden="true" />
       </button>
       {/* 작은 화면에서 화면 밖으로 나가지 않게 폭을 제한하고 왼쪽 기준으로 붙인다 */}
       <span
         id={tipId}
         role="tooltip"
         hidden={!isOpen}
-        className="absolute top-full left-0 z-10 mt-1 w-56 max-w-[calc(100vw-2rem)] rounded border border-line bg-white px-3 py-2 text-left text-sm text-ink"
+        className="absolute top-full left-0 z-10 mt-1 w-[280px] max-w-[calc(100vw-2rem)] rounded-md border border-line bg-white p-4 text-left text-sm text-ink-sub shadow-[0_8px_24px_rgb(0_0_0/0.08)]"
       >
         {text}
       </span>

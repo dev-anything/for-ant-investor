@@ -8,9 +8,9 @@ import { copy } from '@/lib/copy';
 
 type WatchState = 'checking' | 'logged_out' | 'off' | 'on' | 'error';
 
-// 응답 전·로그인 전·후 글자 폭이 달라지지 않게 버튼 폭을 고정한다
+// DESIGN 6-1: 높이 44px, 모서리 12px, 글자 15px/600. 응답 전·후 폭이 흔들리지 않게 최소 폭을 둔다
 const BUTTON_CLASS =
-  'min-w-24 rounded border px-3 py-2 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex h-11 min-w-24 items-center justify-center rounded-md px-5 text-[15px] font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-subtle disabled:text-muted';
 
 export function WatchButton({ code }: { code: string }) {
   const [state, setState] = useState<WatchState>('checking');
@@ -86,16 +86,14 @@ export function WatchButton({ code }: { code: string }) {
 
   return (
     <div className="flex flex-col items-end gap-1">
-      {/* DESIGN.md 5-1: '추적하기'(비추적)는 주요 버튼(갈색 채움), '추적 중'(추적 활성)은 나머지 버튼(흰 바탕+회색 테두리) */}
+      {/* DESIGN 6-1: '추적하기'는 주요 버튼(brand 채움), '추적 중'은 보조 버튼(subtle 바탕) */}
       <button
         type="button"
         onClick={() => void toggle()}
         disabled={disabled}
         aria-pressed={isOn}
         className={`${BUTTON_CLASS} ${
-          isOn
-            ? 'border-line bg-white text-ink hover:bg-surface'
-            : 'border-brand bg-brand text-white hover:opacity-90'
+          isOn ? 'bg-subtle text-ink hover:bg-line' : 'bg-brand text-white hover:bg-brand-hover'
         }`}
       >
         {label}
