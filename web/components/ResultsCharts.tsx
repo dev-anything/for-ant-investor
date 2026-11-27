@@ -6,7 +6,7 @@ import { buildMetricBars, chartMetricsFor, getDisplayYears } from '@/lib/chart-d
 import { copy } from '@/lib/copy';
 import { formatFsDiv, formatYearRange } from '@/lib/format';
 
-// FS 8-2 ResultsCharts, DESIGN.md 2-2, 4-2: 최근 3개년 실적 막대그래프 묶음 (PRD 4장 F-02)
+// FS 8-2 ResultsCharts, DESIGN.md 4-1 구역 면(bg-surface p-4 md:p-6 rounded), 4-2: 최근 3개년 실적 막대그래프 묶음
 export function ResultsCharts({
   years,
   fsDiv,
@@ -27,13 +27,13 @@ export function ResultsCharts({
   const metrics = chartMetricsFor(isFinancial);
 
   return (
-    <section aria-labelledby="results-title" className="mt-8">
+    <section aria-labelledby="results-title" className="mt-8 rounded bg-surface p-4 md:p-6">
       <h2 id="results-title" className="text-lg font-bold text-ink">
         {copy.results.title}
       </h2>
       <p className="mt-1 text-sm text-ink-sub">{copy.results.basis(fsLabel, yearRange)}</p>
       {isFinancial && (
-        <p className="mt-2 rounded border border-line px-3 py-2 text-sm text-ink-sub">
+        <p className="mt-2 rounded border border-line bg-white px-3 py-2 text-sm text-ink-sub">
           {copy.results.financialNotice}
         </p>
       )}

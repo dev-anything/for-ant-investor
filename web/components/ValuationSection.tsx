@@ -4,7 +4,7 @@ import { copy } from '@/lib/copy';
 import type { StockIndustry } from '@/lib/data/stock';
 import { buildValuationRows, valuationBasisText, type StockValuation, type ValuationRow } from '@/lib/valuation';
 
-// FS 9-3 ValuationSection (PRD 4장 F-09), DESIGN.md 3, 4-3: 주가 수준 영역.
+// FS 9-3 ValuationSection (PRD 4장 F-09), DESIGN.md 4-1 구역 면(bg-surface p-4 md:p-6 rounded), 4-3: 주가 수준 영역.
 export function ValuationSection({
   valuation,
   industry,
@@ -15,7 +15,7 @@ export function ValuationSection({
   const rows = valuation ? buildValuationRows(valuation, industry ? industry.medians : null) : [];
 
   return (
-    <section data-tour="valuation" aria-labelledby="valuation-title" className="mt-8">
+    <section data-tour="valuation" aria-labelledby="valuation-title" className="mt-8 rounded bg-surface p-4 md:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 id="valuation-title" className="text-lg font-bold text-ink">
           {copy.valuation.title}
@@ -27,7 +27,7 @@ export function ValuationSection({
       ) : (
         <>
           <p className="mt-1 text-xs text-ink-sub">{copy.valuation.commonShareNote}</p>
-          <div className="mt-4 rounded border border-line px-4">
+          <div className="mt-4">
             {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
             {industry === null && <p className="py-4 text-sm text-ink-sub">{copy.industry.noIndustry}</p>}
             {rows.map((row) => (

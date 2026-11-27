@@ -4,8 +4,7 @@ import type { NewsResult } from '@/lib/news-text';
 import { NaverAttribution } from '@/components/NaverAttribution';
 import { NewsList } from '@/components/NewsList';
 
-// FS 9-6 NewsBlock: 칸 제목 + 네이버 표시 + 결과(목록 / 실패 / 0건). 서버 컴포넌트
-// titleTag: /news는 페이지 제목이라 h1, 나머지 칸은 h2
+// FS 9-6 NewsBlock, DESIGN.md 4-1 구역 면(bg-surface p-4 md:p-6 rounded): 칸 제목 + 네이버 표시 + 결과
 export function NewsBlock({
   title,
   headingId,
@@ -21,19 +20,19 @@ export function NewsBlock({
 }) {
   const Heading = titleTag;
   return (
-    <section aria-labelledby={headingId}>
-      <Heading id={headingId} className="text-lg font-bold text-neutral-900">
+    <section aria-labelledby={headingId} className="rounded bg-surface p-4 md:p-6">
+      <Heading id={headingId} className="text-lg font-bold text-ink">
         {title}
       </Heading>
       <NaverAttribution />
 
-      {result.status === 'error' && <p className="mt-4 text-sm text-neutral-700">{copy.news.error}</p>}
+      {result.status === 'error' && <p className="mt-4 text-sm text-ink-sub">{copy.news.error}</p>}
       {result.status === 'ok' && result.items.length === 0 && (
-        <p className="mt-4 text-sm text-neutral-700">{copy.news.empty}</p>
+        <p className="mt-4 text-sm text-ink-sub">{copy.news.empty}</p>
       )}
       {result.status === 'ok' && result.items.length > 0 && <NewsList items={result.items} />}
 
-      {footer && <div className="mt-4 text-sm">{footer}</div>}
+      {footer && <div className="mt-4 text-sm text-ink">{footer}</div>}
     </section>
   );
 }

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { SortHeaderLink } from '@/components/SortHeaderLink';
 
-// FS 7장 DataTable: 열 정의 + 행. 정렬 제목 버튼(aria-sort), 넓으면 표 안에서만 가로 스크롤.
-// mode: 'button'은 onSort로 상태를 바꾸는 버튼, 'link'는 sortHref가 주는 주소로 가는 링크 (2차 업종 목록, FS 7장)
+// FS 7장 DataTable, DESIGN.md 4-7, 5-5: 가는 가로선만 (border-b border-line), 세로선·줄무늬 없음, 숫자 text-right tabular-nums.
+// 래퍼만 overflow-x-auto, 페이지 전체는 밀리지 않게 한다.
 
 export type SortDir = 'asc' | 'desc';
 
@@ -54,11 +54,11 @@ export function DataTable<T>({
   dimmed = false,
 }: DataTableProps<T>) {
   return (
-    <div className={`overflow-x-auto transition-opacity ${dimmed ? 'opacity-50' : ''}`}>
+    <div className={`max-w-full overflow-x-auto transition-opacity ${dimmed ? 'opacity-50' : ''}`}>
       <table className="min-w-full border-collapse text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-neutral-300 text-neutral-700">
+          <tr className="border-b border-line text-ink-sub">
             {columns.map((column) => {
               const sortKey = column.sortKey ?? null;
               const sortable = sortKey !== null;
@@ -78,7 +78,7 @@ export function DataTable<T>({
                     <button
                       type="button"
                       onClick={() => onSort(sortKey)}
-                      className="hover:text-neutral-900"
+                      className="hover:text-ink"
                     >
                       {label}
                     </button>
@@ -92,11 +92,11 @@ export function DataTable<T>({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={rowKey(row)} className="border-b border-neutral-200 align-top">
+            <tr key={rowKey(row)} className="border-b border-line align-top text-ink">
               {columns.map((column) => {
-                const alignClass = column.align === 'right' ? 'text-right' : 'text-left';
+                const alignClass = column.align === 'right' ? 'text-right tabular-nums' : 'text-left';
                 return (
-                  <td key={column.id} className={`px-3 py-2 whitespace-nowrap ${alignClass}`}>
+                  <td key={column.id} className={`whitespace-nowrap px-3 py-2 ${alignClass}`}>
                     {column.cell(row)}
                   </td>
                 );

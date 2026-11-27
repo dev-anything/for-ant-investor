@@ -6,7 +6,7 @@ import type { ScreenerSortKey } from '@/lib/filters';
 import type { ScreenerRow } from '@/lib/data/screener';
 import { evidenceSlots, readEvidenceCell, type EvidenceSlot } from '@/lib/screener-view';
 
-// FS 8-3 ResultTable: 고정 열(종목명·코드·시장·시가총액) + 고른 필터의 근거 값 열. DataTable로 그린다.
+// FS 8-3 ResultTable, DESIGN.md 4-7, 5-5: 고정 열(종목명·코드·시장·시가총액) + 고른 필터의 근거 값 열.
 export function ResultTable({
   rows,
   filters,
@@ -29,22 +29,22 @@ export function ResultTable({
       header: copy.screener.name,
       sortKey: 'name',
       cell: (row) => (
-        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-neutral-900 underline underline-offset-2">
+        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink underline underline-offset-2 hover:text-ink-sub">
           {row.name}
           {formatAccMt(row.accMt) && (
-            <span className="ml-1 text-xs font-normal text-neutral-600">{formatAccMt(row.accMt)}</span>
+            <span className="ml-1 text-xs font-normal text-ink-sub">{formatAccMt(row.accMt)}</span>
           )}
         </Link>
       ),
     },
-    { id: 'code', header: copy.screener.code, cell: (row) => row.shortCode },
+    { id: 'code', header: copy.screener.code, cell: (row) => <span className="tabular-nums">{row.shortCode}</span> },
     { id: 'market', header: copy.screener.market, cell: (row) => row.market ?? '-' },
     {
       id: 'marketCap',
       header: copy.screener.marketCap,
       sortKey: 'market_cap',
       align: 'right',
-      cell: (row) => formatMarketCap(row.marketCap),
+      cell: (row) => <span className="tabular-nums">{formatMarketCap(row.marketCap)}</span>,
     },
     ...slots.map((slot) => evidenceColumn(slot, refYear)),
   ];
@@ -72,12 +72,12 @@ function evidenceColumn(slot: EvidenceSlot, refYear: number | null): DataColumn<
     cell: (row) => {
       const cell = readEvidenceCell(row, slot, refYear);
       return (
-        <>
+        <span className="tabular-nums">
           {cell.text}
           {cell.isOtherYear && cell.actualYear !== null && (
-            <span className="ml-1 text-xs text-neutral-500">{cell.actualYear}년</span>
+            <span className="ml-1 text-xs text-ink-sub">{cell.actualYear}년</span>
           )}
-        </>
+        </span>
       );
     },
   };
