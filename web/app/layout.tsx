@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className="h-full">
-      <body className="flex min-h-full flex-col bg-white text-neutral-900 antialiased">
+      <body className="flex min-h-full flex-col bg-white text-ink antialiased">
         <AppHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
