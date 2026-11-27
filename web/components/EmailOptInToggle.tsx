@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-12 EmailOptInToggle, DESIGN-remember: 알림 메일 받기 켜기·끄기 (PRD F-12, 확장).
+// FS 9-12 EmailOptInToggle, DESIGN.md 2-1: 알림 메일 받기 켜기·끄기 (PRD F-12, 확장).
 // 바꾸면 PATCH /api/settings로 보내고, 실패하면 되돌린 뒤 FS 12장 10번 문구를 보인다.
 import { useId, useState } from 'react';
 import { copy } from '@/lib/copy';
@@ -43,7 +43,7 @@ export function EmailOptInToggle({ initialValue }: EmailOptInToggleProps) {
         <input
           id={inputId}
           type="checkbox"
-          className="size-4 accent-ink"
+          className="size-4 accent-brand"
           checked={value}
           disabled={busy}
           onChange={(event) => void change(event.target.checked)}

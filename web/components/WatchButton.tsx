@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-12 WatchButton, PRD F-12, DESIGN-remember 공통 컨트롤: 종목 화면의 "추적하기" / "추적 중" 버튼.
+// FS 9-12 WatchButton, PRD F-12, DESIGN.md 5-1: 종목 화면의 "추적하기" / "추적 중" 버튼.
 // 공개 화면은 쿠키를 읽지 않으므로 로그인 여부와 추적 상태를 화면이 뜬 뒤 API로 묻는다.
 import { useEffect, useState } from 'react';
 import { LoginDialog } from '@/components/LoginDialog';
@@ -10,7 +10,7 @@ type WatchState = 'checking' | 'logged_out' | 'off' | 'on' | 'error';
 
 // 응답 전·로그인 전·후 글자 폭이 달라지지 않게 버튼 폭을 고정한다
 const BUTTON_CLASS =
-  'min-w-24 rounded-md border px-3 py-2 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40';
+  'min-w-24 rounded border px-3 py-2 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40';
 
 export function WatchButton({ code }: { code: string }) {
   const [state, setState] = useState<WatchState>('checking');
@@ -86,7 +86,7 @@ export function WatchButton({ code }: { code: string }) {
 
   return (
     <div className="flex flex-col items-end gap-1">
-      {/* DESIGN-remember: '추적하기'(비추적)는 주요 버튼(검정 채움), '추적 중'(추적 활성)은 보조 버튼(흰 바탕+회색 테두리) */}
+      {/* DESIGN.md 5-1: '추적하기'(비추적)는 주요 버튼(갈색 채움), '추적 중'(추적 활성)은 나머지 버튼(흰 바탕+회색 테두리) */}
       <button
         type="button"
         onClick={() => void toggle()}
@@ -95,7 +95,7 @@ export function WatchButton({ code }: { code: string }) {
         className={`${BUTTON_CLASS} ${
           isOn
             ? 'border-line bg-white text-ink hover:bg-surface'
-            : 'border-primary bg-primary text-primary-fg hover:bg-primary-hover'
+            : 'border-brand bg-brand text-white hover:opacity-90'
         }`}
       >
         {label}

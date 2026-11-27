@@ -17,13 +17,13 @@ import { getAxisDomain } from '@/lib/chart-data';
 import { copy } from '@/lib/copy';
 import { Tooltip } from '@/components/Tooltip';
 
-// DESIGN-remember Colors 액센트: 최신 연도 막대만 오렌지(#FF6A0D), 과거 연도 막대는 회색(#808080)
+// DESIGN.md 4-2: 최신 연도 막대만 포인트 갈색(#6B4423), 과거 연도 막대는 회색(#A3A3A3)
 // 적자 막대는 색상 경고 대신 빗금 패턴으로 채운다
-export const LATEST_FILL = '#FF6A0D';
-export const PAST_FILL = '#808080';
+export const LATEST_FILL = '#6B4423';
+export const PAST_FILL = '#A3A3A3';
 const CHART_HEIGHT_PX = 200;
-// 0 기준선 색 (1px 검정 기준선)
-export const BASELINE_STROKE = '#000000';
+// 0 기준선 색 (DESIGN 4-2: 무채색 기준선)
+export const BASELINE_STROKE = '#737373';
 
 // 막대 위(양수)·아래(음수) 값 라벨 자리 (px)
 const LABEL_GAP_PX = 6;
@@ -48,7 +48,7 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
       <div className="h-[200px] w-full">
         <ResponsiveContainer width="100%" height={CHART_HEIGHT_PX}>
           <BarChart data={bars} margin={{ top: 24, right: 8, bottom: 8, left: 8 }}>
-            {/* DESIGN-remember Colors: 적자(음수) 막대용 사선 빗금 패턴. 과거 적자=흰 바탕+검정 사선, 최신 적자=오렌지 바탕+흰 사선 */}
+            {/* DESIGN.md 4-2: 적자(음수) 막대용 사선 빗금 패턴 */}
             <defs>
               <pattern
                 id={hatchPastId}
@@ -57,8 +57,8 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
                 patternUnits="userSpaceOnUse"
                 patternTransform="rotate(45)"
               >
-                <rect width="6" height="6" fill="#FFFFFF" />
-                <line x1="0" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="2" />
+                <rect width="6" height="6" fill="#A3A3A3" />
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#FFFFFF" strokeWidth="2" />
               </pattern>
               <pattern
                 id={hatchLatestId}
@@ -67,7 +67,7 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
                 patternUnits="userSpaceOnUse"
                 patternTransform="rotate(45)"
               >
-                <rect width="6" height="6" fill="#FF6A0D" />
+                <rect width="6" height="6" fill="#6B4423" />
                 <line x1="0" y1="0" x2="0" y2="6" stroke="#FFFFFF" strokeWidth="2" />
               </pattern>
             </defs>
@@ -90,17 +90,13 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
                 const isLatest = index === bars.length - 1;
                 let fill: string;
                 if (bar.isNegative) {
-                  // DESIGN-remember: 적자 막대는 빗금 무늬 (url(#...))
+                  // DESIGN 4-2: 적자 막대는 빗금 무늬 (url(#...))
                   fill = `url(#${isLatest ? hatchLatestId : hatchPastId})`;
                 } else {
-                  // 최신 연도 오렌지(#FF6A0D), 과거 연도 회색(#808080)
-                  fill = isLatest ? LATEST_FILL : PAST_FILL;
+                  // 최신 연도 #6B4423, 과거 연도 #A3A3A3
+                  fill = isLatest ? '#6B4423' : '#A3A3A3';
                 }
-                // D-3: 최신(오렌지) 막대는 흰 바탕 대비 2.87:1이라 검정 1px 외곽; 적자 막대도 검정 1px 외곽
-                const stroke = isLatest || bar.isNegative ? '#000000' : undefined;
-                return (
-                  <Cell key={bar.fiscalYear} fill={fill} stroke={stroke} strokeWidth={1} />
-                );
+                return <Cell key={bar.fiscalYear} fill={fill} />;
               })}
               <LabelList content={<ValueLabel bars={bars} />} />
             </Bar>
@@ -154,11 +150,11 @@ function YearTick({
   const baseY = Number(y ?? 0);
   return (
     <g>
-      <text x={baseX} y={baseY + 12} textAnchor="middle" fontSize={12} fill="#000000">
+      <text x={baseX} y={baseY + 12} textAnchor="middle" fontSize={12} fill="#171717">
         {label}
       </text>
       {isMissing && (
-        <text x={baseX} y={baseY + 28} textAnchor="middle" fontSize={11} fill="#424242">
+        <text x={baseX} y={baseY + 28} textAnchor="middle" fontSize={11} fill="#525252">
           {copy.results.notProvided}
         </text>
       )}
@@ -189,13 +185,13 @@ function ValueLabel({
   const bottom = top + Number(height ?? 0);
   const labelY = bar.isNegative ? bottom + LABEL_GAP_PX + 10 : top - LABEL_GAP_PX;
   return (
-    <text x={baseX} y={labelY} textAnchor="middle" fontSize={12} fill="#000000">
+    <text x={baseX} y={labelY} textAnchor="middle" fontSize={12} fill="#171717">
       {bar.valueText}
     </text>
   );
 }
 
-// 툴팁: 정확한 금액 + 전년 대비 증감률 (그림자 없음, rounded border border-line bg-white text-ink)
+// 툴팁: 정확한 금액 + 전년 대비 증감률 (DESIGN 4-1 그림자 없음, border-line)
 function BarTooltip({ active, payload }: { active?: boolean; payload?: { payload?: unknown }[] }) {
   if (!active || !payload || payload.length === 0) return null;
   const bar = payload[0].payload as ChartBar | undefined;

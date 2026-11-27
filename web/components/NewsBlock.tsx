@@ -21,7 +21,7 @@ export function NewsBlock({
   const Heading = titleTag;
   return (
     <section aria-labelledby={headingId} className="rounded bg-surface p-4 md:p-6">
-      <Heading id={headingId} className="text-xl font-semibold text-ink-sub">
+      <Heading id={headingId} className="text-lg font-bold text-ink">
         {title}
       </Heading>
       <NaverAttribution />

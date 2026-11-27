@@ -16,14 +16,14 @@ export default function HomePage() {
       <SearchBox />
       <p className="mt-4 text-sm text-ink-sub">
         {copy.search.hint}{' '}
-        <Link href="/screener" className="text-ink underline underline-offset-2 hover:decoration-2">
+        <Link href="/screener" className="text-ink underline underline-offset-2 hover:text-ink-sub">
           {copy.nav.screener}
         </Link>
       </p>
       {/* PRD 3-5 첫 화면 바로가기 2번째 줄 (2차, F-15) */}
       <p className="mt-2 text-sm text-ink-sub">
         {copy.search.industryHint}{' '}
-        <Link href="/industries" className="text-ink underline underline-offset-2 hover:decoration-2">
+        <Link href="/industries" className="text-ink underline underline-offset-2 hover:text-ink-sub">
           {copy.search.industryLink}
         </Link>
       </p>

@@ -48,7 +48,7 @@ function metricCell(row: IndustryMetricRow, value: number | null, refYear: numbe
   return (
     <>
       {text}
-      <span className="ml-1 text-xs font-medium text-ink-sub">{copy.industry.yearLabel(row.fiscalYear)}</span>
+      <span className="ml-1 text-xs text-ink-sub">{copy.industry.yearLabel(row.fiscalYear)}</span>
     </>
   );
 }
@@ -64,11 +64,11 @@ function metricColumns(refYear: number | null): DataColumn<IndustryMetricRow>[] 
       sortKey: 'name',
       cell: (row) => (
         <>
-          <Link href={`/stocks/${row.shortCode}`} className="text-ink underline underline-offset-2 hover:decoration-2">
+          <Link href={`/stocks/${row.shortCode}`} className="text-ink underline hover:text-ink-sub">
             {row.name}
           </Link>
           {formatAccMt(row.accMt) && (
-            <span className="ml-2 text-xs font-medium text-ink-sub">{formatAccMt(row.accMt)}</span>
+            <span className="ml-2 text-xs text-ink-sub">{formatAccMt(row.accMt)}</span>
           )}
         </>
       ),
@@ -124,7 +124,7 @@ export default async function IndustryComparePage({ params, searchParams }: Comp
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-xl font-semibold text-ink-sub">{copy.industry.compareTitle(name, page.total)}</h1>
+      <h1 className="text-xl font-semibold text-ink">{copy.industry.compareTitle(name, page.total)}</h1>
       <div className="mt-4 flex justify-end">
         <PageSizeSelect size={state.size} link={linkState} />
       </div>

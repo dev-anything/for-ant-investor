@@ -27,9 +27,9 @@ function Marked({ text, query }: { text: string; query: string }) {
     <>
       {highlightParts(text, query).map((part, index) =>
         part.match ? (
-          <mark key={index} className="bg-accent-soft font-semibold text-ink">
+          <strong key={index} className="font-bold text-ink">
             {part.text}
-          </mark>
+          </strong>
         ) : (
           <span key={index}>{part.text}</span>
         )
@@ -39,7 +39,7 @@ function Marked({ text, query }: { text: string; query: string }) {
 }
 
 // FS 8-1, DESIGN.md 5-2: 종목명 입력 상자와 연관검색어 목록.
-// 첫 화면 가운데 큰 검색창 (border-0 bg-surface, 전역 포커스 링, 그림자 없음)
+// 첫 화면 가운데 큰 테두리 검색창 (border-line, focus-visible 갈색 링, shadow 없음)
 export function SearchBox() {
   const router = useRouter();
   const inputId = useId();
@@ -176,7 +176,7 @@ export function SearchBox() {
         onChange={(event) => handleChange(event.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={close}
-        className="h-[52px] w-full rounded border-0 bg-surface px-4 text-base text-ink placeholder:text-ink-sub"
+        className="w-full rounded border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
       />
 
       {/* 목록 상자는 항상 두고 (aria-controls 대상이 있어야 함), 내용만 필요할 때 그린다 */}
@@ -201,7 +201,7 @@ export function SearchBox() {
               onClick={() => choose(item)}
               className={`flex items-center justify-between gap-3 px-4 py-2 text-sm ${
                 index === active ? 'bg-surface' : ''
-              } ${item.isForeign ? 'text-ink-sub' : 'cursor-pointer text-ink'}`}
+              } ${item.isForeign ? 'text-muted' : 'cursor-pointer text-ink'}`}
             >
               <span>
                 <Marked text={item.name} query={shownQuery} />{' '}

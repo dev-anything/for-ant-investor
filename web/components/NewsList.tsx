@@ -4,7 +4,7 @@ import type { NewsItem } from '@/lib/news-text';
 // 제목은 텍스트 노드로만 넣는다 (HTML 삽입 금지). 줄 사이에 다른 요소를 넣지 않는다 (네이버 약관: 가공 금지)
 export function NewsList({ items }: { items: NewsItem[] }) {
   return (
-    <ul className="mt-4 divide-y divide-line-lite rounded border border-line bg-white">
+    <ul className="mt-4 divide-y divide-line rounded border border-line bg-white">
       {items.map((item, index) => {
         // 도메인·시각을 못 읽었으면 그 칸만 뺀다
         const line = [item.title, item.domain, item.time].filter((part) => part !== '').join(' · ');
@@ -17,7 +17,7 @@ export function NewsList({ items }: { items: NewsItem[] }) {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-ink underline underline-offset-2 hover:decoration-2"
+                className="text-ink underline underline-offset-2 hover:text-ink-sub"
               >
                 {line}
               </a>

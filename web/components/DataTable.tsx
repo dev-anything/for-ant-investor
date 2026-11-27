@@ -78,7 +78,7 @@ export function DataTable<T>({
                     <button
                       type="button"
                       onClick={() => onSort(sortKey)}
-                      className="hover:decoration-2"
+                      className="hover:text-ink"
                     >
                       {label}
                     </button>
@@ -90,9 +90,9 @@ export function DataTable<T>({
             })}
           </tr>
         </thead>
-        <tbody className="divide-y divide-line-lite">
+        <tbody>
           {rows.map((row) => (
-            <tr key={rowKey(row)} className="align-top text-ink">
+            <tr key={rowKey(row)} className="border-b border-line align-top text-ink">
               {columns.map((column) => {
                 const alignClass = column.align === 'right' ? 'text-right tabular-nums' : 'text-left';
                 return (

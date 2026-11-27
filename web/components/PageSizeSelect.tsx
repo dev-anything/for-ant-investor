@@ -32,7 +32,7 @@ export function PageSizeSelect({
       <select
         value={size}
         onChange={(event) => handleChange(Number(event.target.value) as ScreenerSize)}
-        className="rounded border border-muted bg-white px-2 py-1 text-sm text-ink"
+        className="rounded border border-line bg-white px-2 py-1 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
       >
         {SCREENER_SIZES.map((option) => (
           <option key={option} value={option}>

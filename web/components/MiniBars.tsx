@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-12 MiniBars: 추적 카드의 작은 막대 묶음 (PRD F-12, F-02와 같은 기준·단위, DESIGN-remember Colors).
+// FS 9-12 MiniBars: 추적 카드의 작은 막대 묶음 (PRD F-12, F-02와 같은 기준·단위, DESIGN.md 4-2).
 // 값 라벨은 없고, 같은 값을 담은 시각적으로 숨긴 표를 붙인다 (F-02 접근성 규칙과 같음).
 import { useId } from 'react';
 import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
@@ -26,7 +26,7 @@ export function MiniBars({ charts }: MiniBarsProps) {
   );
 }
 
-// 막대 하나. DESIGN-remember Colors: 최신 연도 오렌지(#FF6A0D), 과거 회색(#808080), 적자 막대는 빗금 무늬
+// 막대 하나. DESIGN.md 4-2: 최신 연도 갈색(#6B4423), 과거 회색(#A3A3A3), 적자 막대는 빗금 무늬
 function MiniBar({ chart }: { chart: MiniChart }) {
   const domain = getAxisDomain(chart.bars);
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
@@ -46,8 +46,8 @@ function MiniBar({ chart }: { chart: MiniChart }) {
                 patternUnits="userSpaceOnUse"
                 patternTransform="rotate(45)"
               >
-                <rect width="6" height="6" fill="#FFFFFF" />
-                <line x1="0" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="2" />
+                <rect width="6" height="6" fill="#A3A3A3" />
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#FFFFFF" strokeWidth="2" />
               </pattern>
               <pattern
                 id={hatchLatestId}
@@ -56,7 +56,7 @@ function MiniBar({ chart }: { chart: MiniChart }) {
                 patternUnits="userSpaceOnUse"
                 patternTransform="rotate(45)"
               >
-                <rect width="6" height="6" fill="#FF6A0D" />
+                <rect width="6" height="6" fill="#6B4423" />
                 <line x1="0" y1="0" x2="0" y2="6" stroke="#FFFFFF" strokeWidth="2" />
               </pattern>
             </defs>
@@ -72,9 +72,7 @@ function MiniBar({ chart }: { chart: MiniChart }) {
                 } else {
                   fill = isLatest ? LATEST_FILL : PAST_FILL;
                 }
-                // D-3: 최신(오렌지) 막대·적자 막대 검정 1px 외곽
-                const stroke = isLatest || bar.isNegative ? '#000000' : undefined;
-                return <Cell key={bar.fiscalYear} fill={fill} stroke={stroke} strokeWidth={1} />;
+                return <Cell key={bar.fiscalYear} fill={fill} />;
               })}
             </Bar>
           </BarChart>

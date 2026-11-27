@@ -17,16 +17,16 @@ export function ValuationSection({
   return (
     <section data-tour="valuation" aria-labelledby="valuation-title" className="mt-8 rounded bg-surface p-4 md:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h2 id="valuation-title" className="text-xl font-semibold text-ink-sub">
+        <h2 id="valuation-title" className="text-lg font-bold text-ink">
           {copy.valuation.title}
         </h2>
-        {valuation && <p className="text-xs font-medium text-ink-sub">{valuationBasisText(valuation)}</p>}
+        {valuation && <p className="text-xs text-ink-sub">{valuationBasisText(valuation)}</p>}
       </div>
       {valuation === null ? (
         <p className="mt-4 text-sm text-ink-sub">{copy.valuation.noPrice}</p>
       ) : (
         <>
-          <p className="mt-1 text-xs font-medium text-ink-sub">{copy.valuation.commonShareNote}</p>
+          <p className="mt-1 text-xs text-ink-sub">{copy.valuation.commonShareNote}</p>
           <div className="mt-4">
             {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
             {industry === null && <p className="py-4 text-sm text-ink-sub">{copy.industry.noIndustry}</p>}
@@ -46,7 +46,7 @@ function ValuationItem({ row }: { row: ValuationRow }) {
 
   return (
     <div className="border-t border-line py-4">
-      <h3 className="inline-flex flex-wrap items-center gap-1 text-base font-normal text-ink">
+      <h3 className="inline-flex flex-wrap items-center gap-1 text-base font-semibold text-ink">
         {row.title}
         <Tooltip text={row.tip} label={copy.reportCard.tipButtonLabel} />
       </h3>

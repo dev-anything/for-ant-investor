@@ -27,7 +27,8 @@ const MODE_LINKS: Record<Mode, { mode: Mode; label: string }[]> = {
   reset: [{ mode: 'login', label: copy.auth.toLogin }],
 };
 
-const LINK_CLASS = 'rounded-md border border-line bg-white px-3 py-1.5 text-sm text-ink hover:bg-surface';
+const LINK_CLASS =
+  'text-sm text-ink-sub underline-offset-2 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
 
 interface LoginDialogProps {
   onClose: () => void;
@@ -74,9 +75,9 @@ export function LoginDialog({ onClose, reason, watch }: LoginDialogProps) {
       ref={dialogRef}
       aria-labelledby={titleId}
       onClose={onClose}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-md border border-line bg-white p-6 text-left text-ink backdrop:bg-ink/40"
+      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded border border-line bg-white p-6 text-left text-ink backdrop:bg-ink/40"
     >
-      <h2 id={titleId} className="text-xl font-semibold text-ink-sub">
+      <h2 id={titleId} className="text-lg font-bold text-ink">
         {copy.auth.title[mode]}
       </h2>
 

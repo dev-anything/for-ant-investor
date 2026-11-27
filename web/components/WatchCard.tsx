@@ -12,7 +12,8 @@ import {
   summarizeInsights,
 } from '@/lib/mypage';
 
-const CARD_CLASS = 'block h-full rounded border border-line bg-white p-4 transition-colors';
+const CARD_CLASS =
+  'block h-full rounded border border-line bg-surface p-4 transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
 
 export function WatchCard({ watch }: { watch: WatchEntry }) {
   const body = <WatchCardBody watch={watch} />;
@@ -37,7 +38,7 @@ function WatchCardBody({ watch }: { watch: WatchEntry }) {
 
   return (
     <>
-      <h3 className="text-base font-normal text-ink">
+      <h3 className="font-medium text-ink">
         {watch.name}
         {watch.shortCode !== null && <span className="ml-1 text-sm text-ink-sub">({watch.shortCode})</span>}
       </h3>

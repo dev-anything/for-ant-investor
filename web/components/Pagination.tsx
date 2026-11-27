@@ -21,9 +21,10 @@ export function Pagination({
 }) {
   if (pageCount <= 1) return null;
 
-  const baseButtonClass = 'min-w-8 rounded-md px-2 py-1 text-sm disabled:opacity-40';
-  const normalClass = `${baseButtonClass} border border-line bg-white text-ink hover:bg-surface`;
-  const currentClass = `${baseButtonClass} bg-primary text-primary-fg font-semibold`;
+  const baseButtonClass =
+    'min-w-8 rounded px-2 py-1 text-sm text-ink hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 disabled:opacity-40';
+  const normalClass = `${baseButtonClass} border border-line bg-white`;
+  const currentClass = `${baseButtonClass} border-2 border-brand font-bold bg-white`;
 
   // 한 칸. 링크 모드는 끝 쪽의 이전·다음을 링크 대신 흐린 글자로 둔다
   const control = (
