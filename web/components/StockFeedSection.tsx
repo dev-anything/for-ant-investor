@@ -15,7 +15,7 @@ export function StockFeedSection({
   corpCode: string | null;
 }) {
   return (
-    <div className="mt-8 grid gap-8 md:grid-cols-2">
+    <div className="mt-8 grid gap-4 sm:gap-6 lg:grid-cols-2">
       <Suspense fallback={<Skeleton className="h-40 w-full" />}>
         <StockNews name={name} shortCode={shortCode} />
       </Suspense>

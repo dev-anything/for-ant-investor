@@ -1,6 +1,7 @@
 'use client';
 
-// FS 8-1 SearchBox, DESIGN.md 5-2: 종목 연관검색어 (WAI-ARIA combobox 패턴, PRD 4장 F-01)
+// FS 8-1 SearchBox, DESIGN.md 5-2·6-8: 종목 연관검색어 (WAI-ARIA combobox 패턴, PRD 4장 F-01)
+import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import type { SearchItem } from '@/lib/data/search';
@@ -27,7 +28,7 @@ function Marked({ text, query }: { text: string; query: string }) {
     <>
       {highlightParts(text, query).map((part, index) =>
         part.match ? (
-          <strong key={index} className="font-bold text-ink">
+          <strong key={index} className="font-bold text-brand">
             {part.text}
           </strong>
         ) : (
@@ -163,10 +164,16 @@ export function SearchBox({ compact = false }: SearchBoxProps) {
   };
 
   return (
-    <div className="relative w-full max-w-xl">
+    <div className="relative w-full max-w-[640px]">
       <label htmlFor={inputId} className="sr-only">
         {copy.search.label}
       </label>
+      {/* DESIGN 5-1·6-8: 큰 검색창만 왼쪽 돋보기. 작은 검색창은 헤더 버튼이 이미 있다 */}
+      {!compact && (
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted">
+          <Search size={20} strokeWidth={2} aria-hidden="true" />
+        </span>
+      )}
       <input
         id={inputId}
         ref={inputRef}
@@ -184,8 +191,8 @@ export function SearchBox({ compact = false }: SearchBoxProps) {
         onBlur={close}
         className={
           compact
-            ? 'h-10 w-full rounded border border-line bg-white px-3 text-sm text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2'
-            : 'w-full rounded border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2'
+            ? 'h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-ink placeholder:text-ink-sub focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/30'
+            : 'h-14 w-full rounded-lg border border-line bg-white pl-12 pr-4 text-base text-ink placeholder:text-ink-sub focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/30'
         }
       />
 
@@ -197,7 +204,7 @@ export function SearchBox({ compact = false }: SearchBoxProps) {
         hidden={!showList}
         // 목록을 누를 때 입력창의 포커스가 빠지지 않게 한다 (blur로 목록이 먼저 닫히는 것 방지)
         onMouseDown={(event) => event.preventDefault()}
-        className="absolute z-10 mt-1 w-full overflow-hidden rounded border border-line bg-white"
+        className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-line bg-white shadow-[0_8px_24px_rgb(0_0_0/0.08)]"
       >
         {showList &&
           items.map((item, index) => (
@@ -209,23 +216,23 @@ export function SearchBox({ compact = false }: SearchBoxProps) {
               aria-disabled={item.isForeign ? true : undefined}
               onMouseEnter={() => setActive(index)}
               onClick={() => choose(item)}
-              className={`flex items-center justify-between gap-3 px-4 py-2 text-sm ${
-                index === active ? 'bg-surface' : ''
+              className={`flex items-center justify-between gap-3 px-4 py-2.5 text-base ${
+                index === active ? 'bg-subtle' : ''
               } ${item.isForeign ? 'text-muted' : 'cursor-pointer text-ink'}`}
             >
               <span>
                 <Marked text={item.name} query={shownQuery} />{' '}
-                <span className="text-ink-sub">
+                <span className="text-meta text-muted">
                   (<Marked text={item.shortCode} query={shownQuery} />)
                 </span>
               </span>
-              {item.isForeign && <span className="text-xs text-ink-sub">{copy.search.foreign}</span>}
+              {item.isForeign && <span className="text-meta text-muted">{copy.search.foreign}</span>}
             </li>
           ))}
       </ul>
 
       {showNoResult && (
-        <p role="status" className="absolute z-10 mt-1 w-full rounded border border-line bg-white px-4 py-2 text-sm text-ink-sub">
+        <p role="status" className="absolute z-10 mt-1 w-full rounded-md border border-line bg-white px-4 py-2 text-sm text-ink-sub shadow-[0_8px_24px_rgb(0_0_0/0.08)]">
           {copy.search.noResult}
         </p>
       )}

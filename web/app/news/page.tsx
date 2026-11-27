@@ -36,7 +36,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
   const pageState = (target: number) => ({ ...DEFAULT_LIST_STATE, page: target });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
       <NewsBlock
         title={copy.news.homeTitle}
         headingId="news-page-title"

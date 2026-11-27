@@ -12,7 +12,7 @@ export async function HomeNews() {
       headingId="home-news-title"
       result={result}
       footer={
-        <Link href="/news" className="text-ink underline underline-offset-2 hover:text-ink-sub">
+        <Link href="/news" className="font-medium text-brand underline-offset-2 hover:text-brand-hover hover:underline">
           {copy.news.moreLink}
         </Link>
       }
