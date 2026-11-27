@@ -1,6 +1,6 @@
 'use client';
 
-// FS 8-1 SearchBox: 종목 연관검색어 (WAI-ARIA combobox 패턴, PRD 4장 F-01)
+// FS 8-1 SearchBox, DESIGN.md 5-2: 종목 연관검색어 (WAI-ARIA combobox 패턴, PRD 4장 F-01)
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import type { SearchItem } from '@/lib/data/search';
@@ -27,7 +27,7 @@ function Marked({ text, query }: { text: string; query: string }) {
     <>
       {highlightParts(text, query).map((part, index) =>
         part.match ? (
-          <strong key={index} className="font-bold text-neutral-900">
+          <strong key={index} className="font-bold text-ink">
             {part.text}
           </strong>
         ) : (
@@ -38,7 +38,8 @@ function Marked({ text, query }: { text: string; query: string }) {
   );
 }
 
-// FS 8-1: 종목명 입력 상자와 연관검색어 목록. 입력 요청은 API Route에 맡긴다
+// FS 8-1, DESIGN.md 5-2: 종목명 입력 상자와 연관검색어 목록.
+// 첫 화면 가운데 큰 테두리 검색창 (border-line, focus-visible 갈색 링, shadow 없음)
 export function SearchBox() {
   const router = useRouter();
   const inputId = useId();
@@ -175,7 +176,7 @@ export function SearchBox() {
         onChange={(event) => handleChange(event.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={close}
-        className="w-full rounded-md border border-neutral-300 bg-white px-4 py-3 text-base text-neutral-900 placeholder:text-neutral-500 focus:border-neutral-700 focus:outline-none"
+        className="w-full rounded border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-ink-sub focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
       />
 
       {/* 목록 상자는 항상 두고 (aria-controls 대상이 있어야 함), 내용만 필요할 때 그린다 */}
@@ -186,7 +187,7 @@ export function SearchBox() {
         hidden={!showList}
         // 목록을 누를 때 입력창의 포커스가 빠지지 않게 한다 (blur로 목록이 먼저 닫히는 것 방지)
         onMouseDown={(event) => event.preventDefault()}
-        className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-neutral-300 bg-white shadow-sm"
+        className="absolute z-10 mt-1 w-full overflow-hidden rounded border border-line bg-white"
       >
         {showList &&
           items.map((item, index) => (
@@ -199,22 +200,22 @@ export function SearchBox() {
               onMouseEnter={() => setActive(index)}
               onClick={() => choose(item)}
               className={`flex items-center justify-between gap-3 px-4 py-2 text-sm ${
-                index === active ? 'bg-neutral-100' : ''
-              } ${item.isForeign ? 'text-neutral-500' : 'cursor-pointer text-neutral-900'}`}
+                index === active ? 'bg-surface' : ''
+              } ${item.isForeign ? 'text-muted' : 'cursor-pointer text-ink'}`}
             >
               <span>
                 <Marked text={item.name} query={shownQuery} />{' '}
-                <span className="text-neutral-600">
+                <span className="text-ink-sub">
                   (<Marked text={item.shortCode} query={shownQuery} />)
                 </span>
               </span>
-              {item.isForeign && <span className="text-xs">{copy.search.foreign}</span>}
+              {item.isForeign && <span className="text-xs text-ink-sub">{copy.search.foreign}</span>}
             </li>
           ))}
       </ul>
 
       {showNoResult && (
-        <p role="status" className="absolute z-10 mt-1 w-full rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700">
+        <p role="status" className="absolute z-10 mt-1 w-full rounded border border-line bg-white px-4 py-2 text-sm text-ink-sub">
           {copy.search.noResult}
         </p>
       )}

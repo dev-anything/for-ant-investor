@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-12 계정 칸 · FS 9-11 탈퇴 확인: 로그아웃과 탈퇴 (PRD F-11, 존댓말 예외 칸).
+// FS 9-12 계정 칸 · FS 9-11 탈퇴 확인: 로그아웃과 탈퇴 (PRD F-11, 존댓말 예외 칸, DESIGN.md 5-1).
 // 로그아웃과 탈퇴 뒤에는 전체 이동으로 `/`에 간다. 상단 로그인 메뉴(AuthMenu)의 상태를 새로 읽게 하려고다.
 import { useEffect, useRef, useState } from 'react';
 import { copy } from '@/lib/copy';
@@ -55,24 +55,24 @@ export function AccountSection() {
       <button
         type="button"
         onClick={() => void logout()}
-        className="rounded border border-neutral-300 px-3 py-2 text-neutral-800 transition-colors hover:border-neutral-600"
+        className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
       >
         {copy.auth.logout}
       </button>
       <button
         type="button"
         onClick={() => setConfirmOpen(true)}
-        className="rounded border border-neutral-300 px-3 py-2 text-neutral-800 transition-colors hover:border-neutral-600"
+        className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
       >
         {copy.mypage.deleteButton}
       </button>
       {logoutFailed && (
-        <p role="alert" className="w-full text-neutral-900">
+        <p role="alert" className="w-full text-ink">
           {copy.auth.logoutFailed}
         </p>
       )}
       {deleteFailed && (
-        <p role="alert" className="w-full text-neutral-900">
+        <p role="alert" className="w-full text-ink">
           {copy.mypage.deleteFailed}
         </p>
       )}
@@ -80,7 +80,7 @@ export function AccountSection() {
       <dialog
         ref={dialogRef}
         onClose={() => setConfirmOpen(false)}
-        className="w-[min(90vw,26rem)] rounded border border-neutral-300 bg-white p-6 text-neutral-900 shadow-lg backdrop:bg-neutral-900/40"
+        className="w-[min(90vw,26rem)] rounded border border-line bg-white p-6 text-ink backdrop:bg-ink/40"
       >
         <p className="leading-relaxed">{copy.auth.deleteConfirm}</p>
         <div className="mt-6 flex justify-end gap-2">
@@ -88,15 +88,16 @@ export function AccountSection() {
             type="button"
             onClick={() => setConfirmOpen(false)}
             disabled={deleting}
-            className="rounded border border-neutral-300 px-3 py-2 transition-colors hover:border-neutral-600 disabled:text-neutral-400"
+            className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface disabled:opacity-40"
           >
             {copy.mypage.deleteCancel}
           </button>
+          {/* DESIGN.md 5-1: 탈퇴 확정 모달의 주요 버튼 (갈색 채움) */}
           <button
             type="button"
             onClick={() => void deleteAccount()}
             disabled={deleting}
-            className="rounded border border-neutral-900 bg-neutral-900 px-3 py-2 text-white transition-colors hover:bg-neutral-700 disabled:border-neutral-400 disabled:bg-neutral-400"
+            className="rounded bg-brand px-3 py-2 text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {copy.mypage.deleteSubmit}
           </button>

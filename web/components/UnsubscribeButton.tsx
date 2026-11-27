@@ -1,6 +1,6 @@
 'use client';
 
-// FS 9-13 수신 거부 확인 화면 (클라이언트): 확인 문구와 [수신 거부] 버튼 (PRD F-13, PRD 10장 34번).
+// FS 9-13 수신 거부 확인 화면 (클라이언트): 확인 문구와 [수신 거부] 버튼 (PRD F-13, PRD 10장 34번, DESIGN.md 5-1).
 // GET으로는 아무것도 바꾸지 않고, 버튼을 눌러야 `POST /api/unsubscribe`로 끈다.
 import { useState } from 'react';
 import { copy } from '@/lib/copy';
@@ -32,22 +32,23 @@ export function UnsubscribeButton({ token }: UnsubscribeButtonProps) {
     }
   }
 
-  if (phase === 'done') return <p className="text-neutral-900">{copy.unsubscribe.done}</p>;
-  if (phase === 'invalid') return <p className="text-neutral-900">{copy.unsubscribe.invalid}</p>;
+  if (phase === 'done') return <p className="text-ink">{copy.unsubscribe.done}</p>;
+  if (phase === 'invalid') return <p className="text-ink">{copy.unsubscribe.invalid}</p>;
 
   return (
     <div>
-      <p className="text-neutral-900">{copy.unsubscribe.confirm}</p>
+      <p className="text-ink">{copy.unsubscribe.confirm}</p>
+      {/* DESIGN.md 5-1: 수신 거부 화면의 주요 버튼 (갈색 채움) */}
       <button
         type="button"
         onClick={() => void unsubscribe()}
         disabled={phase === 'busy'}
-        className="mt-4 rounded border border-neutral-900 bg-neutral-900 px-4 py-2 text-white transition-colors hover:bg-neutral-700 disabled:border-neutral-400 disabled:bg-neutral-400"
+        className="mt-4 rounded bg-brand px-4 py-2 text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {copy.unsubscribe.submit}
       </button>
       {phase === 'failed' && (
-        <p role="alert" className="mt-3 text-sm text-neutral-900">
+        <p role="alert" className="mt-3 text-sm text-ink">
           {copy.unsubscribe.failed}
         </p>
       )}

@@ -10,7 +10,7 @@ import {
   type ChatResult,
 } from '@/lib/chat';
 
-// FS 9-9 ChatFilterInput: 문장으로 필터 고르기 (PRD 4장 F-10). 스크리너 맨 위, 필터 버튼 위에 놓인다.
+// FS 9-9 ChatFilterInput, DESIGN.md 5-1: 문장으로 필터 고르기 (PRD 4장 F-10). 스크리너 맨 위, 필터 버튼 위에 놓인다.
 // 적용은 부모(ScreenerClient)의 상태로 한다. 필터 버튼과 같은 상태를 쓰며 따로 상태를 두지 않는다.
 
 const CHAT_PATH = '/api/chat';
@@ -73,13 +73,13 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
   }
 
   return (
-    <section aria-label={copy.chat.inputLabel} className="mb-4 rounded border border-neutral-300 p-4">
+    <section aria-label={copy.chat.inputLabel} className="mb-4 rounded border border-line p-4">
       {unavailable ? (
-        <p className="text-sm text-neutral-800">{copy.chat.unavailable}</p>
+        <p className="text-sm text-ink">{copy.chat.unavailable}</p>
       ) : (
         <>
           <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2">
-            <label htmlFor="chat-filter-text" className="text-sm font-semibold text-neutral-800">
+            <label htmlFor="chat-filter-text" className="text-sm font-semibold text-ink">
               {copy.chat.inputLabel}
             </label>
             <input
@@ -88,26 +88,27 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
               value={text}
               maxLength={CHAT_MAX_INPUT}
               onChange={(event) => setText(event.target.value)}
-              className="min-w-0 flex-1 rounded border border-neutral-300 px-3 py-1 text-sm"
+              className="min-w-0 flex-1 rounded border border-line px-3 py-1 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
             />
+            {/* DESIGN.md 5-1: 필터 적용 버튼은 주요 버튼 (갈색 채움) */}
             <button
               type="submit"
               disabled={pending || text.trim().length === 0}
-              className="rounded border border-neutral-900 px-3 py-1 text-sm font-medium text-neutral-900 hover:bg-neutral-100 disabled:opacity-40"
+              className="rounded bg-brand px-3 py-1 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
             >
               {copy.chat.submit}
             </button>
           </form>
-          <p className="mt-1 text-xs text-neutral-600">{copy.chat.externalNotice}</p>
+          <p className="mt-1 text-xs text-ink-sub">{copy.chat.externalNotice}</p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-            <span className="text-neutral-700">{copy.chat.examplesLead}</span>
+            <span className="text-ink-sub">{copy.chat.examplesLead}</span>
             {CHAT_EXAMPLES.map((example) => (
               <button
                 key={example.text}
                 type="button"
                 onClick={() => handleExample(example.filters)}
-                className="rounded border border-neutral-300 px-2 py-1 text-left text-sm text-neutral-800 hover:bg-neutral-100"
+                className="rounded border border-line bg-white px-2 py-1 text-left text-sm text-ink hover:bg-surface"
               >
                 {example.text}
               </button>
@@ -116,7 +117,7 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
         </>
       )}
 
-      <div aria-live="polite" className="mt-2 space-y-1 text-sm text-neutral-800">
+      <div aria-live="polite" className="mt-2 space-y-1 text-sm text-ink">
         {messages.map((line) => (
           <p key={line}>{line}</p>
         ))}

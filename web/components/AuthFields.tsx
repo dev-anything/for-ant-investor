@@ -1,6 +1,6 @@
 'use client';
 
-// 로그인 창과 새 비밀번호 화면이 같이 쓰는 입력칸·버튼 (FS 9-11).
+// 로그인 창과 새 비밀번호 화면이 같이 쓰는 입력칸·버튼 (FS 9-11, DESIGN.md 5-1, 5-7).
 import { useId, type InputHTMLAttributes } from 'react';
 
 type AuthFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'className'> & {
@@ -16,10 +16,10 @@ export function AuthField({ label, value, onValueChange, hint, ...inputProps }: 
 
   return (
     <div className="space-y-1">
-      <label htmlFor={inputId} className="block text-sm text-neutral-700">
+      <label htmlFor={inputId} className="block text-sm text-ink">
         {label}
         {hint !== undefined && (
-          <span id={hintId} className="ml-2 text-xs text-neutral-500">
+          <span id={hintId} className="ml-2 text-xs text-ink-sub">
             {hint}
           </span>
         )}
@@ -30,18 +30,19 @@ export function AuthField({ label, value, onValueChange, hint, ...inputProps }: 
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
         aria-describedby={hint !== undefined ? hintId : undefined}
-        className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none"
+        className="w-full rounded border border-line px-3 py-2 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
       />
     </div>
   );
 }
 
+// DESIGN.md 5-1: 주요 버튼 (갈색 채움 #6B4423, 흰 글자)
 export function AuthSubmit({ label, disabled }: { label: string; disabled: boolean }) {
   return (
     <button
       type="submit"
       disabled={disabled}
-      className="w-full rounded bg-neutral-900 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-400"
+      className="w-full rounded bg-brand px-3 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {label}
     </button>
@@ -51,7 +52,7 @@ export function AuthSubmit({ label, disabled }: { label: string; disabled: boole
 export function AuthError({ message }: { message: string | null }) {
   if (message === null) return null;
   return (
-    <p role="alert" className="text-sm text-neutral-900">
+    <p role="alert" className="text-sm text-ink">
       {message}
     </p>
   );

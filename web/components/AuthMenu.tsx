@@ -1,6 +1,6 @@
 'use client';
 
-// FS 7장 AuthMenu, 9-10: 상단 로그인 메뉴. 화면이 뜬 뒤 `GET /api/me`로 묻는다
+// FS 7장 AuthMenu, 9-10, DESIGN.md 2-2: 상단 로그인 메뉴. 화면이 뜬 뒤 `GET /api/me`로 묻는다
 // (공개 화면은 쿠키를 읽지 않으므로 서버에서 로그인 상태를 알 수 없다, FS 1장).
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -90,7 +90,7 @@ export function AuthMenu() {
   if (me === null) {
     return (
       <div className={MENU_CLASS} aria-busy="true">
-        <span aria-hidden="true" className="inline-block h-4 w-20 rounded bg-neutral-100" />
+        <span aria-hidden="true" className="inline-block h-4 w-20 rounded bg-skeleton" />
       </div>
     );
   }
@@ -99,24 +99,24 @@ export function AuthMenu() {
     <div className={MENU_CLASS}>
       {me.loggedIn ? (
         <>
-          <Link href="/mypage" className="text-neutral-600 transition-colors hover:text-neutral-900">
+          <Link href="/mypage" className="text-ink-sub transition-colors hover:text-ink">
             {copy.auth.mypage}
-            {me.unreadCount > 0 && <span className="ml-1 tabular-nums font-bold text-neutral-900">{me.unreadCount}</span>}
+            {me.unreadCount > 0 && <span className="ml-1 tabular-nums font-bold text-ink">{me.unreadCount}</span>}
           </Link>
           <button
             type="button"
             onClick={() => void logout()}
-            className="text-neutral-600 transition-colors hover:text-neutral-900"
+            className="text-ink-sub transition-colors hover:text-ink"
           >
             {copy.auth.logout}
           </button>
-          {logoutFailed && <span className="text-xs text-neutral-900">{copy.auth.logoutFailed}</span>}
+          {logoutFailed && <span className="text-xs text-ink">{copy.auth.logoutFailed}</span>}
         </>
       ) : (
         <button
           type="button"
           onClick={() => setDialog({})}
-          className="text-neutral-600 transition-colors hover:text-neutral-900"
+          className="text-ink-sub transition-colors hover:text-ink"
         >
           {copy.auth.login}
         </button>

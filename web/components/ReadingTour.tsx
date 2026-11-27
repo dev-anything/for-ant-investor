@@ -4,7 +4,7 @@ import { useState, useSyncExternalStore } from 'react';
 import { copy } from '@/lib/copy';
 import { TOUR_SEEN_KEY, TOUR_SEEN_VALUE, buildTourSteps, parseTourKeys } from '@/lib/tour';
 
-// PRD 4장 F-16, FS 9-8: 종목 화면 알림 띠 + "읽는 순서" 버튼 (status='ok'에서만 StockHeader가 그린다)
+// PRD 4장 F-16, FS 9-8, DESIGN.md 5-1: 종목 화면 알림 띠 + "읽는 순서" 버튼 (status='ok'에서만 StockHeader가 그린다)
 // localStorage는 막혀 있을 수 있어서 읽기·쓰기 모두 try/catch로 감싼다. 실패해도 화면은 동작해야 한다 (PRD F-16)
 
 // 저장된 값이 바뀌는 일이 없어 구독은 하지 않는다 (같은 화면 안에서 본 것 표시는 dismissed로 처리)
@@ -105,13 +105,14 @@ export function ReadingTour({ isFinancial }: { isFinancial: boolean }) {
         <div
           role="region"
           aria-label={copy.tour.regionLabel}
-          className="flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded border border-neutral-300 px-3 py-2 text-sm text-neutral-800"
+          className="flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded border border-line bg-surface px-3 py-2 text-sm text-ink"
         >
           <p className="min-w-0 flex-1">{copy.tour.banner}</p>
+          {/* DESIGN.md 5-1: 보조 버튼 (흰 바탕 + 회색 테두리) */}
           <button
             type="button"
             onClick={handleStart}
-            className="rounded border border-neutral-900 px-2 py-1 text-sm font-medium text-neutral-900 hover:bg-neutral-100"
+            className="rounded border border-line bg-white px-2 py-1 text-sm font-medium text-ink hover:bg-surface"
           >
             {copy.tour.bannerStart}
           </button>
@@ -119,16 +120,17 @@ export function ReadingTour({ isFinancial }: { isFinancial: boolean }) {
             type="button"
             onClick={hideBanner}
             aria-label={copy.tour.close}
-            className="px-2 py-1 text-sm text-neutral-700 hover:text-neutral-900"
+            className="px-2 py-1 text-sm text-ink-sub hover:text-ink"
           >
             ✕
           </button>
         </div>
       )}
+      {/* DESIGN.md 5-1: 보조 버튼 (흰 바탕 + 회색 테두리) */}
       <button
         type="button"
         onClick={handleStart}
-        className="ml-auto rounded border border-neutral-900 px-3 py-1 text-sm font-medium text-neutral-900 hover:bg-neutral-100"
+        className="ml-auto rounded border border-line bg-white px-3 py-1 text-sm font-medium text-ink hover:bg-surface"
       >
         {copy.tour.fixedButton}
       </button>

@@ -2,8 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 
-// FS 7장 Tooltip: 버튼 트리거 + 말풍선. 마우스 올림·포커스·탭으로 열리고, Esc·바깥 클릭으로 닫힌다.
-// 말풍선은 항상 DOM에 두고 hidden으로 숨겨서 aria-describedby가 늘 가리키는 곳이 있게 한다.
+// FS 7장, DESIGN.md 5-4: Tooltip 버튼 트리거 + 말풍선.
+// 흰 바탕 + 얇은 회색 테두리(border-line), 검정 글자(text-ink). 마우스 올림·포커스·탭으로 열리고, Esc·바깥 클릭으로 닫힌다.
 export function Tooltip({ text, label }: { text: string; label: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLSpanElement>(null);
@@ -43,7 +43,7 @@ export function Tooltip({ text, label }: { text: string; label: string }) {
         onFocus={() => setIsOpen(true)}
         onBlur={() => setIsOpen(false)}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-neutral-400 text-xs text-neutral-600"
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-line bg-white text-xs text-ink-sub hover:text-ink"
       >
         ?
       </button>
@@ -52,11 +52,10 @@ export function Tooltip({ text, label }: { text: string; label: string }) {
         id={tipId}
         role="tooltip"
         hidden={!isOpen}
-        className="absolute top-full left-0 z-10 mt-1 w-56 max-w-[calc(100vw-2rem)] rounded border border-neutral-300 bg-white px-3 py-2 text-left text-sm text-neutral-800 shadow"
+        className="absolute top-full left-0 z-10 mt-1 w-56 max-w-[calc(100vw-2rem)] rounded border border-line bg-white px-3 py-2 text-left text-sm text-ink"
       >
         {text}
       </span>
     </span>
   );
 }
-
