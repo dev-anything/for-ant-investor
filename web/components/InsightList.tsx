@@ -6,8 +6,8 @@ export function InsightList({ items }: { items: { text: string }[] }) {
   if (items.length === 0) return null;
   return (
     <div className="border-t border-line py-4">
-      <h3 className="text-base font-semibold text-ink">{copy.reportCard.insightTitle}</h3>
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink">
+      <h3 className="text-base font-normal text-ink-sub">{copy.reportCard.insightTitle}</h3>
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm font-normal text-ink">
         {items.map((item, index) => (
           <li key={index}>{item.text}</li>
         ))}
