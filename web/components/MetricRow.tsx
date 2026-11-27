@@ -36,8 +36,8 @@ export function MetricRow({
 
   return (
     <div className="border-t border-line py-4">
-      <h3 className="text-base font-semibold text-ink">{question}</h3>
-      <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink">
+      <h3 className="text-base font-normal text-ink">{question}</h3>
+      <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-ink">
         <span>
           {name} <span className="font-bold tabular-nums">{latestText}</span>
         </span>

@@ -9,7 +9,7 @@ import {
   type AnyGaugeKey,
 } from '@/lib/gauge';
 
-// FS 7장 Gauge, DESIGN-remember 4-3: 얇은 가로선(bg-line) + 오렌지 점(bg-accent) + 기준선(bg-ink) + 업종 가운데 값(▲ 눈금 + 라벨).
+// FS 7장 Gauge, DESIGN-remember 4-3: 얇은 가로선(bg-muted) + 오렌지 점(bg-accent) + 기준선(bg-ink) + 업종 가운데 값(▲ 눈금 + 라벨).
 // value는 저장 값 (재판정 없이 위치만 계산). valueText는 화면과 같은 서식 문자열
 // lineTip: 기준선 툴팁 (기준선이 없는 지표는 null이고 기준선 표시도 없다). 단위는 GAUGE_UNIT (F-09 PER·PBR은 배)
 export function Gauge({
@@ -43,8 +43,8 @@ export function Gauge({
 
   return (
     <div className="mt-3">
-      {/* DESIGN-remember: 얇은 가로선(h-0.5 bg-line) + 오렌지 점(bg-accent). 막대 그림만 role="img"로 묶는다 */}
-      <div role="img" aria-label={ariaLabel} className="relative my-3 h-0.5 bg-line">
+      {/* DESIGN-remember: 얇은 가로선(h-px) + 오렌지 점(bg-accent). 막대 그림만 role="img"로 묶는다 */}
+      <div role="img" aria-label={ariaLabel} className="relative my-3 h-px bg-muted">
         {linePct !== null && (
           <div
             className="absolute top-[-6px] bottom-[-6px] w-px -translate-x-1/2 bg-ink"
@@ -52,7 +52,7 @@ export function Gauge({
           />
         )}
         <div
-          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent"
+          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent ring-1 ring-ink"
           style={{ left: `${pct}%` }}
         />
         {/* 가운데 값: 막대 아래쪽 ▲ 모양 (검정 한 가지 색상) */}
