@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Radar } from 'lucide-react';
 import { Suspense } from 'react';
 import { AuthMenu } from '@/components/AuthMenu';
 import { NavLink } from '@/components/NavLink';
@@ -10,11 +11,12 @@ export function AppHeader() {
   return (
     <header className="border-b border-line bg-white">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <Link
-          href="/"
-          className="text-lg font-bold text-ink transition-colors hover:text-ink-sub"
-        >
-          {copy.brand}
+        {/* DESIGN 4-2: 보라 정사각형 심볼(32px) + 로고 글자(20px/800) */}
+        <Link href="/" className="flex items-center gap-2 text-ink">
+          <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-brand">
+            <Radar size={20} strokeWidth={2} className="text-white" aria-hidden="true" />
+          </span>
+          <span className="text-xl font-extrabold">{copy.brand}</span>
         </Link>
 
         {/* 오른쪽 그룹: [데스크톱 nav] [AuthMenu] [모바일 ≡] (DESIGN 5-3) */}

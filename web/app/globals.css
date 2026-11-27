@@ -1,82 +1,92 @@
 @import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 @import "tailwindcss";
-/* FS 9-8, DESIGN.md 5-8: driver.js 투어 말풍선 및 버튼 스타일 */
+/* FS 9-8, DESIGN.md 6-11: driver.js 투어 말풍선 및 버튼 스타일 (3차 색·모서리로 덮어씀) */
 @import "driver.js/dist/driver.css";
 
 @theme {
-  /* DESIGN.md 2-1 포인트 색 */
-  --color-brand: #6B4423;
-  --color-brand-fg: #FFFFFF;
+  /* DESIGN.md 2-1 포인트 색과 중립 색 */
+  --color-brand: #6D28D9;
+  --color-brand-hover: #5B21B6;
+  --color-brand-soft: #F3EEFF;
+  --color-page: #F7F7F8;
+  --color-surface: #FFFFFF;
+  --color-subtle: #F4F4F5;
+  --color-ink: #18181B;
+  --color-ink-sub: #52525B;
+  --color-muted: #71717A;
+  --color-line: #E4E4E7;
+  --color-bar-past: #D4D4D8;
+  --color-skeleton: #EDEDF0;
+  --color-overlay: rgb(0 0 0 / 0.45);
 
-  /* DESIGN.md 2-2 중립 색 및 로딩 스켈레톤 */
-  --color-surface: #F5F5F5;
-  --color-skeleton: #E5E5E5;
-  --color-ink: #171717;
-  --color-ink-sub: #525252;
-  --color-line: #D4D4D4;
-  --color-muted: #A3A3A3;
-
-  /* DESIGN.md 3 글꼴 */
+  /* DESIGN.md 3 글꼴과 글자 크기 */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+  --text-meta: 0.8125rem;
+  --text-hero: 2rem;
 
-  /* DESIGN.md 4-5 모서리: 최대 2px 이하 (rounded-full은 유지) */
-  --radius-xs: 0.125rem;
-  --radius-sm: 0.125rem;
-  --radius: 0.125rem;
-  --radius-md: 0.125rem;
-  --radius-lg: 0.125rem;
-  --radius-xl: 0.125rem;
-  --radius-2xl: 0.125rem;
-  --radius-3xl: 0.125rem;
+  /* DESIGN.md 4-1 카드·버튼 모서리, 최대 폭 */
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --container-content: 1200px;
+
+  /* DESIGN.md 6-13 스켈레톤 반짝임 */
+  --animate-skeleton: skeleton-shimmer 1.5s ease-in-out infinite;
 }
 
-/* DESIGN.md 1 전체 방향, 2-2 중립 색, 3 글꼴 */
+/* DESIGN.md 6-13: 천천히 밝아졌다 어두워진다 */
+@keyframes skeleton-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* DESIGN.md 1, 4-1: 연회색 바탕 위에 흰 카드를 올린다 */
 body {
-  background-color: #FFFFFF;
-  color: #171717;
-  font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
 }
 
-/* DESIGN.md 5-7 포커스 표시: 키보드 포커스 링 (갈색 2px) */
+/* DESIGN.md 6-15: 키보드 포커스는 보라 2px 링 */
 :focus-visible {
-  outline: 2px solid #6B4423;
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-/* DESIGN.md 4-1, 4-5, 5-8: 말풍선은 흰 바탕·검정 글자, 모서리 2px(0.125rem), 그림자 없음, 다음 버튼은 포인트 갈색(#6B4423) 채움 */
+/* DESIGN.md 6-11: 말풍선은 흰 팝오버, 다음 버튼만 보라 채움 */
 .driver-popover {
-  background-color: #ffffff;
-  color: #171717;
-  border: 1px solid #D4D4D4;
-  border-radius: 0.125rem;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
   box-shadow: none;
 }
 .driver-popover-title {
-  color: #171717;
+  color: var(--color-ink);
   font-weight: 700;
 }
 .driver-popover-description {
-  color: #525252;
+  color: var(--color-ink-sub);
 }
 .driver-popover-progress-text {
-  color: #525252;
+  color: var(--color-muted);
 }
 .driver-popover-footer-btn,
 .driver-popover-navigation-btns button {
-  background-color: #ffffff;
-  color: #171717;
-  border: 1px solid #D4D4D4;
-  border-radius: 0.125rem;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
   text-shadow: none;
 }
 .driver-popover-navigation-btns .driver-popover-next-btn {
-  background-color: #6B4423;
-  color: #ffffff;
-  border-color: #6B4423;
-  border-radius: 0.125rem;
+  background-color: var(--color-brand);
+  color: var(--color-surface);
+  border-color: var(--color-brand);
 }
 
-/* 640px 미만은 말풍선을 화면 아래쪽에 고정한다 (FS 9-8). 화살표는 숨긴다 */
+/* FS 9-8: 640px 미만은 말풍선을 화면 아래쪽에 고정한다. 화살표는 숨긴다 */
 @media (max-width: 639.98px) {
   .driver-popover {
     position: fixed !important;
@@ -89,5 +99,14 @@ body {
   }
   .driver-popover-arrow {
     display: none !important;
+  }
+}
+
+/* DESIGN.md 8: 움직임은 최소한만. 스켈레톤 반짝임과 전환을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }
