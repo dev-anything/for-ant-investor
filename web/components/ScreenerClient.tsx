@@ -156,66 +156,67 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
   const shownNotice = hoverNotice ?? notice;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-ink">{copy.screener.title}</h1>
-
+    <>
       <ChatFilterInput onApply={handleChatApply} />
 
-      <FilterPanel
-        selected={state.filters}
-        refYear={refYear}
-        notice={shownNotice}
-        onToggle={handleToggle}
-        onHover={handleHover}
-      />
+      {/* DESIGN 5-3: PC는 왼쪽 필터 패널(300px) + 오른쪽 결과. 아래에서는 결과가 위로 쌓인다 */}
+      <div className="lg:grid lg:grid-cols-[300px_1fr] lg:items-start lg:gap-6">
+        <FilterPanel
+          selected={state.filters}
+          refYear={refYear}
+          notice={shownNotice}
+          onToggle={handleToggle}
+          onHover={handleHover}
+        />
 
-      <div ref={tableTopRef} className="mt-6">
-        {/* 조회 중 안내는 화면에 보이지 않고 스크린 리더에만 알린다 (PRD 3-1 접근성, FS 8-3) */}
-        {hasFilters && (
-          <p role="status" className="sr-only">
-            {loading ? copy.screener.loading : ''}
-          </p>
-        )}
-        {!hasFilters && <EmptyState message={copy.screener.noFilter} />}
-        {hasFilters && failed && <ErrorState message={copy.dbError} />}
-        {hasFilters && !failed && result === null && loading && <Skeleton className="h-40 w-full" />}
+        <div ref={tableTopRef} className="mt-6 lg:mt-0">
+          {/* 조회 중 안내는 화면에 보이지 않고 스크린 리더에만 알린다 (PRD 3-1 접근성, FS 8-3) */}
+          {hasFilters && (
+            <p role="status" className="sr-only">
+              {loading ? copy.screener.loading : ''}
+            </p>
+          )}
+          {!hasFilters && <EmptyState message={copy.screener.noFilter} />}
+          {hasFilters && failed && <ErrorState message={copy.dbError} />}
+          {hasFilters && !failed && result === null && loading && <Skeleton className="h-40 w-full" />}
 
-        {hasFilters && !failed && result !== null && (
-          <>
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <p className="font-semibold text-ink">{copy.screener.count(result.total)}</p>
-                {hasFinancialBlocked(state.filters) && (
-                  <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-sub">
-                    {copy.screener.financialBlocked}
-                    <Tooltip text={copy.screener.financialBlockedTip} label="금융회사 안내 설명 보기" />
-                  </p>
-                )}
-                {result.basDt && <p className="mt-1 text-xs text-ink-sub">{copy.screener.basis(result.basDt)}</p>}
-              </div>
-              <PageSizeSelect size={state.size} onChange={handleSize} />
-            </div>
-
-            {result.total === 0 ? (
-              <EmptyState message={copy.screener.zero} />
-            ) : (
-              <>
-                <div className="mt-3">
-                  <ResultTable
-                    rows={result.rows}
-                    filters={state.filters}
-                    refYear={refYear}
-                    sort={{ key: state.sort, dir: state.dir }}
-                    dimmed={loading}
-                    onSort={handleSort}
-                  />
+          {hasFilters && !failed && result !== null && (
+            <>
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="font-semibold text-ink">{copy.screener.count(result.total)}</p>
+                  {hasFinancialBlocked(state.filters) && (
+                    <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-sub">
+                      {copy.screener.financialBlocked}
+                      <Tooltip text={copy.screener.financialBlockedTip} label="금융회사 안내 설명 보기" />
+                    </p>
+                  )}
+                  {result.basDt && <p className="mt-1 text-meta text-ink-sub">{copy.screener.basis(result.basDt)}</p>}
                 </div>
-                <Pagination page={state.page} pageCount={pageCountOf(result.total, state.size)} onChange={handlePage} />
-              </>
-            )}
-          </>
-        )}
+                <PageSizeSelect size={state.size} onChange={handleSize} />
+              </div>
+
+              {result.total === 0 ? (
+                <EmptyState message={copy.screener.zero} />
+              ) : (
+                <>
+                  <div className="mt-3">
+                    <ResultTable
+                      rows={result.rows}
+                      filters={state.filters}
+                      refYear={refYear}
+                      sort={{ key: state.sort, dir: state.dir }}
+                      dimmed={loading}
+                      onSort={handleSort}
+                    />
+                  </div>
+                  <Pagination page={state.page} pageCount={pageCountOf(result.total, state.size)} onChange={handlePage} />
+                </>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

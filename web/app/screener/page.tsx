@@ -57,11 +57,14 @@ export default async function ScreenerPage({ searchParams }: ScreenerPageProps) 
   if (resolved.target) redirect(`/screener?${toQuery(resolved.target)}`);
 
   return (
-    <ScreenerClient
-      initialState={state}
-      initialResult={resolved.result}
-      initialFailed={resolved.failed}
-      refYear={refYear}
-    />
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
+      <h1 className="text-2xl font-bold text-ink">{copy.screener.title}</h1>
+      <ScreenerClient
+        initialState={state}
+        initialResult={resolved.result}
+        initialFailed={resolved.failed}
+        refYear={refYear}
+      />
+    </div>
   );
 }

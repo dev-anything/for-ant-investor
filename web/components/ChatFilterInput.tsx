@@ -73,7 +73,7 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
   }
 
   return (
-    <section aria-label={copy.chat.inputLabel} className="mb-4 rounded border border-line bg-surface p-4">
+    <section aria-label={copy.chat.inputLabel} className="mb-4 rounded-lg bg-surface p-4 sm:p-6">
       {unavailable ? (
         <p className="text-sm text-ink">{copy.chat.unavailable}</p>
       ) : (
@@ -88,18 +88,18 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
               value={text}
               maxLength={CHAT_MAX_INPUT}
               onChange={(event) => setText(event.target.value)}
-              className="min-w-0 flex-1 rounded border border-line px-3 py-1 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+              className="h-12 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm text-ink focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/30"
             />
-            {/* DESIGN.md 5-1: 필터 적용 버튼은 주요 버튼 (갈색 채움) */}
+            {/* DESIGN.md 6-1: 필터 적용 버튼은 주요 버튼 (보라 채움) */}
             <button
               type="submit"
               disabled={pending || text.trim().length === 0}
-              className="rounded bg-brand px-3 py-1 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+              className="h-11 rounded-md bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:bg-subtle disabled:text-muted"
             >
               {copy.chat.submit}
             </button>
           </form>
-          <p className="mt-1 text-xs text-ink-sub">{copy.chat.externalNotice}</p>
+          <p className="mt-1 text-meta text-ink-sub">{copy.chat.externalNotice}</p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
             <span className="text-ink-sub">{copy.chat.examplesLead}</span>
@@ -108,7 +108,7 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
                 key={example.text}
                 type="button"
                 onClick={() => handleExample(example.filters)}
-                className="rounded border border-line bg-white px-2 py-1 text-left text-sm text-ink hover:bg-surface"
+                className="rounded-full border border-line bg-white px-3 py-1 text-left text-sm text-ink hover:bg-subtle"
               >
                 {example.text}
               </button>

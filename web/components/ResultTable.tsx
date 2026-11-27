@@ -6,7 +6,7 @@ import type { ScreenerSortKey } from '@/lib/filters';
 import type { ScreenerRow } from '@/lib/data/screener';
 import { evidenceSlots, readEvidenceCell, type EvidenceSlot } from '@/lib/screener-view';
 
-// FS 8-3 ResultTable, DESIGN.md 4-7, 5-5: 고정 열(종목명·코드·시장·시가총액) + 고른 필터의 근거 값 열.
+// FS 8-3 ResultTable, DESIGN.md 6-6: 고정 열(종목명·코드·시장·시가총액) + 고른 필터의 근거 값 열.
 export function ResultTable({
   rows,
   filters,
@@ -29,10 +29,13 @@ export function ResultTable({
       header: copy.screener.name,
       sortKey: 'name',
       cell: (row) => (
-        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink underline underline-offset-2 hover:text-ink-sub">
+        <Link
+          href={`/stocks/${row.shortCode}`}
+          className="font-medium text-ink after:absolute after:inset-0 hover:underline"
+        >
           {row.name}
           {formatAccMt(row.accMt) && (
-            <span className="ml-1 text-xs font-normal text-ink-sub">{formatAccMt(row.accMt)}</span>
+            <span className="ml-1 text-meta font-normal text-ink-sub">{formatAccMt(row.accMt)}</span>
           )}
         </Link>
       ),
@@ -75,7 +78,7 @@ function evidenceColumn(slot: EvidenceSlot, refYear: number | null): DataColumn<
         <span className="tabular-nums">
           {cell.text}
           {cell.isOtherYear && cell.actualYear !== null && (
-            <span className="ml-1 text-xs text-ink-sub">{cell.actualYear}년</span>
+            <span className="ml-1 text-meta text-ink-sub">{cell.actualYear}년</span>
           )}
         </span>
       );
