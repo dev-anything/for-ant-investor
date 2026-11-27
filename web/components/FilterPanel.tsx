@@ -21,7 +21,7 @@ export function FilterPanel({
   onHover: (id: number | null) => void;
 }) {
   return (
-    <section aria-labelledby="filter-panel-title" className="mt-6 rounded border border-neutral-300 p-4">
+    <section aria-labelledby="filter-panel-title" className="mt-6 rounded border border-line bg-surface p-4">
       <h2 id="filter-panel-title" className="sr-only">
         고를 조건
       </h2>
@@ -31,13 +31,16 @@ export function FilterPanel({
           {selected.map((id) => {
             const label = findFilter(id)?.label ?? '';
             return (
-              <li key={id} className="inline-flex items-center gap-1 rounded-full border border-neutral-900 px-3 py-1 text-sm">
+              <li
+                key={id}
+                className="inline-flex items-center gap-1 rounded border-2 border-ink bg-white px-3 py-1 text-sm font-bold text-ink"
+              >
                 <span>{label}</span>
                 <button
                   type="button"
                   aria-label={copy.screener.removeChip(label)}
                   onClick={() => onToggle(id)}
-                  className="px-1 text-neutral-600 hover:text-neutral-900"
+                  className="px-1 text-ink-sub hover:text-ink focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
                 >
                   ✕
                 </button>
@@ -50,7 +53,7 @@ export function FilterPanel({
       <div className="space-y-4">
         {FILTER_GROUPS.map((group: FilterGroup) => (
           <div key={group} className="flex flex-wrap items-center gap-2">
-            <h3 className="w-24 shrink-0 text-sm font-semibold text-neutral-700">{group}</h3>
+            <h3 className="w-24 shrink-0 text-sm font-semibold text-ink-sub">{group}</h3>
             <div className="flex flex-wrap gap-2">
               {FILTERS.filter((f) => f.group === group).map((filter) => {
                 const isSelected = selected.includes(filter.id);
@@ -67,10 +70,10 @@ export function FilterPanel({
                       onMouseLeave={() => onHover(null)}
                       onFocus={() => onHover(isBlocked ? filter.id : null)}
                       onBlur={() => onHover(null)}
-                      className={`rounded border px-3 py-1 text-left text-sm transition-colors ${
+                      className={`rounded px-3 py-1 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 ${
                         isSelected
-                          ? 'border-neutral-900 bg-neutral-900 text-white'
-                          : 'border-neutral-300 text-neutral-800 hover:bg-neutral-100'
+                          ? 'border-2 border-ink bg-white font-bold text-ink'
+                          : 'border border-line bg-white text-ink hover:bg-surface'
                       } ${isBlocked ? 'opacity-40' : ''}`}
                     >
                       {filter.label}
@@ -84,7 +87,7 @@ export function FilterPanel({
         ))}
       </div>
 
-      <p role="status" aria-live="polite" className="mt-4 min-h-5 text-sm text-neutral-700">
+      <p role="status" aria-live="polite" className="mt-4 min-h-5 text-sm text-ink-sub">
         {notice ?? ''}
       </p>
     </section>

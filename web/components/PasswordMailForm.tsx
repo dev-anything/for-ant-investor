@@ -48,7 +48,7 @@ export function PasswordMailForm({ email, onEmailChange, getRedirectTo }: Passwo
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-3">
-      <p className="text-sm text-neutral-700">{copy.auth.resetNote}</p>
+      <p className="text-sm text-ink-sub">{copy.auth.resetNote}</p>
       <AuthField
         label={copy.auth.emailLabel}
         type="email"

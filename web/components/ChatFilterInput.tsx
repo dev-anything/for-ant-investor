@@ -73,7 +73,7 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
   }
 
   return (
-    <section aria-label={copy.chat.inputLabel} className="mb-4 rounded border border-line p-4">
+    <section aria-label={copy.chat.inputLabel} className="mb-4 rounded border border-line bg-surface p-4">
       {unavailable ? (
         <p className="text-sm text-ink">{copy.chat.unavailable}</p>
       ) : (

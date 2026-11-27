@@ -29,16 +29,16 @@ export function NotificationList({ initial }: NotificationListProps) {
   }
 
   return (
-    <ul className="divide-y divide-neutral-200 rounded border border-neutral-300">
+    <ul className="divide-y divide-line rounded border border-line bg-white">
       {initial.map((entry) => {
         const unread = entry.unread && !readIds.has(entry.id);
         const content = (
           <>
-            <p className="flex items-center gap-2 text-xs text-neutral-600">
-              {unread && <span className="font-bold text-neutral-900">{copy.mypage.newBadge}</span>}
+            <p className="flex items-center gap-2 text-xs text-ink-sub">
+              {unread && <span className="font-bold text-ink">{copy.mypage.newBadge}</span>}
               <span>{formatNotifyDate(entry.createdAt)}</span>
             </p>
-            <p className={`mt-1 whitespace-pre-line text-sm text-neutral-900 ${unread ? 'font-bold' : ''}`}>{entry.body}</p>
+            <p className={`mt-1 whitespace-pre-line text-sm text-ink ${unread ? 'font-bold' : ''}`}>{entry.body}</p>
           </>
         );
         // 종목 화면이 없는 알림(목록에서 빠짐 등)은 링크 없이 보여 준다
@@ -50,7 +50,7 @@ export function NotificationList({ initial }: NotificationListProps) {
               <Link
                 href={`/stocks/${entry.shortCode}`}
                 onClick={() => markRead(entry.id)}
-                className="block px-4 py-3 transition-colors hover:bg-neutral-50"
+                className="block px-4 py-3 transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
               >
                 {content}
               </Link>

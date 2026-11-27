@@ -21,8 +21,8 @@ export default async function ResetPasswordPage() {
 
   return (
     <div className="mx-auto max-w-sm px-4 py-12">
-      <h1 className="text-xl font-bold text-neutral-900">{copy.auth.resetPage.title}</h1>
-      <div className="mt-6">
+      <h1 className="text-xl font-bold text-ink">{copy.auth.resetPage.title}</h1>
+      <div className="mt-6 rounded border border-line bg-surface p-6">
         <ResetPasswordForm />
       </div>
     </div>

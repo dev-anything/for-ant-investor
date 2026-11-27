@@ -38,14 +38,14 @@ export function MailSentPanel({ message, note, onResend }: MailSentPanelProps) {
 
   return (
     <div className="space-y-2 text-sm">
-      <p role="status">{message}</p>
-      <p className="text-neutral-600">{note}</p>
+      <p role="status" className="text-ink">{message}</p>
+      <p className="text-ink-sub">{note}</p>
       <AuthError message={error} />
       <button
         type="button"
         onClick={() => void resend()}
         disabled={busy || remaining > 0}
-        className="mt-2 w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:text-neutral-400"
+        className="mt-2 w-full rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {remaining > 0 ? copy.auth.resendWait(remaining) : copy.auth.resend}
       </button>

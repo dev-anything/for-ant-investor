@@ -157,7 +157,7 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-neutral-900">{copy.screener.title}</h1>
+      <h1 className="text-2xl font-bold text-ink">{copy.screener.title}</h1>
 
       <ChatFilterInput onApply={handleChatApply} />
 
@@ -184,14 +184,14 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
           <>
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="font-semibold text-neutral-900">{copy.screener.count(result.total)}</p>
+                <p className="font-semibold text-ink">{copy.screener.count(result.total)}</p>
                 {hasFinancialBlocked(state.filters) && (
-                  <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-neutral-700">
+                  <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-sub">
                     {copy.screener.financialBlocked}
                     <Tooltip text={copy.screener.financialBlockedTip} label="금융회사 안내 설명 보기" />
                   </p>
                 )}
-                {result.basDt && <p className="mt-1 text-xs text-neutral-600">{copy.screener.basis(result.basDt)}</p>}
+                {result.basDt && <p className="mt-1 text-xs text-ink-sub">{copy.screener.basis(result.basDt)}</p>}
               </div>
               <PageSizeSelect size={state.size} onChange={handleSize} />
             </div>

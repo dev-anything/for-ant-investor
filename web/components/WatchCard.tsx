@@ -12,7 +12,8 @@ import {
   summarizeInsights,
 } from '@/lib/mypage';
 
-const CARD_CLASS = 'block h-full rounded border border-neutral-300 p-4 transition-colors';
+const CARD_CLASS =
+  'block h-full rounded border border-line bg-surface p-4 transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
 
 export function WatchCard({ watch }: { watch: WatchEntry }) {
   const body = <WatchCardBody watch={watch} />;
@@ -21,7 +22,7 @@ export function WatchCard({ watch }: { watch: WatchEntry }) {
     return <div className={CARD_CLASS}>{body}</div>;
   }
   return (
-    <Link href={`/stocks/${watch.shortCode}`} className={`${CARD_CLASS} hover:border-neutral-600`}>
+    <Link href={`/stocks/${watch.shortCode}`} className={`${CARD_CLASS} hover:border-ink`}>
       {body}
     </Link>
   );
@@ -37,11 +38,11 @@ function WatchCardBody({ watch }: { watch: WatchEntry }) {
 
   return (
     <>
-      <h3 className="font-medium text-neutral-900">
+      <h3 className="font-medium text-ink">
         {watch.name}
-        {watch.shortCode !== null && <span className="ml-1 text-sm text-neutral-600">({watch.shortCode})</span>}
+        {watch.shortCode !== null && <span className="ml-1 text-sm text-ink-sub">({watch.shortCode})</span>}
       </h3>
-      {watch.market !== null && <p className="mt-0.5 text-xs text-neutral-600">{watch.market}</p>}
+      {watch.market !== null && <p className="mt-0.5 text-xs text-ink-sub">{watch.market}</p>}
 
       {!watch.isListed && <Line strong>{copy.mypage.delisted}</Line>}
       {summary === null && <Line>{copy.mypage.noFinancials}</Line>}
@@ -55,9 +56,9 @@ function WatchCardBody({ watch }: { watch: WatchEntry }) {
       {growth !== null && <Line>{growth}</Line>}
       {insight.first !== null && (
         <Line>
-          <span className="text-neutral-600">{copy.reportCard.insightTitle}: </span>
+          <span className="text-ink-sub">{copy.reportCard.insightTitle}: </span>
           {insight.first}
-          {insight.extraCount > 0 && <span className="ml-1 text-neutral-600">{copy.mypage.moreInsights(insight.extraCount)}</span>}
+          {insight.extraCount > 0 && <span className="ml-1 text-ink-sub">{copy.mypage.moreInsights(insight.extraCount)}</span>}
         </Line>
       )}
     </>
@@ -66,5 +67,5 @@ function WatchCardBody({ watch }: { watch: WatchEntry }) {
 
 // 카드 안 한 줄 (간격 통일)
 function Line({ children, strong = false }: { children: ReactNode; strong?: boolean }) {
-  return <p className={`mt-2 text-sm ${strong ? 'font-medium text-neutral-900' : 'text-neutral-700'}`}>{children}</p>;
+  return <p className={`mt-2 text-sm ${strong ? 'font-medium text-ink' : 'text-ink-sub'}`}>{children}</p>;
 }
