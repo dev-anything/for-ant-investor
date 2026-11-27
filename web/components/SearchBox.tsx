@@ -27,9 +27,9 @@ function Marked({ text, query }: { text: string; query: string }) {
     <>
       {highlightParts(text, query).map((part, index) =>
         part.match ? (
-          <strong key={index} className="font-bold text-ink">
+          <mark key={index} className="bg-accent-soft font-semibold text-ink">
             {part.text}
-          </strong>
+          </mark>
         ) : (
           <span key={index}>{part.text}</span>
         )

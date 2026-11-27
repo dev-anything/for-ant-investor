@@ -33,7 +33,7 @@ export default async function MypagePage() {
       <h1 className="text-xl font-bold text-ink">{copy.mypage.title}</h1>
 
       <section aria-labelledby="watch-heading" className="mt-8">
-        <h2 id="watch-heading" className="text-lg font-medium text-ink">
+        <h2 id="watch-heading" className="text-xl font-semibold text-ink-sub">
           {copy.mypage.watchTitle(mypage.watches.length, WATCH_LIMIT)}
         </h2>
         {mypage.watches.length === 0 ? (
@@ -50,7 +50,7 @@ export default async function MypagePage() {
       </section>
 
       <section aria-labelledby="notification-heading" className="mt-10">
-        <h2 id="notification-heading" className="text-lg font-medium text-ink">
+        <h2 id="notification-heading" className="text-xl font-semibold text-ink-sub">
           {copy.mypage.notificationsTitle}
         </h2>
         <div className="mt-4">
@@ -59,7 +59,7 @@ export default async function MypagePage() {
       </section>
 
       <section aria-labelledby="settings-heading" className="mt-10">
-        <h2 id="settings-heading" className="text-lg font-medium text-ink">
+        <h2 id="settings-heading" className="text-xl font-semibold text-ink-sub">
           {copy.mypage.settingsTitle}
         </h2>
         <div className="mt-4">
@@ -68,7 +68,7 @@ export default async function MypagePage() {
       </section>
 
       <section aria-labelledby="account-heading" className="mt-10">
-        <h2 id="account-heading" className="text-lg font-medium text-ink">
+        <h2 id="account-heading" className="text-xl font-semibold text-ink-sub">
           {copy.mypage.accountTitle}
         </h2>
         <div className="mt-4">

@@ -33,14 +33,14 @@ export function FilterPanel({
             return (
               <li
                 key={id}
-                className="inline-flex items-center gap-1 rounded border-2 border-ink bg-white px-3 py-1 text-sm font-bold text-ink"
+                className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1 text-sm font-semibold text-primary-fg"
               >
                 <span>{label}</span>
                 <button
                   type="button"
                   aria-label={copy.screener.removeChip(label)}
                   onClick={() => onToggle(id)}
-                  className="px-1 text-ink-sub hover:text-ink"
+                  className="px-1 text-primary-fg"
                 >
                   ✕
                 </button>
@@ -70,9 +70,9 @@ export function FilterPanel({
                       onMouseLeave={() => onHover(null)}
                       onFocus={() => onHover(isBlocked ? filter.id : null)}
                       onBlur={() => onHover(null)}
-                      className={`rounded px-3 py-1 text-left text-sm transition-colors ${
+                      className={`rounded-md px-3 py-1 text-left text-sm transition-colors ${
                         isSelected
-                          ? 'border-2 border-ink bg-white font-bold text-ink'
+                          ? 'bg-primary font-semibold text-primary-fg'
                           : 'border border-line bg-white text-ink hover:bg-surface'
                       } ${isBlocked ? 'opacity-40' : ''}`}
                     >
