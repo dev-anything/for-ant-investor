@@ -8,11 +8,11 @@ import { copy } from '@/lib/copy';
 // md 이상은 펼침, md 미만은 <details> 접기 메뉴 (≡)
 export function AppHeader() {
   return (
-    <header className="border-b border-line bg-white">
+    <header className="bg-ink text-white">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link
           href="/"
-          className="text-lg font-bold text-ink transition-colors hover:text-ink-sub"
+          className="text-lg font-bold text-white transition-colors"
         >
           {copy.brand}
         </Link>
@@ -36,13 +36,13 @@ export function AppHeader() {
           <details className="relative md:hidden">
             <summary
               aria-label="주요 메뉴"
-              className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded border border-line bg-white text-lg text-ink hover:bg-surface [&::-webkit-details-marker]:hidden"
+              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border border-ink-light text-white [&::-webkit-details-marker]:hidden"
             >
               <span aria-hidden="true">≡</span>
             </summary>
             <nav
               aria-label="주요 메뉴"
-              className="absolute right-0 top-full z-50 mt-2 flex w-40 flex-col gap-2 rounded border border-line bg-white p-3 text-sm"
+              className="absolute right-0 top-full z-50 mt-2 flex w-40 flex-col gap-2 rounded-md border border-ink-light bg-ink p-3 text-sm"
             >
               <NavLink href="/">{copy.nav.search}</NavLink>
               <NavLink href="/screener">{copy.nav.screener}</NavLink>

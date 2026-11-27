@@ -21,8 +21,8 @@ export function NavLink({ href, children }: NavLinkProps) {
       aria-current={isActive ? 'page' : undefined}
       className={`transition-colors ${
         isActive
-          ? 'font-bold text-ink underline decoration-accent decoration-2 underline-offset-4'
-          : 'text-ink-sub hover:text-ink'
+          ? 'font-semibold text-white underline decoration-accent decoration-2 underline-offset-4'
+          : 'text-ink-light hover:text-white'
       }`}
     >
       {children}

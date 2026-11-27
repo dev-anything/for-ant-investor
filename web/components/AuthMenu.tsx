@@ -99,24 +99,24 @@ export function AuthMenu() {
     <div className={MENU_CLASS}>
       {me.loggedIn ? (
         <>
-          <Link href="/mypage" className="text-ink-sub transition-colors hover:text-ink">
+          <Link href="/mypage" className="text-ink-light transition-colors hover:text-white">
             {copy.auth.mypage}
-            {me.unreadCount > 0 && <span className="ml-1 tabular-nums font-bold text-ink">{me.unreadCount}</span>}
+            {me.unreadCount > 0 && <span className="ml-1 tabular-nums font-bold text-white">{me.unreadCount}</span>}
           </Link>
           <button
             type="button"
             onClick={() => void logout()}
-            className="text-ink-sub transition-colors hover:text-ink"
+            className="text-ink-light transition-colors hover:text-white"
           >
             {copy.auth.logout}
           </button>
-          {logoutFailed && <span className="text-xs text-ink">{copy.auth.logoutFailed}</span>}
+          {logoutFailed && <span className="text-xs text-white">{copy.auth.logoutFailed}</span>}
         </>
       ) : (
         <button
           type="button"
           onClick={() => setDialog({})}
-          className="text-ink-sub transition-colors hover:text-ink"
+          className="rounded-md bg-white px-3 py-1.5 text-ink transition-colors hover:bg-surface"
         >
           {copy.auth.login}
         </button>
