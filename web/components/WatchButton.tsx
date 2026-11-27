@@ -99,7 +99,7 @@ export function WatchButton({ code }: { code: string }) {
         {label}
       </button>
       {message !== null && (
-        <p role="status" className="text-xs text-ink">
+        <p role="status" className="text-meta text-ink">
           {message}
         </p>
       )}

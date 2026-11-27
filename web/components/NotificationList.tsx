@@ -56,7 +56,7 @@ export function NotificationList({ initial }: NotificationListProps) {
               <Link
                 href={`/stocks/${entry.shortCode}`}
                 onClick={() => markRead(entry.id)}
-                className="block px-4 py-3 transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+                className="block px-4 py-3 transition-colors hover:bg-subtle"
               >
                 {content}
               </Link>

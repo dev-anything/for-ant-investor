@@ -39,7 +39,7 @@ export function ResultsCharts({
       )}
       {/* 가로 3개, 좁은 화면은 세로로 쌓는다. data-tour는 읽는 순서 안내가 짚는 자리다 (FS 9-1)
           sales = 매출액 그래프 하나, profit = 영업이익·순이익 묶음 (두 칸 차지, 금융회사는 세 칸 전부) */}
-      <div className="mt-4 grid gap-6 md:grid-cols-3">
+      <div className="mt-4 grid gap-6 lg:grid-cols-3">
         {metrics.includes('revenue') && (
           <div data-tour="sales" className="min-w-0">
             <ResultsChart metric="revenue" bars={buildMetricBars(years, 'revenue')} />
@@ -47,7 +47,7 @@ export function ResultsCharts({
         )}
         <div
           data-tour="profit"
-          className={`grid min-w-0 gap-6 md:grid-cols-2 ${isFinancial ? 'md:col-span-3' : 'md:col-span-2'}`}
+          className={`grid min-w-0 gap-6 lg:grid-cols-2 ${isFinancial ? 'lg:col-span-3' : 'lg:col-span-2'}`}
         >
           {metrics
             .filter((metric) => metric !== 'revenue')

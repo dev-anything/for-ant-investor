@@ -22,10 +22,10 @@ export function AppHeader() {
         {/* 가운데 작은 검색창. 홈에서는 HeaderSearch가 스스로 숨는다 */}
         <HeaderSearch />
 
-        {/* 오른쪽 그룹: [데스크톱 nav] [AuthMenu] [모바일 ≡] */}
-        <div className="flex shrink-0 items-center gap-2 md:gap-6">
-          {/* 데스크톱(md 이상) 메뉴 */}
-          <nav aria-label="주요 메뉴" className="hidden items-center gap-4 text-sm md:flex">
+        {/* 오른쪽 그룹: [넓은 화면 nav] [AuthMenu] [좁은 화면 ≡] */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-6">
+          {/* 넓은 화면(sm 이상) 메뉴 */}
+          <nav aria-label="주요 메뉴" className="hidden items-center gap-4 text-sm sm:flex">
             <NavLink href="/">{copy.nav.search}</NavLink>
             <NavLink href="/screener">{copy.nav.screener}</NavLink>
             {/* PRD 4장 F-15 (2차). /industries/… 전부에서 켜진다 (isActivePath 접두어 판정) */}
@@ -37,8 +37,8 @@ export function AppHeader() {
             <AuthMenu />
           </Suspense>
 
-          {/* 모바일(md 미만) 접기 메뉴: 흰 팝오버 카드 + 1px line (DESIGN 4-2) */}
-          <details className="relative md:hidden">
+          {/* 좁은 화면(sm 미만) 접기 메뉴: 흰 팝오버 카드 + 1px line (DESIGN 4-2) */}
+          <details className="relative sm:hidden">
             <summary
               aria-label="주요 메뉴"
               className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-md border border-line bg-white text-ink hover:bg-subtle [&::-webkit-details-marker]:hidden"

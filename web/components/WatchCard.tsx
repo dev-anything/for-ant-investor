@@ -12,8 +12,8 @@ import {
   summarizeInsights,
 } from '@/lib/mypage';
 
-const CARD_CLASS =
-  'block h-full rounded-lg border border-line bg-surface p-4 transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+// DESIGN 6-15: 포커스 링은 globals.css의 :focus-visible 규칙이 맡으므로 중복 클래스를 두지 않는다
+const CARD_CLASS = 'block h-full rounded-lg border border-line bg-surface p-4 transition-colors hover:bg-subtle';
 
 export function WatchCard({ watch }: { watch: WatchEntry }) {
   const body = <WatchCardBody watch={watch} />;

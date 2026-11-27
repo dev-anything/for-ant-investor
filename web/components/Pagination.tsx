@@ -23,8 +23,9 @@ export function Pagination({
 }) {
   if (pageCount <= 1) return null;
 
+  // DESIGN 6-15: 포커스 링은 globals.css의 :focus-visible 규칙이 맡으므로 중복 클래스를 두지 않는다
   const baseButtonClass =
-    'inline-flex h-9 w-9 items-center justify-center rounded-sm text-sm transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 disabled:opacity-40';
+    'inline-flex h-9 w-9 items-center justify-center rounded-sm text-sm transition-colors disabled:opacity-40';
   const normalClass = `${baseButtonClass} text-ink-sub hover:bg-subtle`;
   const currentClass = `${baseButtonClass} bg-brand font-bold text-white`;
 
