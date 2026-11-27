@@ -16,7 +16,7 @@ export default async function IndustriesPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-xl font-semibold text-ink">{copy.industry.listTitle}</h1>
+      <h1 className="text-xl font-semibold text-ink-sub">{copy.industry.listTitle}</h1>
       <p className="mt-2 text-sm text-ink-sub">{copy.industry.listIntro}</p>
       <div className="mt-6 space-y-1">
         {sections.map((section) => (
@@ -32,7 +32,7 @@ export default async function IndustriesPage() {
                 <li key={division.divisionCode}>
                   <Link
                     href={`/industries/${division.divisionCode}`}
-                    className="text-ink underline underline-offset-2 hover:text-ink-sub"
+                    className="text-ink underline underline-offset-2 hover:decoration-2"
                   >
                     {copy.industry.withCount(division.divisionName, division.companyCount)}
                   </Link>

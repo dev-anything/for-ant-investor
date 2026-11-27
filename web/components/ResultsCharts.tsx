@@ -28,7 +28,7 @@ export function ResultsCharts({
 
   return (
     <section aria-labelledby="results-title" className="mt-8 rounded bg-surface p-4 md:p-6">
-      <h2 id="results-title" className="text-lg font-bold text-ink">
+      <h2 id="results-title" className="text-xl font-semibold text-ink-sub">
         {copy.results.title}
       </h2>
       <p className="mt-1 text-sm text-ink-sub">{copy.results.basis(fsLabel, yearRange)}</p>

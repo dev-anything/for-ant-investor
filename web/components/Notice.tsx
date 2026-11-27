@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 
-// DESIGN-remember 안내 박스: 연한 회색 면(surface) + 왼쪽 검정 세로선(ink)
+// DESIGN-remember 안내 박스: 흰 면 + 회색 테두리 + 왼쪽 검정 4px 세로선 (흰 페이지·회색 구역 어디서든 보이게)
 export function Notice({ variant, children }: { variant: 'box' | 'line'; children: ReactNode }) {
   if (variant === 'box') {
     return (
-      <div className="rounded border-l-4 border-ink bg-surface px-4 py-3 text-sm font-semibold text-ink">
+      <div className="rounded border border-line border-l-4 border-l-ink bg-white px-4 py-3 text-sm font-semibold text-ink">
         {children}
       </div>
     );

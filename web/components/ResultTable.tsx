@@ -29,10 +29,10 @@ export function ResultTable({
       header: copy.screener.name,
       sortKey: 'name',
       cell: (row) => (
-        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink underline underline-offset-2 hover:text-ink-sub">
+        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink underline underline-offset-2 hover:decoration-2">
           {row.name}
           {formatAccMt(row.accMt) && (
-            <span className="ml-1 text-xs font-normal text-ink-sub">{formatAccMt(row.accMt)}</span>
+            <span className="ml-1 text-xs font-medium text-ink-sub">{formatAccMt(row.accMt)}</span>
           )}
         </Link>
       ),
@@ -75,7 +75,7 @@ function evidenceColumn(slot: EvidenceSlot, refYear: number | null): DataColumn<
         <span className="tabular-nums">
           {cell.text}
           {cell.isOtherYear && cell.actualYear !== null && (
-            <span className="ml-1 text-xs text-ink-sub">{cell.actualYear}년</span>
+            <span className="ml-1 text-xs font-medium text-ink-sub">{cell.actualYear}년</span>
           )}
         </span>
       );

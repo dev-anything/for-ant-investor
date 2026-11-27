@@ -61,7 +61,7 @@ export function MetricRow({
       {compare.kind === 'too_few' && latest !== null && (
         <p className="mt-2 text-sm text-ink-sub">{copy.industry.tooFew}</p>
       )}
-      <p className="mt-2 text-xs text-ink-sub tabular-nums">{formatValueLine(values)}</p>
+      <p className="mt-2 text-xs font-medium text-ink-sub tabular-nums">{formatValueLine(values)}</p>
       {relationText && <p className="mt-1 text-sm text-ink">{relationText}</p>}
     </div>
   );

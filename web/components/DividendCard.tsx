@@ -15,11 +15,11 @@ export function DividendCard({
   return (
     <section data-tour="dividend" aria-labelledby="dividend-title" className="mt-8 rounded bg-surface p-4 md:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h2 id="dividend-title" className="text-lg font-bold text-ink">
+        <h2 id="dividend-title" className="text-xl font-semibold text-ink-sub">
           {copy.dividend.title}
         </h2>
         {table.kind === 'table' && (
-          <p className="text-xs text-ink-sub">{copy.dividend.basis(table.sourceYear)}</p>
+          <p className="text-xs font-medium text-ink-sub">{copy.dividend.basis(table.sourceYear)}</p>
         )}
       </div>
 
@@ -31,17 +31,17 @@ export function DividendCard({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-line">
-                <th scope="col" className="py-2 text-left font-normal" />
+                <th scope="col" className="py-2 text-left font-semibold" />
                 {table.columns.map((col) => (
-                  <th key={col.year} scope="col" className="py-2 text-right font-semibold tabular-nums text-ink">
+                  <th key={col.year} scope="col" className="py-2 text-right font-semibold tabular-nums text-ink-sub">
                     {col.year}년
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
-              <tr className="border-b border-line">
-                <th scope="row" className="py-3 pr-2 text-left font-normal text-ink">
+            <tbody className="divide-y divide-line-lite">
+              <tr>
+                <th scope="row" className="py-3 pr-2 text-left font-semibold text-ink-sub">
                   <span className="inline-flex flex-wrap items-center gap-1">
                     {copy.dividend.rowDps}
                     <Tooltip text={copy.dividend.rowDpsTip} label={copy.reportCard.tipButtonLabel} />
@@ -51,8 +51,8 @@ export function DividendCard({
                   <DividendTd key={col.year} cell={col.dps} />
                 ))}
               </tr>
-              <tr className="border-b border-line">
-                <th scope="row" className="py-3 pr-2 text-left font-normal text-ink">
+              <tr>
+                <th scope="row" className="py-3 pr-2 text-left font-semibold text-ink-sub">
                   <span className="inline-flex flex-wrap items-center gap-1">
                     {copy.dividend.rowYield}
                     <Tooltip text={copy.dividend.rowYieldTip} label={copy.reportCard.tipButtonLabel} />
@@ -65,7 +65,7 @@ export function DividendCard({
             </tbody>
           </table>
 
-          <div className="space-y-1 py-3 text-xs text-ink-sub">
+          <div className="space-y-1 py-3 text-xs font-medium text-ink-sub">
             <p>{copy.dividend.note}</p>
             <p>
               {copy.dividend.noteRecordDatePrefix}

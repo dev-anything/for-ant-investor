@@ -10,7 +10,7 @@ const LOGO_WIDTH = Math.round((LOGO_SOURCE_WIDTH / LOGO_SOURCE_HEIGHT) * LOGO_HE
 
 export function NaverAttribution() {
   return (
-    <p className="mt-2 flex items-center gap-1 text-xs text-ink-sub">
+    <p className="mt-2 flex items-center gap-1 text-xs font-medium text-ink-sub">
       <span>{copy.news.attributionText} ·</span>
       <a
         href="https://www.naver.com"

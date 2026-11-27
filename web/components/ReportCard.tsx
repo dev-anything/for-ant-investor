@@ -40,7 +40,7 @@ export function ReportCard({
 
   return (
     <section aria-labelledby="report-card-title" className="mt-8 rounded bg-surface p-4 md:p-6">
-      <h2 id="report-card-title" className="text-lg font-bold text-ink">
+      <h2 id="report-card-title" className="text-xl font-semibold text-ink-sub">
         {copy.reportCard.title}
       </h2>
       <div className="mt-4">
@@ -86,7 +86,7 @@ export function ReportCard({
           <p className="border-t border-line pt-4">
             <Link
               href={`/industries/${industry.divisionCode}/compare`}
-              className="text-sm font-medium text-ink underline underline-offset-2 hover:text-ink-sub"
+              className="text-sm font-medium text-ink underline underline-offset-2 hover:decoration-2"
             >
               {copy.industry.compareLink}
             </Link>
