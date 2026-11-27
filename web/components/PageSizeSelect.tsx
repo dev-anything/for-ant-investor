@@ -27,12 +27,12 @@ export function PageSizeSelect({
   };
 
   return (
-    <label className="inline-flex items-center gap-2 text-sm text-neutral-700">
+    <label className="inline-flex items-center gap-2 text-sm text-ink-sub">
       <span>{copy.screener.sizeLabel}</span>
       <select
         value={size}
         onChange={(event) => handleChange(Number(event.target.value) as ScreenerSize)}
-        className="rounded border border-neutral-300 bg-white px-2 py-1"
+        className="rounded border border-line bg-white px-2 py-1 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
       >
         {SCREENER_SIZES.map((option) => (
           <option key={option} value={option}>

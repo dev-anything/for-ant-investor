@@ -16,12 +16,12 @@ export default async function IndustriesPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-xl font-semibold text-neutral-900">{copy.industry.listTitle}</h1>
-      <p className="mt-2 text-sm text-neutral-600">{copy.industry.listIntro}</p>
+      <h1 className="text-xl font-semibold text-ink">{copy.industry.listTitle}</h1>
+      <p className="mt-2 text-sm text-ink-sub">{copy.industry.listIntro}</p>
       <div className="mt-6 space-y-1">
         {sections.map((section) => (
-          <details key={section.sectionCode} className="border-b border-neutral-200 py-2">
-            <summary className="cursor-pointer py-1 text-neutral-900">
+          <details key={section.sectionCode} className="border-b border-line py-2">
+            <summary className="cursor-pointer py-1 font-medium text-ink focus-visible:outline-2 focus-visible:outline-brand">
               {copy.industry.withCount(
                 cleanSectionName(section.sectionName) ?? section.sectionName,
                 section.companyCount
@@ -32,7 +32,7 @@ export default async function IndustriesPage() {
                 <li key={division.divisionCode}>
                   <Link
                     href={`/industries/${division.divisionCode}`}
-                    className="text-neutral-800 underline underline-offset-2 hover:text-neutral-900"
+                    className="text-ink underline underline-offset-2 hover:text-ink-sub"
                   >
                     {copy.industry.withCount(division.divisionName, division.companyCount)}
                   </Link>

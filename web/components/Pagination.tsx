@@ -21,7 +21,10 @@ export function Pagination({
 }) {
   if (pageCount <= 1) return null;
 
-  const buttonClass = 'min-w-8 rounded border border-neutral-300 px-2 py-1 text-sm hover:bg-neutral-100 disabled:opacity-40';
+  const baseButtonClass =
+    'min-w-8 rounded px-2 py-1 text-sm text-ink hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 disabled:opacity-40';
+  const normalClass = `${baseButtonClass} border border-line bg-white`;
+  const currentClass = `${baseButtonClass} border-2 border-brand font-bold bg-white`;
 
   // 한 칸. 링크 모드는 끝 쪽의 이전·다음을 링크 대신 흐린 글자로 둔다
   const control = (
@@ -31,11 +34,11 @@ export function Pagination({
     disabled: boolean,
     isCurrent: boolean
   ) => {
-    const className = `${buttonClass} ${isCurrent ? 'bg-neutral-900 text-white hover:bg-neutral-900' : ''}`;
+    const className = isCurrent ? currentClass : normalClass;
     if (link) {
       if (disabled) {
         return (
-          <span aria-disabled="true" className={`${buttonClass} opacity-40`}>
+          <span aria-disabled="true" className={`${normalClass} opacity-40`}>
             {content}
           </span>
         );
@@ -70,7 +73,7 @@ export function Pagination({
       {control(page - 1, '‹', copy.screener.prevPage, page <= 1, false)}
       {pageItems(page, pageCount).map((item, i) =>
         item === null ? (
-          <span key={`gap-${i}`} aria-hidden="true" className="px-1 text-neutral-500">
+          <span key={`gap-${i}`} aria-hidden="true" className="px-1 text-ink-sub">
             …
           </span>
         ) : (

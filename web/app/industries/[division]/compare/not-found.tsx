@@ -4,7 +4,9 @@ import { copy } from '@/lib/copy';
 export default function IndustryNotFound() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-16">
-      <h1 className="text-lg text-neutral-900">{copy.industry.notFoundDivision}</h1>
+      <h1 className="rounded border-l-4 border-brand bg-surface px-4 py-6 text-lg text-ink">
+        {copy.industry.notFoundDivision}
+      </h1>
     </div>
   );
 }
