@@ -27,8 +27,11 @@ const MODE_LINKS: Record<Mode, { mode: Mode; label: string }[]> = {
   reset: [{ mode: 'login', label: copy.auth.toLogin }],
 };
 
-const LINK_CLASS =
-  'text-sm text-ink-sub underline-offset-2 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+// DESIGN 5-6: 화면 전환은 같은 동작을 탭 모양으로 보여준다 (전환 로직은 그대로)
+const TAB_CLASS =
+  'rounded-t-md border-b-2 border-transparent px-3 py-2 text-sm text-ink-sub transition-colors hover:border-brand hover:text-brand';
+
+const CLOSE_CLASS = 'text-sm text-ink-sub underline-offset-2 hover:text-ink hover:underline';
 
 interface LoginDialogProps {
   onClose: () => void;
@@ -75,11 +78,20 @@ export function LoginDialog({ onClose, reason, watch }: LoginDialogProps) {
       ref={dialogRef}
       aria-labelledby={titleId}
       onClose={onClose}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded border border-line bg-white p-6 text-left text-ink backdrop:bg-ink/40"
+      className="m-0 h-[100dvh] w-screen max-w-none rounded-none border border-line bg-surface p-6 text-left text-ink backdrop:bg-overlay sm:m-auto sm:h-auto sm:w-[calc(100%-2rem)] sm:max-w-[400px] sm:rounded-lg sm:p-8"
     >
-      <h2 id={titleId} className="text-lg font-bold text-ink">
+      <h2 id={titleId} className="text-lg font-semibold text-ink">
         {copy.auth.title[mode]}
       </h2>
+
+      {/* DESIGN 5-6: 전환 버튼을 위쪽 탭으로 옮겨 놓는다 (mode·setMode 동작은 그대로) */}
+      <div className="mt-4 flex gap-2 border-b border-line">
+        {MODE_LINKS[mode].map((link) => (
+          <button key={link.mode} type="button" onClick={() => setMode(link.mode)} className={TAB_CLASS}>
+            {link.label}
+          </button>
+        ))}
+      </div>
 
       <div className="mt-4 space-y-3">
         {reasonText !== null && <p className="text-sm text-ink-sub">{reasonText}</p>}
@@ -101,13 +113,8 @@ export function LoginDialog({ onClose, reason, watch }: LoginDialogProps) {
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-        {MODE_LINKS[mode].map((link) => (
-          <button key={link.mode} type="button" onClick={() => setMode(link.mode)} className={LINK_CLASS}>
-            {link.label}
-          </button>
-        ))}
-        <button type="button" onClick={onClose} className={`ml-auto ${LINK_CLASS}`}>
+      <div className="mt-4 flex justify-end">
+        <button type="button" onClick={onClose} className={CLOSE_CLASS}>
           {copy.auth.close}
         </button>
       </div>

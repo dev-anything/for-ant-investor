@@ -54,7 +54,7 @@ export function SignupForm({ email, onEmailChange, getRedirectTo, onLoggedIn }: 
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <AuthField
         label={copy.auth.emailLabel}
         type="email"
@@ -79,7 +79,7 @@ export function SignupForm({ email, onEmailChange, getRedirectTo, onLoggedIn }: 
         onValueChange={setConfirm}
       />
       <AuthError message={error} />
-      <p className="text-xs text-ink-sub">{copy.auth.privacy}</p>
+      <p className="text-meta text-ink-sub">{copy.auth.privacy}</p>
       <AuthSubmit label={busy ? copy.auth.pending : copy.auth.submit.signup} disabled={busy} />
     </form>
   );

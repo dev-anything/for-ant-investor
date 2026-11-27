@@ -1,6 +1,6 @@
 'use client';
 
-// 로그인 창과 새 비밀번호 화면이 같이 쓰는 입력칸·버튼 (FS 9-11, DESIGN.md 5-1, 5-7).
+// 로그인 창과 새 비밀번호 화면이 같이 쓰는 입력칸·버튼 (FS 9-11, DESIGN.md 5-6, 6-1, 6-2).
 import { useId, type InputHTMLAttributes } from 'react';
 
 type AuthFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'className'> & {
@@ -19,7 +19,7 @@ export function AuthField({ label, value, onValueChange, hint, ...inputProps }: 
       <label htmlFor={inputId} className="block text-sm text-ink">
         {label}
         {hint !== undefined && (
-          <span id={hintId} className="ml-2 text-xs text-ink-sub">
+          <span id={hintId} className="ml-2 text-meta text-ink-sub">
             {hint}
           </span>
         )}
@@ -30,19 +30,19 @@ export function AuthField({ label, value, onValueChange, hint, ...inputProps }: 
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
         aria-describedby={hint !== undefined ? hintId : undefined}
-        className="w-full rounded border border-line px-3 py-2 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+        className="h-12 w-full rounded-md border border-line bg-surface px-4 text-base text-ink placeholder:text-muted focus-visible:border-brand"
       />
     </div>
   );
 }
 
-// DESIGN.md 5-1: 주요 버튼 (갈색 채움 #6B4423, 흰 글자)
+// DESIGN.md 6-1: 주요 버튼 (보라 채움, 흰 글자)
 export function AuthSubmit({ label, disabled }: { label: string; disabled: boolean }) {
   return (
     <button
       type="submit"
       disabled={disabled}
-      className="w-full rounded bg-brand px-3 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+      className="h-11 w-full rounded-md bg-brand px-5 text-base font-semibold text-white transition-colors hover:bg-brand-hover active:bg-brand-hover disabled:cursor-not-allowed disabled:bg-subtle disabled:text-muted"
     >
       {label}
     </button>

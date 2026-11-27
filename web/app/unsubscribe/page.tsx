@@ -21,9 +21,9 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
   const value = typeof token === 'string' ? token : null;
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-12">
-      <h1 className="text-xl font-bold text-ink">{copy.unsubscribe.pageTitle}</h1>
-      <div className="mt-6 rounded border border-line bg-surface p-6">
+    <div className="mx-auto w-[calc(100%-2rem)] max-w-[400px] py-12">
+      <h1 className="text-2xl font-bold text-ink">{copy.unsubscribe.pageTitle}</h1>
+      <div className="mt-6 rounded-lg border border-line bg-surface p-8">
         {isUnsubscribeTokenFormat(value) ? (
           <UnsubscribeButton token={value} />
         ) : (

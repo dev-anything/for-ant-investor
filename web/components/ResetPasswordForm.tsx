@@ -8,8 +8,7 @@ import { checkNewPassword, PASSWORD_MIN_LENGTH } from '@/lib/auth';
 import { updatePassword } from '@/lib/auth-client';
 import { copy } from '@/lib/copy';
 
-const LINK_CLASS =
-  'text-ink underline underline-offset-2 hover:text-ink-sub focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+const LINK_CLASS = 'text-ink underline underline-offset-2 hover:text-ink-sub';
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState('');
@@ -36,7 +35,7 @@ export function ResetPasswordForm() {
 
   if (done) {
     return (
-      <div className="space-y-3 text-sm">
+      <div className="space-y-4 text-sm">
         <p role="status" className="text-ink">{copy.auth.resetPage.done}</p>
         <p className="flex gap-4 text-ink-sub">
           <Link href="/" className={LINK_CLASS}>
@@ -51,7 +50,7 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <AuthField
         label={copy.auth.newPasswordLabel}
         hint={copy.auth.passwordHint(PASSWORD_MIN_LENGTH)}

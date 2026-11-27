@@ -39,7 +39,7 @@ export function LoginForm({ email, onEmailChange, onLoggedIn }: LoginFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <AuthField
         label={copy.auth.emailLabel}
         type="email"

@@ -20,9 +20,9 @@ export default async function ResetPasswordPage() {
   if (data.user === null) redirect('/?login=required');
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-12">
-      <h1 className="text-xl font-bold text-ink">{copy.auth.resetPage.title}</h1>
-      <div className="mt-6 rounded border border-line bg-surface p-6">
+    <div className="mx-auto w-[calc(100%-2rem)] max-w-[400px] py-12">
+      <h1 className="text-2xl font-bold text-ink">{copy.auth.resetPage.title}</h1>
+      <div className="mt-6 rounded-lg border border-line bg-surface p-8">
         <ResetPasswordForm />
       </div>
     </div>

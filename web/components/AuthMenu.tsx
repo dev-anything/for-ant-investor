@@ -11,7 +11,7 @@ import { copy } from '@/lib/copy';
 import { getBrowserClient } from '@/lib/supabase/browser';
 
 // 응답 전에는 자리만 두고, 로그인 전·후 글자 폭 차이로 머리가 흔들리지 않게 폭을 고정한다
-const MENU_CLASS = 'flex h-8 min-w-40 items-center justify-end gap-4 text-sm';
+const MENU_CLASS = 'flex h-9 min-w-40 items-center justify-end gap-4 text-sm';
 
 const LOGGED_OUT: MeState = { loggedIn: false };
 
@@ -110,13 +110,13 @@ export function AuthMenu() {
           >
             {copy.auth.logout}
           </button>
-          {logoutFailed && <span className="text-xs text-ink">{copy.auth.logoutFailed}</span>}
+          {logoutFailed && <span className="text-meta text-ink">{copy.auth.logoutFailed}</span>}
         </>
       ) : (
         <button
           type="button"
           onClick={() => setDialog({})}
-          className="text-ink-sub transition-colors hover:text-ink"
+          className="h-9 rounded-md bg-subtle px-4 font-semibold text-ink transition-colors hover:bg-line"
         >
           {copy.auth.login}
         </button>

@@ -1,6 +1,7 @@
 'use client';
 
 // 메일을 보낸 뒤 화면: 안내와 다시 보내기 (FS 9-11).
+import { Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AuthError } from '@/components/AuthFields';
 import { copy } from '@/lib/copy';
@@ -37,15 +38,21 @@ export function MailSentPanel({ message, note, onResend }: MailSentPanelProps) {
   }
 
   return (
-    <div className="space-y-2 text-sm">
-      <p role="status" className="text-ink">{message}</p>
-      <p className="text-ink-sub">{note}</p>
+    <div className="space-y-4 text-sm">
+      {/* DESIGN 6-12: 안내는 subtle 박스 + ⓘ. 경고색은 쓰지 않는다 */}
+      <div className="flex gap-2 rounded-md bg-subtle p-4">
+        <Info aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-muted" />
+        <div className="space-y-1">
+          <p role="status" className="text-ink">{message}</p>
+          <p className="text-ink-sub">{note}</p>
+        </div>
+      </div>
       <AuthError message={error} />
       <button
         type="button"
         onClick={() => void resend()}
         disabled={busy || remaining > 0}
-        className="mt-2 w-full rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+        className="h-11 w-full rounded-md border border-line bg-surface px-5 font-semibold text-ink transition-colors hover:bg-line disabled:cursor-not-allowed disabled:bg-subtle disabled:text-muted"
       >
         {remaining > 0 ? copy.auth.resendWait(remaining) : copy.auth.resend}
       </button>
