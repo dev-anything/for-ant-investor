@@ -44,6 +44,7 @@ logs/
 
 # 외부 스킬 설치 복사본 (design-system 등, 원본은 설치처에서 다시 받음)
 .agents/
+.agent
 .claude/skills/
 
 # Claude Code 로컬 설정·작업 복사본
