@@ -40,7 +40,7 @@ export function FilterPanel({
                   type="button"
                   aria-label={copy.screener.removeChip(label)}
                   onClick={() => onToggle(id)}
-                  className="px-1 text-ink-sub hover:text-ink focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+                  className="px-1 text-ink-sub hover:text-ink"
                 >
                   ✕
                 </button>
@@ -70,7 +70,7 @@ export function FilterPanel({
                       onMouseLeave={() => onHover(null)}
                       onFocus={() => onHover(isBlocked ? filter.id : null)}
                       onBlur={() => onHover(null)}
-                      className={`rounded px-3 py-1 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 ${
+                      className={`rounded px-3 py-1 text-left text-sm transition-colors ${
                         isSelected
                           ? 'border-2 border-ink bg-white font-bold text-ink'
                           : 'border border-line bg-white text-ink hover:bg-surface'

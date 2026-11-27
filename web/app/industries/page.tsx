@@ -21,7 +21,7 @@ export default async function IndustriesPage() {
       <div className="mt-6 space-y-1">
         {sections.map((section) => (
           <details key={section.sectionCode} className="border-b border-line py-2">
-            <summary className="cursor-pointer py-1 font-medium text-ink focus-visible:outline-2 focus-visible:outline-brand">
+            <summary className="cursor-pointer py-1 font-medium text-ink">
               {copy.industry.withCount(
                 cleanSectionName(section.sectionName) ?? section.sectionName,
                 section.companyCount

@@ -43,7 +43,7 @@ export function EmailOptInToggle({ initialValue }: EmailOptInToggleProps) {
         <input
           id={inputId}
           type="checkbox"
-          className="size-4 accent-brand"
+          className="size-4 accent-ink"
           checked={value}
           disabled={busy}
           onChange={(event) => void change(event.target.checked)}

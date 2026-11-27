@@ -1,79 +1,98 @@
 @import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 @import "tailwindcss";
-/* FS 9-8, DESIGN.md 5-8: driver.js 투어 말풍선 및 버튼 스타일 */
+/* FS 9-8, DESIGN-remember Components tour: driver.js 투어 말풍선 및 버튼 스타일 */
 @import "driver.js/dist/driver.css";
 
 @theme {
-  /* DESIGN.md 2-1 포인트 색 */
-  --color-brand: #6B4423;
-  --color-brand-fg: #FFFFFF;
+  /* DESIGN-remember Colors: 주 액션 채움 및 hover */
+  --color-primary: #000000;
+  --color-primary-fg: #FFFFFF;
+  --color-primary-hover: #424242;
 
-  /* DESIGN.md 2-2 중립 색 및 로딩 스켈레톤 */
-  --color-surface: #F5F5F5;
-  --color-skeleton: #E5E5E5;
-  --color-ink: #171717;
-  --color-ink-sub: #525252;
+  /* DESIGN-remember Colors: 액센트 (최신 막대·눈금 점·헤더 밑줄) 및 하이라이트 */
+  --color-accent: #FF6A0D;
+  --color-accent-soft: #FFF4ED;
+
+  /* DESIGN-remember Colors: 전경 텍스트 */
+  --color-ink: #000000;
+  --color-ink-sub: #424242;
+  --color-ink-light: #BDBDBD;
+
+  /* DESIGN-remember Colors: 비텍스트 경계 및 지난 연도 막대 (글자 사용 금지) */
+  --color-muted: #808080;
+
+  /* DESIGN-remember Colors: 구분선 */
   --color-line: #D4D4D4;
-  --color-muted: #A3A3A3;
+  --color-line-lite: #EBEBEB;
 
-  /* DESIGN.md 3 글꼴 */
+  /* DESIGN-remember Colors: 표면 바탕 및 스켈레톤 */
+  --color-surface: #F2F2F2;
+  --color-surface-lite: #FAFAFA;
+  --color-skeleton: #EBEBEB;
+
+  /* 글꼴 */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
 
-  /* DESIGN.md 4-5 모서리: 최대 2px 이하 (rounded-full은 유지) */
+  /* DESIGN-remember Rounded: 기본 4px(0.25rem), 버튼·칩 6px(0.375rem), 상한 6px */
   --radius-xs: 0.125rem;
-  --radius-sm: 0.125rem;
-  --radius: 0.125rem;
-  --radius-md: 0.125rem;
-  --radius-lg: 0.125rem;
-  --radius-xl: 0.125rem;
-  --radius-2xl: 0.125rem;
-  --radius-3xl: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.375rem;
+  --radius-2xl: 0.375rem;
+  --radius-3xl: 0.375rem;
 }
 
-/* DESIGN.md 1 전체 방향, 2-2 중립 색, 3 글꼴 */
+/* DESIGN-remember 바탕 및 글자 */
 body {
   background-color: #FFFFFF;
-  color: #171717;
+  color: #000000;
   font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
 }
 
-/* DESIGN.md 5-7 포커스 표시: 키보드 포커스 링 (갈색 2px) */
+/* DESIGN-remember 포커스 링 (D-2): 검정 2px + 바깥 오렌지 2px */
 :focus-visible {
-  outline: 2px solid #6B4423;
+  outline: 2px solid #000000;
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px #FF6A0D;
 }
 
-/* DESIGN.md 4-1, 4-5, 5-8: 말풍선은 흰 바탕·검정 글자, 모서리 2px(0.125rem), 그림자 없음, 다음 버튼은 포인트 갈색(#6B4423) 채움 */
+/* DESIGN-remember Components tour: 말풍선 테두리 #D4D4D4, 모서리 6px, 그림자 없음 */
 .driver-popover {
   background-color: #ffffff;
-  color: #171717;
+  color: #000000;
   border: 1px solid #D4D4D4;
-  border-radius: 0.125rem;
-  box-shadow: none;
+  border-radius: 0.375rem;
+  box-shadow: none !important;
 }
 .driver-popover-title {
-  color: #171717;
-  font-weight: 700;
+  color: #000000;
+  font-weight: 600;
 }
 .driver-popover-description {
-  color: #525252;
+  color: #424242;
 }
 .driver-popover-progress-text {
-  color: #525252;
+  color: #424242;
 }
 .driver-popover-footer-btn,
 .driver-popover-navigation-btns button {
   background-color: #ffffff;
-  color: #171717;
+  color: #000000;
   border: 1px solid #D4D4D4;
-  border-radius: 0.125rem;
+  border-radius: 0.375rem;
   text-shadow: none;
 }
 .driver-popover-navigation-btns .driver-popover-next-btn {
-  background-color: #6B4423;
+  background-color: #000000;
   color: #ffffff;
-  border-color: #6B4423;
-  border-radius: 0.125rem;
+  border-color: #000000;
+  border-radius: 0.375rem;
+}
+.driver-popover-navigation-btns .driver-popover-next-btn:hover {
+  background-color: #424242;
+  border-color: #424242;
 }
 
 /* 640px 미만은 말풍선을 화면 아래쪽에 고정한다 (FS 9-8). 화살표는 숨긴다 */

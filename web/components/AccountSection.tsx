@@ -92,12 +92,12 @@ export function AccountSection() {
           >
             {copy.mypage.deleteCancel}
           </button>
-          {/* DESIGN.md 5-1: 탈퇴 확정 모달의 주요 버튼 (갈색 채움) */}
+          {/* DESIGN-remember: 탈퇴 확정 모달의 주요 버튼 (검정 채움) */}
           <button
             type="button"
             onClick={() => void deleteAccount()}
             disabled={deleting}
-            className="rounded bg-brand px-3 py-2 text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded bg-primary px-3 py-2 text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
           >
             {copy.mypage.deleteSubmit}
           </button>

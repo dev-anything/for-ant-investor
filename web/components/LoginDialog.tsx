@@ -28,7 +28,7 @@ const MODE_LINKS: Record<Mode, { mode: Mode; label: string }[]> = {
 };
 
 const LINK_CLASS =
-  'text-sm text-ink-sub underline-offset-2 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+  'text-sm text-ink-sub underline-offset-2 hover:text-ink hover:underline';
 
 interface LoginDialogProps {
   onClose: () => void;

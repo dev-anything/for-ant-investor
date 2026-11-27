@@ -30,19 +30,19 @@ export function AuthField({ label, value, onValueChange, hint, ...inputProps }: 
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
         aria-describedby={hint !== undefined ? hintId : undefined}
-        className="w-full rounded border border-line px-3 py-2 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+        className="w-full rounded border border-line px-3 py-2 text-sm text-ink focus:border-ink"
       />
     </div>
   );
 }
 
-// DESIGN.md 5-1: 주요 버튼 (갈색 채움 #6B4423, 흰 글자)
+// DESIGN-remember Components button-primary: 주요 버튼 (검정 채움, 흰 글자)
 export function AuthSubmit({ label, disabled }: { label: string; disabled: boolean }) {
   return (
     <button
       type="submit"
       disabled={disabled}
-      className="w-full rounded bg-brand px-3 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+      className="w-full rounded bg-primary px-3 py-2 text-sm font-bold text-primary-fg hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
     >
       {label}
     </button>

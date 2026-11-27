@@ -88,13 +88,13 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
               value={text}
               maxLength={CHAT_MAX_INPUT}
               onChange={(event) => setText(event.target.value)}
-              className="min-w-0 flex-1 rounded border border-line px-3 py-1 text-sm text-ink focus:border-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+              className="min-w-0 flex-1 rounded border border-line px-3 py-1 text-sm text-ink focus:border-ink"
             />
-            {/* DESIGN.md 5-1: 필터 적용 버튼은 주요 버튼 (갈색 채움) */}
+            {/* DESIGN-remember: 필터 적용 버튼은 주요 버튼 (검정 채움) */}
             <button
               type="submit"
               disabled={pending || text.trim().length === 0}
-              className="rounded bg-brand px-3 py-1 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+              className="rounded bg-primary px-3 py-1 text-sm font-medium text-primary-fg hover:bg-primary-hover disabled:opacity-40"
             >
               {copy.chat.submit}
             </button>

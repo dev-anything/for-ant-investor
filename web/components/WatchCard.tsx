@@ -13,7 +13,7 @@ import {
 } from '@/lib/mypage';
 
 const CARD_CLASS =
-  'block h-full rounded border border-line bg-surface p-4 transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+  'block h-full rounded border border-line bg-surface p-4 transition-colors';
 
 export function WatchCard({ watch }: { watch: WatchEntry }) {
   const body = <WatchCardBody watch={watch} />;

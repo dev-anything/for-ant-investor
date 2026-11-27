@@ -9,7 +9,7 @@ import { updatePassword } from '@/lib/auth-client';
 import { copy } from '@/lib/copy';
 
 const LINK_CLASS =
-  'text-ink underline underline-offset-2 hover:text-ink-sub focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+  'text-ink underline underline-offset-2 hover:text-ink-sub';
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState('');

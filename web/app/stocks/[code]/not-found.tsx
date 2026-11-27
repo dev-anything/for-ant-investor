@@ -4,7 +4,7 @@ import { copy } from '@/lib/copy';
 export default function StockNotFound() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-16">
-      <h1 className="mt-6 rounded border-l-4 border-brand bg-surface px-4 py-6 text-lg text-ink">
+      <h1 className="mt-6 rounded border-l-4 border-ink bg-surface px-4 py-6 text-lg text-ink">
         {copy.stock.notFound}
       </h1>
     </div>

@@ -86,7 +86,7 @@ export function WatchButton({ code }: { code: string }) {
 
   return (
     <div className="flex flex-col items-end gap-1">
-      {/* DESIGN.md 5-1: '추적하기'(비추적)는 주요 버튼(갈색 채움), '추적 중'(추적 활성)은 나머지 버튼(흰 바탕+회색 테두리) */}
+      {/* DESIGN-remember: '추적하기'(비추적)는 주요 버튼(검정 채움), '추적 중'(추적 활성)은 보조 버튼(흰 바탕+회색 테두리) */}
       <button
         type="button"
         onClick={() => void toggle()}
@@ -95,7 +95,7 @@ export function WatchButton({ code }: { code: string }) {
         className={`${BUTTON_CLASS} ${
           isOn
             ? 'border-line bg-white text-ink hover:bg-surface'
-            : 'border-brand bg-brand text-white hover:opacity-90'
+            : 'border-primary bg-primary text-primary-fg hover:bg-primary-hover'
         }`}
       >
         {label}
