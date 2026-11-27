@@ -50,7 +50,7 @@ const COMPANY_COLUMNS: DataColumn<IndustryCompanyRow>[] = [
         <Link href={`/stocks/${row.shortCode}`} className="text-ink underline hover:text-ink-sub">
           {row.name}
         </Link>
-        {formatAccMt(row.accMt) && <span className="ml-2 text-xs text-ink-sub">{formatAccMt(row.accMt)}</span>}
+        {formatAccMt(row.accMt) && <span className="ml-2 text-meta text-ink-sub">{formatAccMt(row.accMt)}</span>}
       </>
     ),
   },
@@ -88,9 +88,9 @@ export default async function IndustryCompaniesPage({ params, searchParams }: Co
   const linkState = { path, state };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <h1 className="text-xl font-semibold text-ink">{copy.industry.companyTitle(name, page.total)}</h1>
+        <h1 className="text-2xl font-bold text-ink">{copy.industry.companyTitle(name, page.total)}</h1>
         <Link
           href={`/industries/${division}/compare`}
           className="text-sm text-ink underline underline-offset-2 hover:text-ink-sub"
@@ -98,7 +98,7 @@ export default async function IndustryCompaniesPage({ params, searchParams }: Co
           {copy.industry.compareFromList}
         </Link>
       </div>
-      {basDt !== null && <p className="mt-1 text-xs text-ink-sub">{copy.industry.marketCapBasis(basDt)}</p>}
+      {basDt !== null && <p className="mt-1 text-meta text-ink-sub">{copy.industry.marketCapBasis(basDt)}</p>}
       <div className="mt-4 flex justify-end">
         <PageSizeSelect size={state.size} link={linkState} />
       </div>

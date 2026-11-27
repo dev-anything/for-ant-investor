@@ -39,19 +39,28 @@ export function EmailOptInToggle({ initialValue }: EmailOptInToggleProps) {
 
   return (
     <div>
-      <label htmlFor={inputId} className="inline-flex items-center gap-2 text-sm text-ink">
-        <input
-          id={inputId}
-          type="checkbox"
-          className="size-4 accent-brand"
-          checked={value}
-          disabled={busy}
-          onChange={(event) => void change(event.target.checked)}
-        />
+      <label htmlFor={inputId} className="inline-flex items-center gap-3 text-sm text-ink">
+        {/* DESIGN 5-5: 스위치는 체크박스 동작을 그대로 쓰고 모양만 바꾼다 (켜짐 brand, 꺼짐 line). */}
+        <span className="relative inline-flex">
+          <input
+            id={inputId}
+            type="checkbox"
+            role="switch"
+            aria-checked={value}
+            className="peer h-6 w-11 cursor-pointer appearance-none rounded-full bg-line transition-colors checked:bg-brand disabled:cursor-not-allowed disabled:opacity-40"
+            checked={value}
+            disabled={busy}
+            onChange={(event) => void change(event.target.checked)}
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"
+          />
+        </span>
         {copy.mypage.emailOptIn}
       </label>
       {failed && (
-        <p role="alert" className="mt-2 text-sm text-ink">
+        <p role="alert" className="mt-2 rounded-md bg-subtle p-3 text-sm text-ink-sub">
           {copy.mypage.toggleFailed}
         </p>
       )}

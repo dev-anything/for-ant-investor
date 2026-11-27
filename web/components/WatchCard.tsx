@@ -13,7 +13,7 @@ import {
 } from '@/lib/mypage';
 
 const CARD_CLASS =
-  'block h-full rounded border border-line bg-surface p-4 transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
+  'block h-full rounded-lg border border-line bg-surface p-4 transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2';
 
 export function WatchCard({ watch }: { watch: WatchEntry }) {
   const body = <WatchCardBody watch={watch} />;
@@ -22,7 +22,7 @@ export function WatchCard({ watch }: { watch: WatchEntry }) {
     return <div className={CARD_CLASS}>{body}</div>;
   }
   return (
-    <Link href={`/stocks/${watch.shortCode}`} className={`${CARD_CLASS} hover:border-ink`}>
+    <Link href={`/stocks/${watch.shortCode}`} className={CARD_CLASS}>
       {body}
     </Link>
   );
@@ -38,11 +38,11 @@ function WatchCardBody({ watch }: { watch: WatchEntry }) {
 
   return (
     <>
-      <h3 className="font-medium text-ink">
+      <h3 className="text-base font-semibold text-ink">
         {watch.name}
-        {watch.shortCode !== null && <span className="ml-1 text-sm text-ink-sub">({watch.shortCode})</span>}
+        {watch.shortCode !== null && <span className="ml-1 text-sm font-normal text-ink-sub">({watch.shortCode})</span>}
       </h3>
-      {watch.market !== null && <p className="mt-0.5 text-xs text-ink-sub">{watch.market}</p>}
+      {watch.market !== null && <p className="mt-0.5 text-meta text-ink-sub">{watch.market}</p>}
 
       {!watch.isListed && <Line strong>{copy.mypage.delisted}</Line>}
       {summary === null && <Line>{copy.mypage.noFinancials}</Line>}

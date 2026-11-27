@@ -51,36 +51,38 @@ export function AccountSection() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 text-sm">
-      <button
-        type="button"
-        onClick={() => void logout()}
-        className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
-      >
-        {copy.auth.logout}
-      </button>
-      <button
-        type="button"
-        onClick={() => setConfirmOpen(true)}
-        className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface"
-      >
-        {copy.mypage.deleteButton}
-      </button>
-      {logoutFailed && (
-        <p role="alert" className="w-full text-ink">
-          {copy.auth.logoutFailed}
-        </p>
-      )}
-      {deleteFailed && (
-        <p role="alert" className="w-full text-ink">
-          {copy.mypage.deleteFailed}
-        </p>
-      )}
+    <div className="rounded-lg bg-surface p-4 sm:p-6">
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <button
+          type="button"
+          onClick={() => void logout()}
+          className="h-11 rounded-md border border-line bg-subtle px-4 font-semibold text-ink transition-colors hover:bg-line"
+        >
+          {copy.auth.logout}
+        </button>
+        <button
+          type="button"
+          onClick={() => setConfirmOpen(true)}
+          className="h-11 rounded-md border border-line bg-subtle px-4 font-semibold text-ink transition-colors hover:bg-line"
+        >
+          {copy.mypage.deleteButton}
+        </button>
+        {logoutFailed && (
+          <p role="alert" className="w-full text-sm text-ink">
+            {copy.auth.logoutFailed}
+          </p>
+        )}
+        {deleteFailed && (
+          <p role="alert" className="w-full text-sm text-ink">
+            {copy.mypage.deleteFailed}
+          </p>
+        )}
+      </div>
 
       <dialog
         ref={dialogRef}
         onClose={() => setConfirmOpen(false)}
-        className="w-[min(90vw,26rem)] rounded border border-line bg-white p-6 text-ink backdrop:bg-ink/40"
+        className="w-[min(90vw,25rem)] rounded-lg border border-line bg-surface p-8 text-ink backdrop:bg-overlay"
       >
         <p className="leading-relaxed">{copy.auth.deleteConfirm}</p>
         <div className="mt-6 flex justify-end gap-2">
@@ -88,16 +90,16 @@ export function AccountSection() {
             type="button"
             onClick={() => setConfirmOpen(false)}
             disabled={deleting}
-            className="rounded border border-line bg-white px-3 py-2 text-ink transition-colors hover:bg-surface disabled:opacity-40"
+            className="h-11 rounded-md border border-line bg-subtle px-4 font-semibold text-ink transition-colors hover:bg-line disabled:opacity-40"
           >
             {copy.mypage.deleteCancel}
           </button>
-          {/* DESIGN.md 5-1: 탈퇴 확정 모달의 주요 버튼 (갈색 채움) */}
+          {/* DESIGN.md 6-1: 탈퇴 확정 모달의 주요 버튼 (보라 채움) */}
           <button
             type="button"
             onClick={() => void deleteAccount()}
             disabled={deleting}
-            className="rounded bg-brand px-3 py-2 text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="h-11 rounded-md bg-brand px-4 font-semibold text-white transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-40"
           >
             {copy.mypage.deleteSubmit}
           </button>

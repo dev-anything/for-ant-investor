@@ -29,52 +29,59 @@ export default async function MypagePage() {
   const mypage = await getMypage(supabase);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-xl font-bold text-ink">{copy.mypage.title}</h1>
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
+      <h1 className="text-2xl font-bold text-ink">{copy.mypage.title}</h1>
 
-      <section aria-labelledby="watch-heading" className="mt-8">
-        <h2 id="watch-heading" className="text-lg font-medium text-ink">
-          {copy.mypage.watchTitle(mypage.watches.length, WATCH_LIMIT)}
-        </h2>
-        {mypage.watches.length === 0 ? (
-          <EmptyState message={copy.mypage.noWatch} />
-        ) : (
-          <ul className="mt-4 grid gap-4 md:grid-cols-2">
-            {mypage.watches.map((watch) => (
-              <li key={watch.srtnCd}>
-                <WatchCard watch={watch} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {/* DESIGN 5-5: 모바일도 왼쪽 단(추적 → 알림) 다음에 오른쪽 단(계정 → 메일)이 온다. */}
+      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <section aria-labelledby="watch-heading">
+            <h2 id="watch-heading" className="text-lg font-semibold text-ink">
+              {copy.mypage.watchTitle(mypage.watches.length, WATCH_LIMIT)}
+            </h2>
+            {mypage.watches.length === 0 ? (
+              <EmptyState message={copy.mypage.noWatch} />
+            ) : (
+              <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+                {mypage.watches.map((watch) => (
+                  <li key={watch.srtnCd}>
+                    <WatchCard watch={watch} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
-      <section aria-labelledby="notification-heading" className="mt-10">
-        <h2 id="notification-heading" className="text-lg font-medium text-ink">
-          {copy.mypage.notificationsTitle}
-        </h2>
-        <div className="mt-4">
-          <NotificationList initial={mypage.notifications} />
+          <section aria-labelledby="notification-heading">
+            <h2 id="notification-heading" className="text-lg font-semibold text-ink">
+              {copy.mypage.notificationsTitle}
+            </h2>
+            <div className="mt-4">
+              <NotificationList initial={mypage.notifications} />
+            </div>
+          </section>
         </div>
-      </section>
 
-      <section aria-labelledby="settings-heading" className="mt-10">
-        <h2 id="settings-heading" className="text-lg font-medium text-ink">
-          {copy.mypage.settingsTitle}
-        </h2>
-        <div className="mt-4">
-          <EmailOptInToggle initialValue={mypage.emailOptIn} />
-        </div>
-      </section>
+        <div className="space-y-6">
+          <section aria-labelledby="account-heading">
+            <h2 id="account-heading" className="text-lg font-semibold text-ink">
+              {copy.mypage.accountTitle}
+            </h2>
+            <div className="mt-4 rounded-lg bg-surface p-4 sm:p-6">
+              <AccountSection />
+            </div>
+          </section>
 
-      <section aria-labelledby="account-heading" className="mt-10">
-        <h2 id="account-heading" className="text-lg font-medium text-ink">
-          {copy.mypage.accountTitle}
-        </h2>
-        <div className="mt-4">
-          <AccountSection />
+          <section aria-labelledby="settings-heading">
+            <h2 id="settings-heading" className="text-lg font-semibold text-ink">
+              {copy.mypage.settingsTitle}
+            </h2>
+            <div className="mt-4 rounded-lg bg-surface p-4 sm:p-6">
+              <EmailOptInToggle initialValue={mypage.emailOptIn} />
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

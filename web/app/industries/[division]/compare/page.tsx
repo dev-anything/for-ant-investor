@@ -48,7 +48,7 @@ function metricCell(row: IndustryMetricRow, value: number | null, refYear: numbe
   return (
     <>
       {text}
-      <span className="ml-1 text-xs text-ink-sub">{copy.industry.yearLabel(row.fiscalYear)}</span>
+      <span className="ml-1 text-meta text-ink-sub">{copy.industry.yearLabel(row.fiscalYear)}</span>
     </>
   );
 }
@@ -68,7 +68,7 @@ function metricColumns(refYear: number | null): DataColumn<IndustryMetricRow>[] 
             {row.name}
           </Link>
           {formatAccMt(row.accMt) && (
-            <span className="ml-2 text-xs text-ink-sub">{formatAccMt(row.accMt)}</span>
+            <span className="ml-2 text-meta text-ink-sub">{formatAccMt(row.accMt)}</span>
           )}
         </>
       ),
@@ -123,8 +123,8 @@ export default async function IndustryComparePage({ params, searchParams }: Comp
   const linkState = { path, state };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-xl font-semibold text-ink">{copy.industry.compareTitle(name, page.total)}</h1>
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
+      <h1 className="text-2xl font-bold text-ink">{copy.industry.compareTitle(name, page.total)}</h1>
       <div className="mt-4 flex justify-end">
         <PageSizeSelect size={state.size} link={linkState} />
       </div>

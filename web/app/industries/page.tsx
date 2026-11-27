@@ -10,36 +10,39 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = { title: copy.industry.listMeta };
 
-// FS 9-7 `/industries` (서버): 대분류를 펼치면 중분류가 보인다. 펼침은 <details>만 쓴다 (JS 없음, 처음엔 모두 닫힘)
+// FS 9-7 `/industries` (서버): DESIGN 5-4대로 대분류 제목 아래 중분류 카드를 격자로 펼친다 (접기 없음).
 export default async function IndustriesPage() {
   const sections = groupIndustryTree(await getIndustryTree());
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-xl font-semibold text-ink">{copy.industry.listTitle}</h1>
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
+      <h1 className="text-2xl font-bold text-ink">{copy.industry.listTitle}</h1>
       <p className="mt-2 text-sm text-ink-sub">{copy.industry.listIntro}</p>
-      <div className="mt-6 space-y-1">
+      <div className="mt-8 space-y-8">
         {sections.map((section) => (
-          <details key={section.sectionCode} className="border-b border-line py-2">
-            <summary className="cursor-pointer py-1 font-medium text-ink focus-visible:outline-2 focus-visible:outline-brand">
+          <section key={section.sectionCode} aria-labelledby={`section-${section.sectionCode}`}>
+            <h2 id={`section-${section.sectionCode}`} className="text-lg font-semibold text-ink">
               {copy.industry.withCount(
                 cleanSectionName(section.sectionName) ?? section.sectionName,
                 section.companyCount
               )}
-            </summary>
-            <ul className="mt-1 space-y-1 pl-5 text-sm">
+            </h2>
+            {/* 표준산업분류 이름은 줄이지 않고 카드 안에서 줄바꿈한다 (라이선스). */}
+            <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {section.divisions.map((division) => (
                 <li key={division.divisionCode}>
                   <Link
                     href={`/industries/${division.divisionCode}`}
-                    className="text-ink underline underline-offset-2 hover:text-ink-sub"
+                    className="block h-full rounded-lg border border-line bg-surface p-4 transition-colors hover:border-brand sm:p-6"
                   >
-                    {copy.industry.withCount(division.divisionName, division.companyCount)}
+                    <span className="block break-words text-base font-medium text-ink">
+                      {copy.industry.withCount(division.divisionName, division.companyCount)}
+                    </span>
                   </Link>
                 </li>
               ))}
             </ul>
-          </details>
+          </section>
         ))}
       </div>
     </div>

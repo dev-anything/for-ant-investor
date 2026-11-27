@@ -29,13 +29,19 @@ export function NotificationList({ initial }: NotificationListProps) {
   }
 
   return (
-    <ul className="divide-y divide-line rounded border border-line bg-white">
+    <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
       {initial.map((entry) => {
         const unread = entry.unread && !readIds.has(entry.id);
         const content = (
           <>
-            <p className="flex items-center gap-2 text-xs text-ink-sub">
-              {unread && <span className="font-bold text-ink">{copy.mypage.newBadge}</span>}
+            <p className="flex items-center gap-2 text-meta text-ink-sub">
+              {unread && (
+                <>
+                  {/* DESIGN 5-5: 안 읽은 알림은 점으로도 표시한다. "새 알림" 문구는 그대로 둔다. */}
+                  <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-brand" />
+                  <span className="font-bold text-ink">{copy.mypage.newBadge}</span>
+                </>
+              )}
               <span>{formatNotifyDate(entry.createdAt)}</span>
             </p>
             <p className={`mt-1 whitespace-pre-line text-sm text-ink ${unread ? 'font-bold' : ''}`}>{entry.body}</p>
@@ -50,7 +56,7 @@ export function NotificationList({ initial }: NotificationListProps) {
               <Link
                 href={`/stocks/${entry.shortCode}`}
                 onClick={() => markRead(entry.id)}
-                className="block px-4 py-3 transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+                className="block px-4 py-3 transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
               >
                 {content}
               </Link>
