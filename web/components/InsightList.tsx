@@ -1,6 +1,6 @@
 import { copy } from '@/lib/copy';
 
-// FS 8-2 InsightList, DESIGN.md 2-2: "눈여겨볼 변화" 문장. 문장이 없으면 영역(제목 포함)을 그리지 않는다 (PRD 4장 F-05)
+// FS 8-2 InsightList, DESIGN.md 5-2: "눈여겨볼 변화" 문장(14px, 구분선 line). 문장이 없으면 영역(제목 포함)을 그리지 않는다 (PRD 4장 F-05)
 // items는 topInsights가 만든 문장 목록 (배치가 저장한 우선순위 순서 그대로)
 export function InsightList({ items }: { items: { text: string }[] }) {
   if (items.length === 0) return null;

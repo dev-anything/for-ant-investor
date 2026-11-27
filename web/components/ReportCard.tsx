@@ -11,7 +11,7 @@ import { compareToIndustry, type IndustryCompare } from '@/lib/industry';
 import { topInsights } from '@/lib/insights';
 import { latestValue, metricValues } from '@/lib/report-card';
 
-// FS 8-2 ReportCard / PRD 4장 F-05, DESIGN.md 4-1 구역 면(bg-surface p-4 md:p-6 rounded), 4-3, 4-5.
+// FS 8-2 ReportCard / PRD 4장 F-05, DESIGN.md 4-1 흰 카드(rounded-lg, p-4 sm:p-6), 5-2.
 // 순서: 금융회사 자본잠식 안내 → 눈여겨볼 변화 → 지표 3개(매출 증가율 → 영업이익률 → 부채비율) → 같은 업종 회사 보기
 export function ReportCard({
   summary,
@@ -39,8 +39,8 @@ export function ReportCard({
   const debtValues = metricValues(displayYears, 'debt_ratio');
 
   return (
-    <section aria-labelledby="report-card-title" className="mt-8 rounded bg-surface p-4 md:p-6">
-      <h2 id="report-card-title" className="text-lg font-bold text-ink">
+    <section aria-labelledby="report-card-title" className="rounded-lg bg-surface p-4 sm:p-6">
+      <h2 id="report-card-title" className="text-lg font-semibold text-ink">
         {copy.reportCard.title}
       </h2>
       <div className="mt-4">
