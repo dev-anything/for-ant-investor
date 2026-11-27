@@ -59,17 +59,25 @@ export default async function StockPage({ params }: StockPageProps) {
       )}
       {page.status === 'ok' && page.summary && (
         <>
-          <ReportCard summary={page.summary} years={page.years} industry={page.industry} />
-          <ResultsCharts
-            years={page.years}
-            fsDiv={page.summary.fsDiv}
-            isFinancial={page.summary.isFinancial}
-          />
-          <ValuationSection valuation={page.valuation} industry={page.industry} />
-          <DividendCard
-            dividends={page.dividends}
-            displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
-          />
+          {/* DESIGN 5-2: PC는 위쪽 두 단, 1024px 미만은 PRD 3-5 순서대로 한 단.
+              DOM 순서(리포트 → 실적 → PER·PBR → 배당)를 지켜 읽는 순서 안내가 그대로 동작한다 */}
+          <div className="grid gap-4 lg:grid-cols-3 lg:gap-6">
+            <div className="min-w-0 space-y-4 lg:col-span-2">
+              <ReportCard summary={page.summary} years={page.years} industry={page.industry} />
+              <ResultsCharts
+                years={page.years}
+                fsDiv={page.summary.fsDiv}
+                isFinancial={page.summary.isFinancial}
+              />
+            </div>
+            <div className="min-w-0 space-y-4">
+              <ValuationSection valuation={page.valuation} industry={page.industry} />
+              <DividendCard
+                dividends={page.dividends}
+                displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
+              />
+            </div>
+          </div>
           <StockFeedSection name={page.stock.name} shortCode={page.stock.shortCode} corpCode={page.corpCode} />
         </>
       )}

@@ -53,6 +53,10 @@ async function startTour(isFinancial: boolean): Promise<void> {
   const { driver } = await import('driver.js');
   const tour = driver({
     showProgress: true,
+    // DESIGN 6-11: 비추는 카드 모서리는 16px, 바깥은 지정한 덮개 색(0.45)으로 덮는다
+    stageRadius: 16,
+    overlayColor: 'var(--color-overlay)',
+    overlayOpacity: 1,
     // 기본 닫기(✕) 버튼은 뺀다. 건너뛰기는 아래 footer 버튼으로만 한다 (FS 9-8)
     showButtons: ['next', 'previous'],
     progressText: copy.tour.progress,
@@ -105,14 +109,14 @@ export function ReadingTour({ isFinancial }: { isFinancial: boolean }) {
         <div
           role="region"
           aria-label={copy.tour.regionLabel}
-          className="flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded border border-line bg-surface px-3 py-2 text-sm text-ink"
+          className="flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink"
         >
           <p className="min-w-0 flex-1">{copy.tour.banner}</p>
-          {/* DESIGN.md 5-1: 보조 버튼 (흰 바탕 + 회색 테두리) */}
+          {/* DESIGN.md 6-1: 보조 버튼 (subtle 바탕 + ink 글자) */}
           <button
             type="button"
             onClick={handleStart}
-            className="rounded border border-line bg-white px-2 py-1 text-sm font-medium text-ink hover:bg-surface"
+            className="rounded-md bg-subtle px-3 py-1.5 text-sm font-medium text-ink hover:bg-line"
           >
             {copy.tour.bannerStart}
           </button>
@@ -126,11 +130,11 @@ export function ReadingTour({ isFinancial }: { isFinancial: boolean }) {
           </button>
         </div>
       )}
-      {/* DESIGN.md 5-1: 보조 버튼 (흰 바탕 + 회색 테두리) */}
+      {/* DESIGN.md 6-1: 보조 버튼 (subtle 바탕 + ink 글자) */}
       <button
         type="button"
         onClick={handleStart}
-        className="ml-auto rounded border border-line bg-white px-3 py-1 text-sm font-medium text-ink hover:bg-surface"
+        className="ml-auto rounded-md bg-subtle px-3 py-1.5 text-sm font-medium text-ink hover:bg-line"
       >
         {copy.tour.fixedButton}
       </button>

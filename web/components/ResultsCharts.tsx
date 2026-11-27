@@ -6,7 +6,7 @@ import { buildMetricBars, chartMetricsFor, getDisplayYears } from '@/lib/chart-d
 import { copy } from '@/lib/copy';
 import { formatFsDiv, formatYearRange } from '@/lib/format';
 
-// FS 8-2 ResultsCharts, DESIGN.md 4-1 구역 면(bg-surface p-4 md:p-6 rounded), 4-2: 최근 3개년 실적 막대그래프 묶음
+// FS 8-2 ResultsCharts, DESIGN.md 5-2 흰 카드(rounded-lg, p-4 sm:p-6), 6-4: 최근 3개년 실적 막대그래프 묶음
 export function ResultsCharts({
   years,
   fsDiv,
@@ -19,7 +19,7 @@ export function ResultsCharts({
   const displayYears = getDisplayYears(years);
   // 화면 연도가 하나도 없으면 그래프를 그리지 않고 재무 없음 문구를 쓴다 (PRD 3-7)
   if (displayYears.length === 0) {
-    return <p className="mt-6 text-ink-sub">{copy.stock.noFinancials}</p>;
+    return <p className="text-ink-sub">{copy.stock.noFinancials}</p>;
   }
 
   const yearRange = formatYearRange(displayYears.map((row) => row.fiscalYear)) ?? '';
@@ -27,8 +27,8 @@ export function ResultsCharts({
   const metrics = chartMetricsFor(isFinancial);
 
   return (
-    <section aria-labelledby="results-title" className="mt-8 rounded bg-surface p-4 md:p-6">
-      <h2 id="results-title" className="text-lg font-bold text-ink">
+    <section aria-labelledby="results-title" className="rounded-lg bg-surface p-4 sm:p-6">
+      <h2 id="results-title" className="text-lg font-semibold text-ink">
         {copy.results.title}
       </h2>
       <p className="mt-1 text-sm text-ink-sub">{copy.results.basis(fsLabel, yearRange)}</p>
