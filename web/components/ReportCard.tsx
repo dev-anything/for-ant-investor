@@ -11,9 +11,8 @@ import { compareToIndustry, type IndustryCompare } from '@/lib/industry';
 import { topInsights } from '@/lib/insights';
 import { latestValue, metricValues } from '@/lib/report-card';
 
-// FS 8-2 ReportCard / PRD 4장 F-05. 순서: 금융회사 자본잠식 안내 → 눈여겨볼 변화 → 지표 3개(매출 증가율 → 영업이익률 → 부채비율) → 같은 업종 회사 보기
-// 자본잠식 안내 위치: 일반 회사는 부채비율 눈금 자리(full 상자, partial 눈금 아래 한 줄), 금융회사는 맨 위 (PRD 4장 F-05 표, FS 8-2)
-// 금융회사 판별·자본잠식 판정은 배치 값을 읽을 뿐 다시 하지 않는다 (FS 1장)
+// FS 8-2 ReportCard / PRD 4장 F-05, DESIGN.md 3, 4-3, 4-5.
+// 순서: 금융회사 자본잠식 안내 → 눈여겨볼 변화 → 지표 3개(매출 증가율 → 영업이익률 → 부채비율) → 같은 업종 회사 보기
 export function ReportCard({
   summary,
   years,
@@ -41,10 +40,10 @@ export function ReportCard({
 
   return (
     <section aria-labelledby="report-card-title" className="mt-8">
-      <h2 id="report-card-title" className="text-lg font-bold text-neutral-900">
+      <h2 id="report-card-title" className="text-lg font-bold text-ink">
         {copy.reportCard.title}
       </h2>
-      <div className="mt-4 rounded border border-neutral-300 px-4">
+      <div className="mt-4 rounded border border-line px-4">
         {isFinancial && hasCapitalNotice && (
           <div className="py-4">
             <CapitalNotice impairment={capitalImpairment} />
@@ -55,7 +54,7 @@ export function ReportCard({
         {!isFinancial && (
           <>
             {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
-            {industry === null && <p className="py-4 text-sm text-neutral-700">{copy.industry.noIndustry}</p>}
+            {industry === null && <p className="py-4 text-sm text-ink-sub">{copy.industry.noIndustry}</p>}
             {/* data-tour="debt": 부채비율 행 또는 그 자리의 완전 자본잠식 상자를 짚는다 (FS 9-1) */}
             <MetricRow
               gauge="revenue_growth"
@@ -87,7 +86,7 @@ export function ReportCard({
           <p className="py-4">
             <Link
               href={`/industries/${industry.divisionCode}/compare`}
-              className="text-sm font-medium text-neutral-900 underline underline-offset-2"
+              className="text-sm font-medium text-ink underline underline-offset-2 hover:text-ink-sub"
             >
               {copy.industry.compareLink}
             </Link>

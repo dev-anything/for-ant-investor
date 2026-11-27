@@ -4,9 +4,7 @@ import { copy } from '@/lib/copy';
 import type { StockIndustry } from '@/lib/data/stock';
 import { buildValuationRows, valuationBasisText, type StockValuation, type ValuationRow } from '@/lib/valuation';
 
-// FS 9-3 ValuationSection (PRD 4장 F-09): 주가 수준 영역. 서버 컴포넌트, 계산은 lib/valuation.ts가 맡는다.
-// 리포트카드와 분리된 별도 영역 (실적 그래프 아래). 평가하는 글자 판정과 비교 한 줄은 쓰지 않는다 (FS 12장 동작 기본안 1번)
-// data-tour="valuation"은 13단계 읽는 순서 안내가 이 영역을 짚을 때 쓴다 (FS 9-1)
+// FS 9-3 ValuationSection (PRD 4장 F-09), DESIGN.md 3, 4-3: 주가 수준 영역.
 export function ValuationSection({
   valuation,
   industry,
@@ -19,19 +17,19 @@ export function ValuationSection({
   return (
     <section data-tour="valuation" aria-labelledby="valuation-title" className="mt-8">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h2 id="valuation-title" className="text-lg font-bold text-neutral-900">
+        <h2 id="valuation-title" className="text-lg font-bold text-ink">
           {copy.valuation.title}
         </h2>
-        {valuation && <p className="text-xs text-neutral-600">{valuationBasisText(valuation)}</p>}
+        {valuation && <p className="text-xs text-ink-sub">{valuationBasisText(valuation)}</p>}
       </div>
       {valuation === null ? (
-        <p className="mt-4 text-sm text-neutral-700">{copy.valuation.noPrice}</p>
+        <p className="mt-4 text-sm text-ink-sub">{copy.valuation.noPrice}</p>
       ) : (
         <>
-          <p className="mt-1 text-xs text-neutral-600">{copy.valuation.commonShareNote}</p>
-          <div className="mt-4 rounded border border-neutral-300 px-4">
+          <p className="mt-1 text-xs text-ink-sub">{copy.valuation.commonShareNote}</p>
+          <div className="mt-4 rounded border border-line px-4">
             {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
-            {industry === null && <p className="py-4 text-sm text-neutral-700">{copy.industry.noIndustry}</p>}
+            {industry === null && <p className="py-4 text-sm text-ink-sub">{copy.industry.noIndustry}</p>}
             {rows.map((row) => (
               <ValuationItem key={row.key} row={row} />
             ))}
@@ -47,17 +45,17 @@ function ValuationItem({ row }: { row: ValuationRow }) {
   const median = row.compare.kind === 'ok' ? { value: row.compare.median, n: row.compare.n } : null;
 
   return (
-    <div className="border-t border-neutral-200 py-4">
-      <h3 className="inline-flex flex-wrap items-center gap-1 text-base font-semibold text-neutral-900">
+    <div className="border-t border-line py-4">
+      <h3 className="inline-flex flex-wrap items-center gap-1 text-base font-semibold text-ink">
         {row.title}
         <Tooltip text={row.tip} label={copy.reportCard.tipButtonLabel} />
       </h3>
       {row.value === null || row.valueText === null ? (
-        <p className="mt-2 text-sm text-neutral-700">{row.notice}</p>
+        <p className="mt-2 text-sm text-ink-sub">{row.notice}</p>
       ) : (
         <>
-          <p className="mt-1 text-sm text-neutral-800">
-            {row.name} <span className="font-bold">{row.valueText}</span>
+          <p className="mt-1 text-sm text-ink">
+            {row.name} <span className="font-bold tabular-nums">{row.valueText}</span>
           </p>
           <Gauge
             gauge={row.key}
@@ -68,7 +66,7 @@ function ValuationItem({ row }: { row: ValuationRow }) {
             lineTip={row.lineTip}
           />
           {row.compare.kind === 'too_few' && (
-            <p className="mt-2 text-sm text-neutral-700">{copy.industry.tooFew}</p>
+            <p className="mt-2 text-sm text-ink-sub">{copy.industry.tooFew}</p>
           )}
         </>
       )}

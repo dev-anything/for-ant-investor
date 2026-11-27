@@ -6,8 +6,7 @@ import { buildMetricBars, chartMetricsFor, getDisplayYears } from '@/lib/chart-d
 import { copy } from '@/lib/copy';
 import { formatFsDiv, formatYearRange } from '@/lib/format';
 
-// FS 8-2 ResultsCharts: 최근 3개년 실적 막대그래프 묶음 (PRD 4장 F-02)
-// 금융회사 판별은 다시 하지 않고 summary.isFinancial 값을 그대로 받는다 (PRD 3-6)
+// FS 8-2 ResultsCharts, DESIGN.md 2-2, 4-2: 최근 3개년 실적 막대그래프 묶음 (PRD 4장 F-02)
 export function ResultsCharts({
   years,
   fsDiv,
@@ -20,7 +19,7 @@ export function ResultsCharts({
   const displayYears = getDisplayYears(years);
   // 화면 연도가 하나도 없으면 그래프를 그리지 않고 재무 없음 문구를 쓴다 (PRD 3-7)
   if (displayYears.length === 0) {
-    return <p className="mt-6 text-neutral-700">{copy.stock.noFinancials}</p>;
+    return <p className="mt-6 text-ink-sub">{copy.stock.noFinancials}</p>;
   }
 
   const yearRange = formatYearRange(displayYears.map((row) => row.fiscalYear)) ?? '';
@@ -29,12 +28,12 @@ export function ResultsCharts({
 
   return (
     <section aria-labelledby="results-title" className="mt-8">
-      <h2 id="results-title" className="text-lg font-bold text-neutral-900">
+      <h2 id="results-title" className="text-lg font-bold text-ink">
         {copy.results.title}
       </h2>
-      <p className="mt-1 text-sm text-neutral-600">{copy.results.basis(fsLabel, yearRange)}</p>
+      <p className="mt-1 text-sm text-ink-sub">{copy.results.basis(fsLabel, yearRange)}</p>
       {isFinancial && (
-        <p className="mt-2 rounded border border-neutral-300 px-3 py-2 text-sm text-neutral-700">
+        <p className="mt-2 rounded border border-line px-3 py-2 text-sm text-ink-sub">
           {copy.results.financialNotice}
         </p>
       )}

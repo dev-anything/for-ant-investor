@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import {
   Bar,
   BarChart,
@@ -16,12 +17,12 @@ import { getAxisDomain } from '@/lib/chart-data';
 import { copy } from '@/lib/copy';
 import { Tooltip } from '@/components/Tooltip';
 
-// PRD 4장 F-02: 적자 막대는 빨강이 아니라 옅은 회색으로 구분한다 (무채색만)
-// 마이페이지 작은 막대(MiniBars)와 같은 색을 쓰려고 export한다 (FS 9-12)
-export const POSITIVE_FILL = '#525252';
-export const NEGATIVE_FILL = '#c4c4c4';
+// DESIGN.md 4-2: 최신 연도 막대만 포인트 갈색(#6B4423), 과거 연도 막대는 회색(#A3A3A3)
+// 적자 막대는 색상 경고 대신 빗금 패턴으로 채운다
+export const LATEST_FILL = '#6B4423';
+export const PAST_FILL = '#A3A3A3';
 const CHART_HEIGHT_PX = 200;
-// 0 기준선 색 (FS 8-2: 무채색, 막대 채움보다 진한 회색)
+// 0 기준선 색 (DESIGN 4-2: 무채색 기준선)
 export const BASELINE_STROKE = '#737373';
 
 // 막대 위(양수)·아래(음수) 값 라벨 자리 (px)
@@ -37,11 +38,40 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
   const title = copy.results.metricTitle[metric];
   const domain = getAxisDomain(bars);
 
+  // SVG 패턴 id가 화면 내 여러 차트 간에 충돌하지 않도록 고유 접두사 생성
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const hatchPastId = `hatch-past-${uid}`;
+  const hatchLatestId = `hatch-latest-${uid}`;
+
   return (
     <div className="min-w-0">
       <div className="h-[200px] w-full">
         <ResponsiveContainer width="100%" height={CHART_HEIGHT_PX}>
           <BarChart data={bars} margin={{ top: 24, right: 8, bottom: 8, left: 8 }}>
+            {/* DESIGN.md 4-2: 적자(음수) 막대용 사선 빗금 패턴 */}
+            <defs>
+              <pattern
+                id={hatchPastId}
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+                patternTransform="rotate(45)"
+              >
+                <rect width="6" height="6" fill="#A3A3A3" />
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#FFFFFF" strokeWidth="2" />
+              </pattern>
+              <pattern
+                id={hatchLatestId}
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+                patternTransform="rotate(45)"
+              >
+                <rect width="6" height="6" fill="#6B4423" />
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#FFFFFF" strokeWidth="2" />
+              </pattern>
+            </defs>
+
             {/* 세로축 숫자는 숨기고 막대 위 값 라벨만 쓴다. 0을 항상 포함한다 */}
             <YAxis hide domain={domain} />
             <XAxis
@@ -56,18 +86,24 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
             <ReferenceLine y={0} stroke={BASELINE_STROKE} strokeWidth={1} ifOverflow="extendDomain" />
             <ChartTooltip cursor={false} content={<BarTooltip />} />
             <Bar dataKey="value" isAnimationActive={false}>
-              {bars.map((bar) => (
-                <Cell
-                  key={bar.fiscalYear}
-                  fill={bar.isNegative ? NEGATIVE_FILL : POSITIVE_FILL}
-                />
-              ))}
+              {bars.map((bar, index) => {
+                const isLatest = index === bars.length - 1;
+                let fill: string;
+                if (bar.isNegative) {
+                  // DESIGN 4-2: 적자 막대는 빗금 무늬 (url(#...))
+                  fill = `url(#${isLatest ? hatchLatestId : hatchPastId})`;
+                } else {
+                  // 최신 연도 #6B4423, 과거 연도 #A3A3A3
+                  fill = isLatest ? '#6B4423' : '#A3A3A3';
+                }
+                return <Cell key={bar.fiscalYear} fill={fill} />;
+              })}
               <LabelList content={<ValueLabel bars={bars} />} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <h3 className="mt-2 flex items-center justify-center gap-1 text-sm font-medium text-neutral-800">
+      <h3 className="mt-2 flex items-center justify-center gap-1 text-sm font-medium text-ink">
         {title}
         {/* PRD 4장 F-02: 순이익 제목 옆 정식 이름 툴팁 */}
         {metric === 'netIncome' && (
@@ -114,11 +150,11 @@ function YearTick({
   const baseY = Number(y ?? 0);
   return (
     <g>
-      <text x={baseX} y={baseY + 12} textAnchor="middle" fontSize={12} fill="#404040">
+      <text x={baseX} y={baseY + 12} textAnchor="middle" fontSize={12} fill="#171717">
         {label}
       </text>
       {isMissing && (
-        <text x={baseX} y={baseY + 28} textAnchor="middle" fontSize={11} fill="#737373">
+        <text x={baseX} y={baseY + 28} textAnchor="middle" fontSize={11} fill="#525252">
           {copy.results.notProvided}
         </text>
       )}
@@ -149,22 +185,22 @@ function ValueLabel({
   const bottom = top + Number(height ?? 0);
   const labelY = bar.isNegative ? bottom + LABEL_GAP_PX + 10 : top - LABEL_GAP_PX;
   return (
-    <text x={baseX} y={labelY} textAnchor="middle" fontSize={12} fill="#262626">
+    <text x={baseX} y={labelY} textAnchor="middle" fontSize={12} fill="#171717">
       {bar.valueText}
     </text>
   );
 }
 
-// 툴팁: 정확한 금액 + 전년 대비 증감률 (증감률은 전년 값이 있을 때만)
+// 툴팁: 정확한 금액 + 전년 대비 증감률 (DESIGN 4-1 그림자 없음, border-line)
 function BarTooltip({ active, payload }: { active?: boolean; payload?: { payload?: unknown }[] }) {
   if (!active || !payload || payload.length === 0) return null;
   const bar = payload[0].payload as ChartBar | undefined;
   if (!bar) return null;
   return (
-    <div className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-800 shadow">
+    <div className="rounded border border-line bg-white px-3 py-2 text-sm text-ink">
       <p className="font-medium">{bar.label}</p>
-      <p>{bar.exactText ?? copy.results.notProvided}</p>
-      {bar.growthText && <p className="text-neutral-600">{copy.results.growth(bar.growthText)}</p>}
+      <p className="tabular-nums">{bar.exactText ?? copy.results.notProvided}</p>
+      {bar.growthText && <p className="text-ink-sub tabular-nums">{copy.results.growth(bar.growthText)}</p>}
     </div>
   );
 }
