@@ -53,6 +53,37 @@ export function gaugePosition(value: number, key: AnyGaugeKey): GaugePosition {
   return { pct, clamped: null };
 }
 
+// 3개년 점 눈금 (DESIGN-V2 2-2-1, FS 6-3). 값이 없는 연도는 점을 그리지 않는다.
+// 점이 이 거리보다 가까우면 잇는 선을 그리지 않는다.
+const OVERLAP_THRESHOLD_PX = 4;
+
+export interface GaugeDot {
+  year: number;
+  value: number;
+  pct: number;
+  clamped: 'low' | 'high' | null;
+  latest: boolean;
+}
+
+/** 점 후보에서 값이 없는 연도를 빼고 눈금 위치를 붙인다. 남은 마지막 점이 최신 연도다. */
+export function gaugeDots(
+  points: { year: number; value: number | null }[],
+  key: AnyGaugeKey,
+): GaugeDot[] {
+  const drawn = points.flatMap((point) => {
+    if (point.value === null) return [];
+    const { pct, clamped } = gaugePosition(point.value, key);
+    return [{ year: point.year, value: point.value, pct, clamped, latest: false }];
+  });
+  return drawn.map((dot, index) => ({ ...dot, latest: index === drawn.length - 1 }));
+}
+
+/** 점 사이 거리가 4px 이내면 잇는 선을 생략한다 (DESIGN-V2 2-2-1). */
+export function dotsOverlap(a: GaugeDot, b: GaugeDot, widthPx: number): boolean {
+  const distancePx = (Math.abs(a.pct - b.pct) / 100) * widthPx;
+  return distancePx <= OVERLAP_THRESHOLD_PX;
+}
+
 /** 기준선이 눈금에서 어디쯤인지 (0~100). 기준선이 없으면 null. */
 export function gaugeLinePct(key: AnyGaugeKey): number | null {
   const { min, max, line } = GAUGES[key];
