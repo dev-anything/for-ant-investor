@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
-| 갱신일 | 2026-11-28 — **`DESIGN-V2.md` 페이지 세부 수정 반영** (사용자 토론 확정). 5-9 업종별 시가총액 상위 회사 DB 함수 추가(적용 전 사용자 확인), 6-3 `gaugeDots`, 7장 `Tooltip` 위치 계산·`Gauge` 3개년 점, 8-2 `MetricRow` 3줄, 8-3 필터 버튼 너비, 9-1 종목 화면 순서(실적 → 리포트카드, 실적 전체 폭), 9-3 PER·PBR 행 모양, 9-6 종목 기사 검색 조건 비교, 9-7 업종 카드, 9-8 투어 흐름, 9-9 외부 전송 안내 삭제, 11장 19단계. 2026-11-27 — **`DESIGN.md` 3차로 교체** (사용자 확정: 모던 핀테크풍, 포인트 색 보라 `#6D28D9`, 흰 카드, lucide 아이콘, 종목 화면 PC 두 단). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·9-1 PC 배치·9-13 투어 스타일 반영. 2026-11-27 — 화면 디자인 기준을 `DESIGN.md`로 정함 (포인트 색 갈색 한 가지, 라이트 모드만, 빗금 음수 막대 등). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·음수·9-13 투어 스타일 반영. 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
+| 갱신일 | 2026-11-28 — F-18 종목 기사 `sort=sim` 확정. 2026-11-28 — **`DESIGN-V2.md` 페이지 세부 수정 반영** (사용자 토론 확정). 5-9 업종별 시가총액 상위 회사 DB 함수 추가(적용 전 사용자 확인), 6-3 `gaugeDots`, 7장 `Tooltip` 위치 계산·`Gauge` 3개년 점, 8-2 `MetricRow` 3줄, 8-3 필터 버튼 너비, 9-1 종목 화면 순서(실적 → 리포트카드, 실적 전체 폭), 9-3 PER·PBR 행 모양, 9-6 종목 기사 검색 조건 비교, 9-7 업종 카드, 9-8 투어 흐름, 9-9 외부 전송 안내 삭제, 11장 19단계. 2026-11-27 — **`DESIGN.md` 3차로 교체** (사용자 확정: 모던 핀테크풍, 포인트 색 보라 `#6D28D9`, 흰 카드, lucide 아이콘, 종목 화면 PC 두 단). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·9-1 PC 배치·9-13 투어 스타일 반영. 2026-11-27 — 화면 디자인 기준을 `DESIGN.md`로 정함 (포인트 색 갈색 한 가지, 라이트 모드만, 빗금 음수 막대 등). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·음수·9-13 투어 스타일 반영. 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
 | 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 8장, 2차(F-08·F-09·F-14·F-17·F-18·F-15·F-16·F-10)·확장(F-11·F-12·F-13)은 9장**에 같은 깊이로 적는다. 외부 API 응답처럼 **아직 확인하지 않은 것**은 "확인 뒤 정함"으로 남기고 PRD 11장 번호를 단다 |
@@ -616,7 +616,7 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | `newsDomain(originallink, link)` | `originallink` 호스트에서 앞 `www.`만 뗌. 없거나 잘못된 주소면 `link` 호스트 |
 | `newsHref(originallink, link)` | 원문 링크 (`originallink`, 없으면 `link`). `http:`·`https:`가 아니면 null (줄을 링크 없이) |
 | `formatPubDate(pubDate)` | RFC 822 형식 → 한국 시간 `YYYY-MM-DD HH:mm` (형식은 PRD 11장 16번 실제 응답으로 확인) |
-| `buildStockNewsQuery(name, shortCode)` | 종목 화면 기사 검색어 `{종목명} {종목코드}` (이름 앞뒤 공백 뗌, 예 `대상 001680`). 2026-11-23 사용자 결정 (PRD 4장 F-18) |
+| `buildStockNewsQuery(name, shortCode)` | 종목 화면 기사 검색어 `{종목명} {종목코드}` (이름 앞뒤 공백 뗌, 예 `대상 001680`). 2026-11-23 사용자 결정 (PRD 4장 F-18). `getStockNews`는 `sort=sim`(2026-11-28 비교 결과, PRD 4장 F-18) |
 | `parseNewsPage(searchParams)` | 1~`NEWS_MAX_PAGE` 정수, 잘못된 값은 1. `NEWS_PAGE_SIZE = 10`, `NEWS_MAX_PAGE = 100` (`start` ≤ 1000, PRD 10장 29번) |
 
 ### 6-14. (2차) `lib/disclosure.ts` — 공시 (PRD 4장 F-17)
@@ -1001,7 +1001,7 @@ type NewsResult = { status: 'ok'; items: NewsItem[]; total: number | null } | { 
 function searchNews(p: { query: string; display: number; start: number; sort: 'date' | 'sim' }): Promise<NewsResult>
 function getHomeNews(): Promise<NewsResult>            // HOME_NEWS_QUERY, display 5, start 1, date — 1800초
 function getNewsPage(page: number): Promise<NewsResult> // display 10, start (page−1)×10+1 — 1800초
-function getStockNews(name: string, shortCode: string): Promise<NewsResult> // query = `{name} {shortCode}` (buildStockNewsQuery), display 5, date — 3600초. 2026-11-28: 4가지 조합 비교 뒤 query·sort 바꿈 (아래)
+function getStockNews(name: string, shortCode: string): Promise<NewsResult> // query = `{name} {shortCode}` (buildStockNewsQuery), display 5, sort sim — 3600초. 2026-11-28 4가지 조합 비교 결과 B안 확정 (PRD 4장 F-18)
 ```
 
 - `GET https://naverapihub.apigw.ntruss.com/search/v1/news?query&display&start&sort`, 헤더 `X-NCP-APIGW-API-KEY-ID`·`X-NCP-APIGW-API-KEY`, 5초 제한. 키가 없으면 부르지 않고 `error`.

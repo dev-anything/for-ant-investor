@@ -130,12 +130,12 @@ export function getNewsPage(page: number): Promise<NewsResult> {
   });
 }
 
-/** 종목 화면 회사 기사 5개 (`{종목명} {종목코드}` 검색, 최신순, PRD 4장 F-18, 2026-11-23 사용자 결정) */
+/** 종목 화면 회사 기사 5개 (`{종목명} {종목코드}` 검색, 정확도순(sim), PRD 4장 F-18, 2026-11-28 DESIGN-V2 2-5 비교 결과) */
 export function getStockNews(name: string, shortCode: string): Promise<NewsResult> {
   return loadNews(cachedStockNews, {
     query: buildStockNewsQuery(name, shortCode),
     display: STOCK_NEWS_COUNT,
     start: 1,
-    sort: 'date',
+    sort: 'sim',
   });
 }
