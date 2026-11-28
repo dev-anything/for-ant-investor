@@ -28,10 +28,11 @@ export function latestValue(values: (number | null)[]): number | null {
   return values[values.length - 1];
 }
 
-/** 값 목록을 `(a → b → c)` 줄로 만든다. null 칸은 "계산할 수 없어" (PRD 4장 F-05 표). 단위 %. */
-export function formatValueLine(values: (number | null)[]): string {
-  const parts = values.map((v) => formatPercent(v) ?? copy.reportCard.noCalc);
-  return `(${parts.join(' → ')})`;
+/** 3개년 값 줄 `2023 a → 2024 b → 2025 c`를 만든다. null 칸은 "계산할 수 없어" (FS 8-2). 단위 %. */
+export function formatValueLine(points: { year: number; value: number | null }[]): string {
+  return points
+    .map(({ year, value }) => `${year} ${formatPercent(value) ?? copy.reportCard.noCalc}`)
+    .join(' → ');
 }
 
 /**

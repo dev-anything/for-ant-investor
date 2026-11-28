@@ -3,6 +3,7 @@ import {
   GAUGES,
   dotsOverlap,
   formatGaugeValue,
+  gaugeAriaLabel,
   gaugeDots,
   gaugeLinePct,
   gaugePosition,
@@ -164,6 +165,39 @@ describe('dotsOverlap', () => {
 
   it('두 점이 같은 위치면 눈금 폭과 무관하게 겹친다', () => {
     expect(dotsOverlap(dot(0), dot(0), 280)).toBe(true);
+  });
+});
+
+describe('gaugeAriaLabel', () => {
+  const points = (values: (number | null)[]) =>
+    values.map((value, index) => ({ year: 2023 + index, value }));
+
+  it('지표 이름·연도별 값·눈금 범위를 순서대로 읽는다 (PRD 10장 38번)', () => {
+    const three = points([3.1, 7.0, 12.4]);
+    expect(gaugeAriaLabel('매출 증가율', three, 'revenue_growth', gaugeDots(three, 'revenue_growth'), null)).toBe(
+      '매출 증가율, 2023년 3.1%, 2024년 7.0%, 2025년 12.4%, 눈금 −40~+70%',
+    );
+  });
+
+  it('값이 없는 연도도 "계산할 수 없어"로 읽고 점 목록에는 남지 않는다', () => {
+    const withNull = points([150, null, 75]);
+    const dots = gaugeDots(withNull, 'debt_ratio');
+    expect(dots.map((dot) => dot.year)).toEqual([2023, 2025]);
+    expect(gaugeAriaLabel('부채비율', withNull, 'debt_ratio', dots, null)).toBe(
+      '부채비율, 2023년 150.0%, 2024년 계산할 수 없어, 2025년 75.0%, 눈금 0~300%',
+    );
+  });
+
+  it('업종 가운데 값과 범위 밖 알림을 뒤에 붙인다', () => {
+    const outside = points([150, 200, 450]);
+    expect(
+      gaugeAriaLabel('부채비율', outside, 'debt_ratio', gaugeDots(outside, 'debt_ratio'), '62.0%'),
+    ).toBe('부채비율, 2023년 150.0%, 2024년 200.0%, 2025년 450.0%, 눈금 0~300%, 업종 가운데 값 62.0%, 눈금 밖 값이 있어');
+  });
+
+  it('PER은 배 단위 범위를 읽는다', () => {
+    const one = [{ year: 2025, value: 25.5 }];
+    expect(gaugeAriaLabel('PER', one, 'per', gaugeDots(one, 'per'), null)).toBe('PER, 2025년 25.5배, 눈금 0~50배');
   });
 });
 

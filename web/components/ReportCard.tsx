@@ -23,6 +23,7 @@ export function ReportCard({
   industry: StockIndustry | null;
 }) {
   const displayYears = getDisplayYears(years);
+  const displayYearNumbers = displayYears.map((row) => row.fiscalYear);
   // 영역 숨김 판단은 페이지의 두 단 배치와 같아야 하므로 순수 함수로 같이 쓴다 (DESIGN-V2 2-1)
   if (!shouldShowReportCard(summary, years, industry)) return null;
 
@@ -56,17 +57,20 @@ export function ReportCard({
             <MetricRow
               gauge="revenue_growth"
               values={growthValues}
+              years={displayYearNumbers}
               compare={compareFor('revenue_growth', growthValues, industry)}
             />
             <MetricRow
               gauge="operating_margin"
               values={marginValues}
+              years={displayYearNumbers}
               compare={compareFor('operating_margin', marginValues, industry)}
             />
             <div data-tour="debt">
               <MetricRow
                 gauge="debt_ratio"
                 values={debtValues}
+                years={displayYearNumbers}
                 compare={compareFor('debt_ratio', debtValues, industry)}
                 gaugeSlot={
                   capitalImpairment === 'full' ? <CapitalNotice impairment="full" /> : undefined

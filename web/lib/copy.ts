@@ -35,6 +35,8 @@ export const copy = {
     compareLink: '같은 업종 회사 보기',
     // 눈금 아래 가운데 값 라벨: `▲ 같은 업종 가운데 값 62.0%`
     medianLabel: (valueText: string) => `같은 업종 가운데 값 ${valueText}`,
+    // 지표 행 3줄째의 짧은 가운데 값 라벨: `업종 5.1%` (DESIGN-V2 2-2-1)
+    medianShort: (valueText: string) => `업종 ${valueText}`,
     // 가운데 값 툴팁 (PRD 4장 F-08). {N} = 이 업종 회사 수
     medianTip: (n: number) =>
       `같은 업종 회사들을 줄 세웠을 때 한가운데 값이야. 이 업종 회사 ${n}개로 계산했어.`,
@@ -185,14 +187,26 @@ export const copy = {
       operating_margin: '이 선보다 아래면 영업적자야.',
       revenue_growth: '이 선보다 아래면 매출이 전년보다 줄었어.',
     },
-    // 눈금 관련 작은 문구 (Gauge)
+    // 눈금 스크린 리더 문장 (PRD 10장 38번, DESIGN-V2 2-2-1)
     gauge: {
-      // 눈금 aria-label용 범위: `범위 0~300%` (FS 7장 예시와 글자 단위로 같게)
-      range: (min: number, max: number, suffix = '%') => `범위 ${min}~${max}${suffix}`,
-      // 눈금 aria-label: `부채비율 87.3%, 범위 0~300%` (FS 7장)
-      ariaLabel: (name: string, valueText: string, range: string) => `${name} ${valueText}, ${range}`,
-      // 눈금 범위 밖 값일 때 aria-label 끝에 붙인다 (Gauge가 clamped일 때 사용)
-      outOfRange: '눈금 범위를 벗어난 값',
+      // `{지표 이름}, {Y1}년 {값}, {Y2}년 {값}, {Y3}년 {값}, 눈금 {최소}~{최대}`
+      // + (있으면) `, 업종 가운데 값 {값}`, `, 눈금 밖 값이 있어`
+      ariaLabel: (input: {
+        name: string;
+        values: string;
+        min: number;
+        max: number;
+        suffix: string;
+        medianText: string | null;
+        hasOutOfRange: boolean;
+      }) => {
+        const minText = input.min < 0 ? `−${Math.abs(input.min)}` : `${input.min}`;
+        const maxText = input.min < 0 && input.max > 0 ? `+${input.max}` : `${input.max}`;
+        let text = `${input.name}, ${input.values}, 눈금 ${minText}~${maxText}${input.suffix}`;
+        if (input.medianText !== null) text += `, 업종 가운데 값 ${input.medianText}`;
+        if (input.hasOutOfRange) text += ', 눈금 밖 값이 있어';
+        return text;
+      },
     },
     // 툴팁 열기 버튼 (보이지 않는 글자, 스크린 리더용)
     tipButtonLabel: '설명 보기',

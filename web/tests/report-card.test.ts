@@ -67,16 +67,34 @@ describe('latestValue', () => {
 });
 
 describe('formatValueLine', () => {
-  it('세 값을 소수 1자리 % 와 화살표로 잇는다', () => {
-    expect(formatValueLine([112, 95, 87])).toBe('(112.0% → 95.0% → 87.0%)');
+  it('연도와 값을 소수 1자리 % 와 화살표로 잇는다', () => {
+    expect(
+      formatValueLine([
+        { year: 2023, value: 112 },
+        { year: 2024, value: 95 },
+        { year: 2025, value: 87 },
+      ]),
+    ).toBe('2023 112.0% → 2024 95.0% → 2025 87.0%');
   });
 
   it('null 칸은 "계산할 수 없어"로 적는다', () => {
-    expect(formatValueLine([null, 95, 87])).toBe('(계산할 수 없어 → 95.0% → 87.0%)');
+    expect(
+      formatValueLine([
+        { year: 2023, value: null },
+        { year: 2024, value: 95 },
+        { year: 2025, value: 87 },
+      ]),
+    ).toBe('2023 계산할 수 없어 → 2024 95.0% → 2025 87.0%');
   });
 
   it('음수와 0도 그대로 적는다 (0은 데이터 없음이 아님)', () => {
-    expect(formatValueLine([-2.5, 0, 3])).toBe('(-2.5% → 0.0% → 3.0%)');
+    expect(
+      formatValueLine([
+        { year: 2023, value: -2.5 },
+        { year: 2024, value: 0 },
+        { year: 2025, value: 3 },
+      ]),
+    ).toBe('2023 -2.5% → 2024 0.0% → 2025 3.0%');
   });
 });
 

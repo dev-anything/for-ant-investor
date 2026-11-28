@@ -2,6 +2,7 @@ import { Gauge } from '@/components/Gauge';
 import { Tooltip } from '@/components/Tooltip';
 import { copy } from '@/lib/copy';
 import type { StockIndustry } from '@/lib/data/stock';
+import { formatGaugeValue } from '@/lib/gauge';
 import { buildValuationRows, valuationBasisText, type StockValuation, type ValuationRow } from '@/lib/valuation';
 
 // FS 9-3 ValuationSection (PRD 4장 F-09), DESIGN.md 5-2 흰 카드(rounded-lg, p-4 sm:p-6), 6-5: 주가 수준 영역.
@@ -31,7 +32,7 @@ export function ValuationSection({
             {/* 업종 정보가 없으면 지표마다 반복하지 않고 한 번만 알린다 (PRD 4장 F-08) */}
             {industry === null && <p className="py-4 text-sm text-ink-sub">{copy.industry.noIndustry}</p>}
             {rows.map((row) => (
-              <ValuationItem key={row.key} row={row} />
+              <ValuationItem key={row.key} row={row} year={valuation.latestYear} />
             ))}
           </div>
         </>
@@ -40,9 +41,11 @@ export function ValuationSection({
   );
 }
 
-// 지표 하나 = 제목(툴팁) + 값 + 눈금 + 가운데 값. 값이 없으면 눈금 자리에 사유 문장만 쓴다
-function ValuationItem({ row }: { row: ValuationRow }) {
+// 지표 하나 = 제목(툴팁) + 값 + 눈금 + 가운데 값. 값이 없으면 눈금 자리에 사유 문장만 쓴다.
+// S6에서 3줄 모양으로 바꾸므로 여기서는 점 1개 배열 넘기기와 가운데 값 라벨 위치만 유지한다.
+function ValuationItem({ row, year }: { row: ValuationRow; year: number }) {
   const median = row.compare.kind === 'ok' ? { value: row.compare.median, n: row.compare.n } : null;
+  const medianText = median ? formatGaugeValue(median.value, row.key) : null;
 
   return (
     <div className="border-t border-line py-4">
@@ -63,11 +66,16 @@ function ValuationItem({ row }: { row: ValuationRow }) {
           <Gauge
             gauge={row.key}
             name={row.name}
-            value={row.value}
-            valueText={row.valueText}
+            points={[{ year, value: row.value }]}
             median={median}
             lineTip={row.lineTip}
           />
+          {median && medianText && (
+            <p className="mt-1 inline-flex items-center gap-1 text-meta text-ink-sub">
+              <span>{copy.industry.medianLabel(medianText)}</span>
+              <Tooltip text={copy.industry.medianTip(median.n)} label={copy.reportCard.tipButtonLabel} />
+            </p>
+          )}
           {row.compare.kind === 'too_few' && (
             <p className="mt-2 text-sm text-ink-sub">{copy.industry.tooFew}</p>
           )}

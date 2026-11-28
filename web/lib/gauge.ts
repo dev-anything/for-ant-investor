@@ -1,5 +1,6 @@
 // 눈금 범위·위치 계산 (PRD 4장 F-05·F-09, FS 6-3). 화면 없이 계산만 한다.
 // F-05 지표 3개 범위는 batch/rules.py의 GAUGES와 같아야 한다 (tests/rules-sync.test.ts가 확인). PER·PBR은 배치에 없는 웹앱 전용 범위다.
+import { copy } from '@/lib/copy';
 import { formatMultiple, formatPercent } from '@/lib/format';
 
 // F-05 리포트카드 지표 3개
@@ -99,4 +100,32 @@ export function gaugeUnitSuffix(key: AnyGaugeKey): string {
 /** 값을 지표 단위에 맞춰 화면 서식으로 바꾼다 (FS 6-1 formatPercent·formatMultiple). */
 export function formatGaugeValue(value: number, key: AnyGaugeKey): string | null {
   return GAUGE_UNIT[key] === 'multiple' ? formatMultiple(value) : formatPercent(value);
+}
+
+/**
+ * 눈금 스크린 리더 문장을 만든다 (PRD 10장 38번). null 연도는 "계산할 수 없어"로 읽고,
+ * 범위 밖 점이 하나라도 있으면 끝에 알린다. dots는 gaugeDots 결과를 그대로 받는다.
+ */
+export function gaugeAriaLabel(
+  name: string,
+  points: { year: number; value: number | null }[],
+  key: AnyGaugeKey,
+  dots: GaugeDot[],
+  medianText: string | null,
+): string {
+  const values = points
+    .map(({ year, value }) =>
+      `${year}년 ${value === null ? copy.reportCard.noCalc : (formatGaugeValue(value, key) ?? copy.reportCard.noCalc)}`,
+    )
+    .join(', ');
+  const { min, max } = GAUGES[key];
+  return copy.reportCard.gauge.ariaLabel({
+    name,
+    values,
+    min,
+    max,
+    suffix: gaugeUnitSuffix(key),
+    medianText,
+    hasOutOfRange: dots.some((dot) => dot.clamped !== null),
+  });
 }
