@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
-| 갱신일 | 2026-11-27 — **`DESIGN.md` 3차로 교체** (사용자 확정: 모던 핀테크풍, 포인트 색 보라 `#6D28D9`, 흰 카드, lucide 아이콘, 종목 화면 PC 두 단). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·9-1 PC 배치·9-13 투어 스타일 반영. 2026-11-27 — 화면 디자인 기준을 `DESIGN.md`로 정함 (포인트 색 갈색 한 가지, 라이트 모드만, 빗금 음수 막대 등). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·음수·9-13 투어 스타일 반영. 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
+| 갱신일 | 2026-11-28 — **`DESIGN-V2.md` 페이지 세부 수정 반영** (사용자 토론 확정). 5-9 업종별 시가총액 상위 회사 DB 함수 추가(적용 전 사용자 확인), 6-3 `gaugeDots`, 7장 `Tooltip` 위치 계산·`Gauge` 3개년 점, 8-2 `MetricRow` 3줄, 8-3 필터 버튼 너비, 9-1 종목 화면 순서(실적 → 리포트카드, 실적 전체 폭), 9-3 PER·PBR 행 모양, 9-6 종목 기사 검색 조건 비교, 9-7 업종 카드, 9-8 투어 흐름, 9-9 외부 전송 안내 삭제, 11장 19단계. 2026-11-27 — **`DESIGN.md` 3차로 교체** (사용자 확정: 모던 핀테크풍, 포인트 색 보라 `#6D28D9`, 흰 카드, lucide 아이콘, 종목 화면 PC 두 단). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·9-1 PC 배치·9-13 투어 스타일 반영. 2026-11-27 — 화면 디자인 기준을 `DESIGN.md`로 정함 (포인트 색 갈색 한 가지, 라이트 모드만, 빗금 음수 막대 등). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·음수·9-13 투어 스타일 반영. 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
 | 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 8장, 2차(F-08·F-09·F-14·F-17·F-18·F-15·F-16·F-10)·확장(F-11·F-12·F-13)은 9장**에 같은 깊이로 적는다. 외부 API 응답처럼 **아직 확인하지 않은 것**은 "확인 뒤 정함"으로 남기고 PRD 11장 번호를 단다 |
@@ -371,6 +371,20 @@ revoke all on public.chat_usage_daily from anon, authenticated;
 
 ---
 
+
+### 5-9. (2차) `industry_top_companies(p_limit int default 3)` — F-15 업종 카드 회사 이름 (2026-11-28)
+
+- 파일: `{ts}_industry_top_companies.sql`. 공통 규칙은 5장 머리와 같다 (`anon`·`authenticated`·`service_role` 실행). **적용 전 사용자 확인.**
+- 대상: `industry_tree()`(5-3)와 같은 범위 (`v_search_targets` 중 `not is_foreign` and `division_name is not null`) **and** `v_valuation.mrkt_tot_amt is not null`.
+- 중분류마다 `row_number() over (partition by division_code order by mrkt_tot_amt desc, itms_nm asc)` ≤ `p_limit`. `p_limit`은 1~5로 자른다.
+
+| 반환 열 | 설명 |
+| --- | --- |
+| `division_code` | 중분류 |
+| `rank` | 1부터 |
+| `short_code`, `itms_nm` | 종목코드(표시용 `A` 없음)·종목명 원본 그대로 |
+
+- `industry_tree()` 반환 모양을 바꾸지 않으려고 따로 둔다 (`create or replace`로 반환 열을 바꾸면 drop이 필요함). 화면은 두 RPC를 병렬로 불러 `division_code`로 합친다 (9-7).
 ## 6. 공통 모듈 (순수 함수·상수·문구)
 
 모두 **순수 함수**로 만들고 Vitest로 테스트한다 (10장). DB·React에 기대지 않는다.
@@ -421,6 +435,15 @@ function gaugePosition(value: number, key): { pct: number; clamped: 'low' | 'hig
 - `pct = (value − min) / (max − min) × 100`, 0~100으로 자르고 잘렸으면 `clamped`.
 - 범위 숫자는 `batch/rules.py`의 `GAUGES`와 같아야 한다 (10장 상수 대조 테스트). `per`·`pbr`은 배치에 없으므로 대조 대상이 아니다 (웹앱만 씀).
 - (2차) 업종 가운데 값 표시도 같은 `gaugePosition`으로 위치를 구한다 (범위 밖이면 끝에 붙이고 값은 글자로).
+- (2026-11-28, `DESIGN-V2.md` 2-2) 3개년 점 눈금용 순수 함수를 더한다.
+
+```ts
+type GaugeDot = { year: number; value: number; pct: number; clamped: 'low' | 'high' | null; latest: boolean };
+function gaugeDots(points: { year: number; value: number | null }[], key): GaugeDot[]  // null 연도는 뺀다, 마지막 점이 latest
+function dotsOverlap(a: GaugeDot, b: GaugeDot, widthPx: number): boolean             // 4px 이내면 잇는 선 생략
+```
+
+- 테스트: 3개년 위치, `null` 연도 빼기(남은 점만), 점 1개, 범위 밖 `clamped`, 겹침 판정.
 
 ### 6-4. `lib/filters.ts` — F-03 상수
 
@@ -617,8 +640,8 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | `AppHeader` | 서버 | 서비스 이름(→ `/`), 상단 메뉴 "종목 검색"(`/`)·"조건으로 찾기"(`/screener`)·(2차) "업종으로 둘러보기"(`/industries`, `/industries/…` 전부에서 `aria-current`). 오른쪽 (확장) `AuthMenu` 자리. `/news`(F-18)는 메뉴에 넣지 않는다. 쿠키를 읽지 않는다 (1장) |
 | `AuthMenu` (확장) | 클라이언트 | 9-10. 화면이 뜬 뒤 `GET /api/me` → 로그인 전 "로그인"(→ `LoginDialog`), 로그인 후 "마이페이지 {읽지 않은 수}"·"로그아웃". 응답 전에는 자리만 (깜빡임 방지로 폭 고정) |
 | `SiteFooter` | 서버 | 투자 책임 고지 한 줄 + 출처 두 줄 (PRD 3-2, 10장 1번) |
-| `Tooltip` | 클라이언트 | 트리거(`button`, `aria-describedby`) + 말풍선. 마우스 올림·포커스·탭으로 열림, Esc·바깥 클릭으로 닫힘. 작은 화면에서도 화면 밖으로 안 나가게 |
-| `Gauge` | 서버 | 가로 막대 + 점(이 회사) + 기준선(있으면, 툴팁) + (2차) 업종 가운데 값 표시. `gaugePosition` 사용. 범위 밖이면 점을 끝에 두고 값을 글자로. `role="img"` + `aria-label`("부채비율 87.3%, 범위 0~300%") |
+| `Tooltip` | 클라이언트 | 트리거(`button`, `aria-describedby`) + 말풍선. 마우스 올림·포커스·탭으로 열림, Esc·바깥 클릭으로 닫힘. 작은 화면에서도 화면 밖으로 안 나가게. **(2026-11-28, `DESIGN-V2.md` 2-4) 열 때 트리거 `getBoundingClientRect()`와 `window.innerWidth`·`innerHeight`로 자리를 정한다:** 오른쪽에 280px(+16px 여백)가 남으면 왼쪽 기준, 아니면 오른쪽 기준, 둘 다 모자라면 화면 기준 `fixed` 가운데(양옆 16px). 아래 공간이 모자라면 위로. 폭 `min(280px, 100vw − 32px)`. 페이지 가로 스크롤이 생기면 안 된다 |
+| `Gauge` | 서버 | 가로 막대 + 점(이 회사) + 기준선(있으면, 툴팁) + (2차) 업종 가운데 값 표시. **(2026-11-28) 점을 `points: { year; value }[]`로 받아 `gaugeDots`로 점 여러 개를 그린다** (과거 10px `bar-past`, 최신 16px `brand`, 2px `muted` 선 + 최신 쪽 화살촉, 겹치면 선 생략, `DESIGN-V2.md` 2-2-1). PER·PBR은 점 1개. 업종 가운데 값 라벨은 `Gauge` 밖(`MetricRow` 3줄째)으로 옮긴다. `aria-label`은 PRD 10장 38번. `gaugePosition` 사용. 범위 밖이면 점을 끝에 두고 값을 글자로. `role="img"` + `aria-label`("부채비율 87.3%, 범위 0~300%") |
 | `Gauge` 2차 추가 | 서버 | prop `median?: { value: number; n: number } \| null`. 막대 **아래쪽** 짧은 세로 눈금(▲ 모양) + 라벨 "같은 업종 가운데 값 {값}" + `Tooltip`(PRD F-08 가운데 값 툴팁, `{N}` = n). 점(이 회사)과 모양이 달라 색 없이 구분된다. `aria-label` 끝에 ", 같은 업종 가운데 값 {값}". 값 포맷은 지표에 맞게 (`%` / `배`) |
 | `TrendArrow` | 서버 | 화살표 + 말 ("↘ 3년째 감소"). 한 가지 색. "비슷한 수준"이면 툴팁 |
 | `DataTable` | 서버/클라이언트 | 열 정의 + 행. 열 제목 정렬 버튼(`aria-sort`). 넓으면 표 안에서만 가로 스크롤 |
@@ -723,7 +746,7 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 | --- | --- | --- |
 | `CapitalNotice` | `summary.capitalImpairment` | `full` → `Notice box` (부채비율 눈금 자리를 대신함), `partial` → 부채비율 눈금 아래 `Notice line`, 그 밖 없음 |
 | `InsightList` | `summary.insights` | `topInsights(…, 3)` → `insightText`. 0개면 영역(제목 포함) 렌더하지 않음 |
-| `MetricRow` ×3 | `years` 중 `displayYears`의 `revenue_growth`·`operating_margin`·`debt_ratio` (화면 순서 매출 → 영업이익 → 빚) | 제목(질문형) + 지표 이름 + Y3 값 + `TrendArrow`(`getTrend`) + `Gauge`(Y3) + 값 3개 줄 `(a → b → c)` (null 칸은 "계산할 수 없어") |
+| `MetricRow` ×3 | `years` 중 `displayYears`의 `revenue_growth`·`operating_margin`·`debt_ratio` (화면 순서 매출 → 영업이익 → 빚) | **3줄 (2026-11-28, `DESIGN-V2.md` 2-2-2):** ① 제목(질문형) | Y3 값(20px/700) + `TrendArrow`(`getTrend`), 지표 이름은 `sr-only` ② `Gauge`(Y1~Y3 점) ③ 값 3개 줄 `2023 a → 2024 b → 2025 c` (null 칸은 "계산할 수 없어") | `업종 {값}` + `Tooltip`. 그 아래 업종 비교 문장·`too_few`·부분 자본잠식 |
 
 - 금융회사(`isFinancial`): `MetricRow` 3개를 렌더하지 않는다. `CapitalNotice`·`InsightList`는 그대로.
 - Y3 값이 null인 `MetricRow`: 눈금 대신 사유 문장. 영업이익률 → "매출액이 없어서 영업이익률을 계산할 수 없어." 부채비율 → 완전 자본잠식 상자가 그 자리를 대신함. 매출 증가율 → "계산할 수 없어".
@@ -786,7 +809,7 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 
 **`FilterPanel`**
 
-- 묶음 6개 순서대로, 묶음마다 제목 + 버튼. 버튼은 `aria-pressed`. 버튼 옆 `Tooltip`: `{tooltip} 계산: {fillYears(calc, 기준 연도)}` (기준 연도는 PRD 10장 9번 — 서버에서 `company_summary.latest_year` 최빈값을 구해 넘김).
+- 묶음 6개 순서대로, 묶음마다 제목 + 버튼. 버튼은 `aria-pressed`. **버튼 너비 통일 (2026-11-28, `DESIGN-V2.md` 1-2):** 필터 하나가 한 줄(`flex` 세로), 버튼은 `w-full`·글자 왼쪽 맞춤·긴 글자는 줄바꿈(말줄임 없음), `Tooltip`은 버튼 오른쪽 고정 폭 자리. 버튼 옆 `Tooltip`: `{tooltip} 계산: {fillYears(calc, 기준 연도)}` (기준 연도는 PRD 10장 9번 — 서버에서 `company_summary.latest_year` 최빈값을 구해 넘김).
 - 선택한 필터를 묶음 위에 칩으로 한 번 더 보여주고 ✕로 뺄 수 있게 한다.
 
 **`ResultTable`** (`DataTable` 사용)
@@ -825,14 +848,15 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 005930 · KOSPI · [전자 부품, … 제조업]ⓘ(→ F-15)                      ← StockHeader
 ┌ 어디부터 읽을지 모르겠다면 순서대로 짚어 줄게. [읽는 순서 보기] ✕ ┐  [읽는 순서] ← ReadingTour
 ─────────────────────────────────────────────
+[실적] data-tour="sales" / "profit"  (PC 전체 폭, 그래프 3개 가로)    ← ResultsCharts
+─────────────────────────────────────────────
 [리포트카드] (업종 정보가 없어.)                                     ← ReportCard
- 빚이 얼마나 있나  부채비율 25.4%  ↘ 3년째 감소
-  0% ─●──▲─|──────── 300%     ▲ 같은 업종 가운데 값 62.0%ⓘ
+ 빚이 얼마나 있나                                  25.4%  ↓
+  ├──○───●──▶◉───|──────────┤  0% … 300%
+  2023 40.1% → 2024 31.0% → 2025 25.4%          업종 62.0%ⓘ
   같은 업종 가운데 값보다 낮아
  … (지표 3개)
  [같은 업종 회사 보기 →]
-─────────────────────────────────────────────
-[실적] data-tour="sales" / "profit"                                  ← ResultsCharts
 ─────────────────────────────────────────────
 [주가 수준] data-tour="valuation"                                    ← ValuationSection
 ─────────────────────────────────────────────
@@ -844,13 +868,13 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 
 | status | 보여주는 것 (8-2 표를 대체) |
 | --- | --- |
-| `ok` | StockHeader(+ReadingTour) + ReportCard + ResultsCharts + ValuationSection + DividendCard + StockFeedSection |
+| `ok` | StockHeader(+ReadingTour) + ResultsCharts + ReportCard + ValuationSection + DividendCard + StockFeedSection |
 | `no_financials` | StockHeader + `EmptyState` "이 회사의 재무정보가 없어." + StockFeedSection (PRD 10장 26번). ReadingTour 없음 |
 | `foreign` | StockHeader + `EmptyState` (12장 1번). StockFeedSection·ReadingTour 없음 |
 
 - `data-tour` 속성 위치: `sales` = 매출액 그래프 하나, `profit` = 영업이익·순이익 그래프 둘을 감싼 요소 (`ResultsCharts` 안에서 두 그래프를 한 묶음으로 감싼다. 금융회사도 같음), `debt` = 부채비율 `MetricRow` **또는** 그 자리를 대신한 완전 자본잠식 상자, `valuation` = `ValuationSection` 전체, `dividend` = `DividendCard` 전체.
 - `loading.tsx` 스켈레톤에 주가 수준·배당 자리를 더한다. 공시·기사 칸은 각자 `Suspense` 스켈레톤.
-- **PC 배치 (2026-11-27, `DESIGN.md` 5-2):** 폭 1024px 이상에서 위 순서는 그대로 두고 화면만 나눈다. 머리는 전체 폭이다. 그 아래 왼쪽 단(약 2/3)에 ReportCard → ResultsCharts, 오른쪽 단(약 1/3)에 ValuationSection → DividendCard를 둔다. 맨 아래 StockFeedSection은 전체 폭에 두 칸이다. DOM 순서는 위 그림 순서를 유지해서 1024px 미만 한 단 순서·스크린리더 순서·투어 순서가 같게 한다.
+- **PC 배치 (2026-11-28, `DESIGN-V2.md` 2-1. 2026-11-27 배치를 바꿈):** 폭 1024px 이상에서 머리 → ResultsCharts(전체 폭, 그래프 3개 가로·640px 미만 세로) → 두 단[왼쪽(약 2/3) ReportCard | 오른쪽(약 1/3) ValuationSection → DividendCard] → StockFeedSection(전체 폭 두 칸). `ReportCard`가 `null`이면 두 단 대신 ValuationSection | DividendCard 같은 폭 두 칸. DOM 순서 = 화면 순서로 두고 CSS `order`를 쓰지 않아서 1024px 미만 한 단 순서·스크린리더 순서·투어 순서가 같게 한다.
 
 ### 9-2. F-08 업종 비교
 
@@ -895,7 +919,7 @@ function buildTourSteps(present: TourKey[], isFinancial: boolean): { key; title;
 
 **규칙·문구:** PRD 4장 F-09.
 
-**`ValuationSection` (서버)** — `data-tour="valuation"`. 입력 `valuation`, `industry`.
+**`ValuationSection` (서버)** — `data-tour="valuation"`. 입력 `valuation`, `industry`. **행 모양 (2026-11-28, `DESIGN-V2.md` 2-2-3):** `MetricRow`와 같은 3줄 — ① 제목 + `Tooltip` | 값 ② `Gauge`(점 1개) ③ 기준일·보통주 안내 | `업종 {값}` + `Tooltip`. 오른쪽 단이 좁아 범위 숫자와 기준선 값이 겹치면 기준선 값을 막대 위로 올린다.
 
 ```
 주가 수준                                 주가 2026-11-16 기준 · 순이익·자본 2025년 기준
@@ -977,7 +1001,7 @@ type NewsResult = { status: 'ok'; items: NewsItem[]; total: number | null } | { 
 function searchNews(p: { query: string; display: number; start: number; sort: 'date' | 'sim' }): Promise<NewsResult>
 function getHomeNews(): Promise<NewsResult>            // HOME_NEWS_QUERY, display 5, start 1, date — 1800초
 function getNewsPage(page: number): Promise<NewsResult> // display 10, start (page−1)×10+1 — 1800초
-function getStockNews(name: string, shortCode: string): Promise<NewsResult> // query = `{name} {shortCode}` (buildStockNewsQuery), display 5, date — 3600초
+function getStockNews(name: string, shortCode: string): Promise<NewsResult> // query = `{name} {shortCode}` (buildStockNewsQuery), display 5, date — 3600초. 2026-11-28: 4가지 조합 비교 뒤 query·sort 바꿈 (아래)
 ```
 
 - `GET https://naverapihub.apigw.ntruss.com/search/v1/news?query&display&start&sort`, 헤더 `X-NCP-APIGW-API-KEY-ID`·`X-NCP-APIGW-API-KEY`, 5초 제한. 키가 없으면 부르지 않고 `error`.
@@ -1013,6 +1037,11 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 
 **출처 푸터:** 네이버 추가 문구는 사용자 확인 뒤 `copy.footer.source`만 바꾼다 (PRD 10장 25번).
 
+**종목 기사 검색 조건 비교 (2026-11-28, PRD 4장 F-18 "검색 조건 다시 정하기", `DESIGN-V2.md` 2-5)**
+
+- 스크립트 `scripts/news_query_check.py` (표준 라이브러리, 키는 변수 이름으로만, 출력·저장에서 키 값 없음). 표본 10종목 × 조합 A~D × 5개를 받아 `api_check_results/`(git 제외)에 원본을 두고, 조합마다 "제목에 종목명 포함 비율"·가장 오래된 `pubDate`를 출력한다.
+- 고른 조합으로 `buildStockNewsQuery`(따옴표 조합이면 `"{name}"`)와 `getStockNews`의 `sort`를 바꾸고 `news-text.test.ts`를 고친다. 결과를 걸러 내는 코드는 넣지 않는다 (PRD 5-8).
+
 ### 9-7. F-15 업종으로 둘러보기
 
 **규칙·문구:** PRD 4장 F-15.
@@ -1032,7 +1061,8 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 ```
 
 - 대분류마다 `<details>` (JS 없음, 키보드로 열림). 처음엔 모두 닫힘 (12장 동작 기본안 2번). 대분류 이름은 `cleanSectionName`, 중분류 이름은 그대로.
-- 회사 수 표기 `(회사 {n}개)`, 숫자 쉼표.
+- ~~회사 수 표기 `(회사 {n}개)`~~ → **회색 배지 `{n}개`** (2026-11-28, PRD 10장 35번, `DESIGN-V2.md` 3-2). 숫자 쉼표. 중분류 카드 오른쪽 위·대분류 제목 오른쪽. 공통 부품 `CountBadge`(서버)로 둔다.
+- **카드 회사 이름 3개 (2026-11-28, PRD 4장 F-15, `DESIGN-V2.md` 3-1):** `getIndustryTree()`가 RPC 5-3과 5-9(`p_limit` 3)를 병렬로 불러 중분류마다 `topCompanies: string[]`(종목명)를 붙인다. 카드 아래쪽에 ` · `로 잇는다 (링크 아님). 0개면 줄 없음. 5-9 실패 시 회사 줄만 빼고 카드는 그린다 (로그만 남김).
 
 **`/industries/[division]` (서버, `revalidate = 3600`)**
 
@@ -1070,6 +1100,7 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 | 스타일 | driver.js 기본 CSS를 불러오고 모양은 `DESIGN.md` 6-11 기준으로 덮는다 (툴팁과 같은 흰 팝오버, 다음 버튼 보라 채움, 이전 버튼 보조 버튼, 비추는 칸 모서리 16px) |
 
 - 투어에 기사·공시 칸은 넣지 않는다 (`data-tour`를 달지 않음).
+- (2026-11-28) 9-1 배치 변경으로 `sales` → `profit` → `debt` → `valuation` → `dividend`가 화면 위→아래·왼→오 순서가 된다. `data-tour` 위치·`TOUR_KEYS` 순서는 바꾸지 않는다.
 
 ### 9-9. F-10 챗봇
 
@@ -1077,9 +1108,10 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 
 **`ChatFilterInput` (클라이언트)** — 스크리너 맨 위, `FilterPanel` 위. `ScreenerClient` 안에 두고 필터 상태를 함께 쓴다.
 
+- 외부 AI 전송 안내 줄은 두지 않는다 (2026-11-28 사용자 지시, PRD 10장 15번 삭제). `copy.ts`의 해당 키도 지운다.
+
 ```
 찾고 싶은 회사를 문장으로 적어 줘 [                              ] [찾기]
-적은 문장은 조건을 찾으려고 외부 AI 서비스로 보내져.
 이렇게 적어 봐  [빚이 적고 매출이 늘어나는 회사] [적자에서 흑자로 돌아선 회사] [꾸준히 배당하는 회사]
 (결과 문구 줄, aria-live="polite")
 ```
@@ -1314,6 +1346,8 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 | 16. F-11 | PRD 11장 11번(Gmail 한도) 확인, 마이그레이션 5-7(**사용자 확인 후 적용**), `@supabase/ssr`, `session.ts`·`browser.ts`·`proxy.ts`, `/api/me`, `AuthMenu`, `LoginDialog`, `/reset-password`, `/auth/callback`, 탈퇴. Supabase SMTP·Redirect URL·메일 템플릿 설정 (사용자와 함께) | PRD F-11 수용 기준(다른 기기에서 메일 링크 열기 포함), 공개 화면 응답이 여전히 캐시됨 |
 | 17. F-12 | `/api/watchlist`·`/api/settings`, `WatchButton`, 로그인 뒤 자동 등록, `/mypage`, `WatchCard`·`MiniBars` | PRD F-12 (20개 상한 문구, 목록에서 빠짐 표시) |
 | 18. F-13 | 마이그레이션 5-8(**사용자 확인 후 적용**), 알림 읽음·`NotificationList`, `/unsubscribe`·`/api/unsubscribe`, 배치 `notify.py`·`notify_mail.py`·`dart_collect`·`krx_list` 연결, `daily.yml` 단계, GitHub Secrets (사용자) | PRD F-13 (같은 변화 두 번 안 알림, 메일 한 통, GET으로는 수신 거부 안 됨) |
+| **디자인 V2** | | |
+| 19. 페이지 세부 수정 (2026-11-28) | `DESIGN-V2.md` 5장 순서: 스크리너 문구·버튼 너비 → `Tooltip` 위치 → 종목 화면 배치·투어 → `gaugeDots`·`Gauge`·`MetricRow`·`ValuationSection` → 업종 카드(마이그레이션 5-9 **사용자 확인 후 적용**) → 기사 검색 조건 비교·반영 | `DESIGN-V2.md` 5장 완료 조건 + PRD F-05·F-09·F-15·F-16·F-18 수용 기준 |
 
 ---
 
