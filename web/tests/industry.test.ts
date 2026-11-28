@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_INDUSTRY_COUNT, compareToIndustry, groupIndustryTree } from '@/lib/industry';
+import {
+  MIN_INDUSTRY_COUNT,
+  compareToIndustry,
+  groupIndustryTree,
+  groupTopCompanies,
+  topCompaniesFor,
+} from '@/lib/industry';
 
 describe('compareToIndustry', () => {
   it('업종 정보가 없으면 no_industry다', () => {
@@ -91,5 +97,50 @@ describe('groupIndustryTree', () => {
 
   it('빈 입력이면 빈 목록이다', () => {
     expect(groupIndustryTree([])).toEqual([]);
+  });
+});
+
+describe('groupTopCompanies', () => {
+  const company = (divisionCode: string, rank: number, shortCode: string, name: string) => ({
+    divisionCode,
+    rank,
+    shortCode,
+    name,
+  });
+
+  it('중분류별로 묶고 rank순으로 준다', () => {
+    const grouped = groupTopCompanies([
+      company('10', 3, '000330', 'SK하이닉스'),
+      company('26', 1, '005930', '삼성전자'),
+      company('10', 1, '005930', '삼성전자'),
+      company('10', 2, '066570', 'LG전자'),
+    ]);
+    expect([...grouped.keys()]).toEqual(['10', '26']);
+    expect(topCompaniesFor(grouped, '10').map((c) => c.name)).toEqual(['삼성전자', 'LG전자', 'SK하이닉스']);
+    expect(topCompaniesFor(grouped, '26').map((c) => c.shortCode)).toEqual(['005930']);
+  });
+
+  it('회사가 없는 중분류는 빈 배열이다', () => {
+    const grouped = groupTopCompanies([company('10', 1, '005930', '삼성전자')]);
+    expect(topCompaniesFor(grouped, '99')).toEqual([]);
+    expect(topCompaniesFor(new Map(), '10')).toEqual([]);
+  });
+
+  it('rank가 같으면 종목명 가나다순으로 순서를 고정한다', () => {
+    const grouped = groupTopCompanies([
+      company('10', 1, '000330', 'SK하이닉스'),
+      company('10', 1, '005930', '삼성전자'),
+    ]);
+    expect(topCompaniesFor(grouped, '10').map((c) => c.name)).toEqual(['SK하이닉스', '삼성전자']);
+  });
+
+  it('빈 입력이면 빈 Map이다', () => {
+    expect(groupTopCompanies([]).size).toBe(0);
+  });
+
+  it('원본 배열의 순서는 바꾸지 않는다', () => {
+    const input = [company('10', 2, '066570', 'LG전자'), company('10', 1, '005930', '삼성전자')];
+    groupTopCompanies(input);
+    expect(input[0].rank).toBe(2);
   });
 });

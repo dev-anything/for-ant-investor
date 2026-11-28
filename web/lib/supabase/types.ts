@@ -834,6 +834,15 @@ export type Database = {
           section_order: number
         }[]
       }
+      industry_top_companies: {
+        Args: { p_limit?: number }
+        Returns: {
+          division_code: string
+          rank: number
+          short_code: string
+          itms_nm: string
+        }[]
+      }
       screener_search: {
         Args: {
           p_dir: string

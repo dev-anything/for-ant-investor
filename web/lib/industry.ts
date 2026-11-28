@@ -101,3 +101,36 @@ export function groupIndustryTree(rows: readonly IndustryTreeInput[]): IndustryS
   }
   return sections;
 }
+
+// 업종 카드 회사 한 줄 (FS 5-9 반환 열). rank는 1부터, shortCode는 A 없는 표시용 종목코드
+export interface IndustryTopCompany {
+  divisionCode: string;
+  rank: number;
+  shortCode: string;
+  name: string;
+}
+
+/**
+ * FS 5-9 결과를 중분류 코드별로 묶는다 (rank순). 시가총액 큰 순서만 담고 평가하는 말은 붙이지 않는다 (DESIGN-V2 3-1).
+ * RPC가 이미 순서를 주지만 입력 순서에 기대지 않고 rank로 다시 정렬한다.
+ */
+export function groupTopCompanies(rows: readonly IndustryTopCompany[]): Map<string, IndustryTopCompany[]> {
+  const grouped = new Map<string, IndustryTopCompany[]>();
+  for (const row of rows) {
+    const list = grouped.get(row.divisionCode);
+    if (list === undefined) grouped.set(row.divisionCode, [row]);
+    else list.push(row);
+  }
+  for (const list of grouped.values()) {
+    list.sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name));
+  }
+  return grouped;
+}
+
+/** 중분류의 회사 목록. 없으면 빈 배열 (DESIGN-V2 3-1: 회사가 0개면 카드에 줄을 그리지 않는다). */
+export function topCompaniesFor(
+  grouped: ReadonlyMap<string, readonly IndustryTopCompany[]>,
+  divisionCode: string
+): readonly IndustryTopCompany[] {
+  return grouped.get(divisionCode) ?? [];
+}

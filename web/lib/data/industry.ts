@@ -1,6 +1,8 @@
 // 업종 조회 (FS 5-3~5-5, 9-2). DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다.
 import 'server-only';
 import { db } from '@/lib/supabase/server';
+import { groupTopCompanies } from '@/lib/industry';
+import type { IndustryTopCompany } from '@/lib/industry';
 import type { ListState } from '@/lib/params';
 
 // 업종 목록 한 쪽 (total은 전체 회사 수, 쪽을 넘으면 rows가 비어 total도 0이다)
@@ -42,6 +44,9 @@ export interface IndustryTreeRow {
   divisionOrder: number;
   companyCount: number;
 }
+
+// 업종 카드에 보여 줄 회사 수 (DESIGN-V2 3-1)
+const INDUSTRY_TOP_COMPANIES_LIMIT = 3;
 
 // 모양 검사는 DB 결과를 unknown으로 받아 확인한 뒤 쓴다 (any 금지). 메시지에는 함수 이름만 쓴다
 function asRecord(v: unknown, fn: string): Record<string, unknown> {
@@ -168,6 +173,28 @@ export async function getIndustryTree(): Promise<IndustryTreeRow[]> {
       companyCount: requiredNumber(r, 'company_count', fn),
     };
   });
+}
+
+/**
+ * 업종 카드용 시가총액 상위 회사 (FS 5-9). 중분류 코드 → rank순 회사 목록.
+ * 시가총액 없는 회사는 RPC에서 빼므로 여기서 다시 거르지 않는다. 결과가 없으면 빈 Map이다.
+ */
+export async function getIndustryTopCompanies(
+  limit: number = INDUSTRY_TOP_COMPANIES_LIMIT
+): Promise<Map<string, IndustryTopCompany[]>> {
+  const fn = 'industry_top_companies';
+  const { data, error } = await db().rpc(fn, { p_limit: limit });
+  if (error) throw new Error(`${fn} 실패: ${error.code ?? '코드 없음'} ${error.message}`);
+  const rows = asRows(data, fn).map((raw): IndustryTopCompany => {
+    const r = asRecord(raw, fn);
+    return {
+      divisionCode: requiredString(r, 'division_code', fn),
+      rank: requiredNumber(r, 'rank', fn),
+      shortCode: requiredString(r, 'short_code', fn),
+      name: requiredString(r, 'itms_nm', fn),
+    };
+  });
+  return groupTopCompanies(rows);
 }
 
 /** 중분류 이름 (ksic_classes, level division). 없으면 null → 404 (FS 9-2). */
