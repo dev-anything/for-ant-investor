@@ -1,9 +1,12 @@
 // 업종 조회 (FS 5-3~5-5, 9-2). DB 컬럼 snake_case는 이 파일에서 camelCase로 한 번만 바꾼다.
 import 'server-only';
 import { db } from '@/lib/supabase/server';
-import { groupTopCompanies } from '@/lib/industry';
-import type { IndustryTopCompany } from '@/lib/industry';
+import { groupTopCompanies, mapIndustryCompanyRow } from '@/lib/industry';
+import type { IndustryCompanyRow, IndustryTopCompany } from '@/lib/industry';
 import type { ListState } from '@/lib/params';
+
+// 화면이 쓰는 행 타입은 순수 매핑 함수가 있는 lib/industry.ts에 두고 여기서 다시 내보낸다
+export type { IndustryCompanyRow } from '@/lib/industry';
 
 // 업종 목록 한 쪽 (total은 전체 회사 수, 쪽을 넘으면 rows가 비어 total도 0이다)
 export interface IndustryPage<T> {
@@ -22,16 +25,6 @@ export interface IndustryMetricRow {
   debtRatio: number | null;
   operatingMargin: number | null;
   revenueGrowth: number | null;
-}
-
-// 회사 목록 한 행 (FS 5-4 반환 열, F-15)
-export interface IndustryCompanyRow {
-  shortCode: string;
-  name: string;
-  market: string | null;
-  accMt: string | null;
-  marketCap: number | null;
-  basDt: string | null;
 }
 
 // 업종 트리 한 행 (FS 5-3 반환 열, F-15 목록)
@@ -110,22 +103,6 @@ function mapMetricRow(raw: unknown): { total: number; row: IndustryMetricRow } {
   };
 }
 
-function mapCompanyRow(raw: unknown): { total: number; row: IndustryCompanyRow } {
-  const fn = 'industry_companies';
-  const r = asRecord(raw, fn);
-  return {
-    total: requiredNumber(r, 'total_count', fn),
-    row: {
-      shortCode: requiredString(r, 'short_code', fn),
-      name: requiredString(r, 'itms_nm', fn),
-      market: stringOrNull(r.mrkt_ctg),
-      accMt: stringOrNull(r.acc_mt),
-      marketCap: numberOrNull(r.mrkt_tot_amt),
-      basDt: stringOrNull(r.bas_dt),
-    },
-  };
-}
-
 /**
  * 지표 비교 목록 한 쪽 (FS 5-5). 재무 없는 회사도 들어간다 (제목의 회사 수와 F-15 목록이 같아야 함).
  * DB 오류는 throw한다 (error.tsx가 오류 화면).
@@ -152,7 +129,7 @@ export async function getIndustryCompanies(division: string, state: ListState): 
     p_size: state.size,
   });
   if (error) throw new Error(`industry_companies 실패: ${error.code ?? '코드 없음'} ${error.message}`);
-  return pageOf(asRows(data, 'industry_companies').map(mapCompanyRow));
+  return pageOf(asRows(data, 'industry_companies').map(mapIndustryCompanyRow));
 }
 
 /** 업종 트리 (FS 5-3, F-15). 대분류·중분류를 분류 번호순으로 준다. */

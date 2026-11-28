@@ -7,8 +7,9 @@ import { PageSizeSelect } from '@/components/PageSizeSelect';
 import { Pagination } from '@/components/Pagination';
 import { getDivisionName, getIndustryCompanies, type IndustryCompanyRow } from '@/lib/data/industry';
 import { copy } from '@/lib/copy';
-import { formatAccMt, formatMarketCap } from '@/lib/format';
+import { formatAccMt, formatAmount, formatMarketCap, formatMultiple, formatWon } from '@/lib/format';
 import { pageCountOf } from '@/lib/pagination';
+import { modeYear } from '@/lib/reference-year';
 import {
   INDUSTRY_COMPANY_SORTS,
   isDivisionCode,
@@ -39,31 +40,84 @@ export async function generateMetadata({ params }: CompaniesPageProps): Promise<
   return { title: copy.industry.companyMeta(name) };
 }
 
-// 열 정의 (FS 9-7). 종목명은 링크, 결산월은 12월이 아닐 때만 옆에 붙는다 (formatAccMt가 판정)
-const COMPANY_COLUMNS: DataColumn<IndustryCompanyRow>[] = [
-  {
-    id: 'name',
-    header: copy.industry.companyColumns.name,
-    sortKey: 'name',
-    cell: (row) => (
-      <>
-        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink hover:text-brand">
-          {row.name}
-        </Link>
-        {formatAccMt(row.accMt) && <span className="ml-2 text-meta text-ink-sub">{formatAccMt(row.accMt)}</span>}
-      </>
-    ),
-  },
-  { id: 'code', header: copy.industry.companyColumns.code, cell: (row) => row.shortCode },
-  { id: 'market', header: copy.industry.companyColumns.market, cell: (row) => row.market ?? '-' },
-  {
-    id: 'market_cap',
-    header: copy.industry.companyColumns.marketCap,
-    sortKey: 'market_cap',
-    align: 'right',
-    cell: (row) => formatMarketCap(row.marketCap),
-  },
-];
+// 매출액·영업이익 칸: 값이 없으면 '-', 회사 연도가 열 기준 연도와 다르면 작게 적는다 (지표 비교 목록과 같은 방식)
+function amountCell(row: IndustryCompanyRow, value: number | null, refYear: number | null) {
+  if (value === null) return '-';
+  const text = formatAmount(value) ?? '-';
+  if (row.fiscalYear === null || refYear === null || row.fiscalYear === refYear) return text;
+  return (
+    <>
+      {text}
+      <span className="ml-1 text-meta text-ink-sub">{copy.industry.yearLabel(row.fiscalYear)}</span>
+    </>
+  );
+}
+
+// 열 정의 (FS 9-7 + 2026-11-28 사용자 지시). 종목명은 링크, 결산월은 12월이 아닐 때만 옆에 붙는다 (formatAccMt가 판정)
+function companyColumns(refYear: number | null): DataColumn<IndustryCompanyRow>[] {
+  const c = copy.industry.companyColumns;
+  // 스크리너 근거 열처럼 매출액·영업이익 머리에 기준 연도를 붙인다 (없으면 연도 없이)
+  const withYear = (label: string) => (refYear === null ? label : `${label} ${copy.industry.yearLabel(refYear)}`);
+  return [
+    {
+      id: 'name',
+      header: c.name,
+      sortKey: 'name',
+      cell: (row) => (
+        <>
+          <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink hover:text-brand">
+            {row.name}
+          </Link>
+          {formatAccMt(row.accMt) && <span className="ml-2 text-meta text-ink-sub">{formatAccMt(row.accMt)}</span>}
+        </>
+      ),
+    },
+    { id: 'code', header: c.code, cell: (row) => row.shortCode },
+    { id: 'market', header: c.market, cell: (row) => row.market ?? '-' },
+    {
+      id: 'market_cap',
+      header: c.marketCap,
+      sortKey: 'market_cap',
+      align: 'right',
+      cell: (row) => formatMarketCap(row.marketCap),
+    },
+    {
+      id: 'price',
+      header: c.price,
+      align: 'right',
+      cell: (row) => formatWon(row.price) ?? '-',
+    },
+    {
+      id: 'per',
+      header: c.per,
+      sortKey: 'per',
+      align: 'right',
+      cell: (row) => formatMultiple(row.per) ?? '-',
+    },
+    {
+      id: 'pbr',
+      header: c.pbr,
+      sortKey: 'pbr',
+      align: 'right',
+      cell: (row) => formatMultiple(row.pbr) ?? '-',
+    },
+    {
+      id: 'revenue',
+      header: withYear(c.revenue),
+      sortKey: 'revenue',
+      align: 'right',
+      // 금융회사는 매출액 항목이 없다 (PRD 4장 F-02)
+      cell: (row) => amountCell(row, row.isFinancial === true ? null : row.revenue, refYear),
+    },
+    {
+      id: 'operating_income',
+      header: withYear(c.operatingIncome),
+      sortKey: 'operating_income',
+      align: 'right',
+      cell: (row) => amountCell(row, row.operatingIncome, refYear),
+    },
+  ];
+}
 
 // FS 9-7 `/industries/[division]` (서버): 주소를 읽어 회사 목록을 그린다
 export default async function IndustryCompaniesPage({ params, searchParams }: CompaniesPageProps) {
@@ -85,6 +139,10 @@ export default async function IndustryCompaniesPage({ params, searchParams }: Co
 
   // 기준일은 행의 bas_dt 중 처음 있는 값 (모두 null이면 줄을 생략한다)
   const basDt = page.rows.map((row) => row.basDt).find((d): d is string => d !== null) ?? null;
+  // 매출액·영업이익 열 머리의 기준 연도 (지표 비교 목록과 같은 방식)
+  const refYear = modeYear(
+    page.rows.flatMap((row) => (row.fiscalYear === null ? [] : [row.fiscalYear]))
+  );
   const linkState = { path, state };
 
   return (
@@ -105,7 +163,7 @@ export default async function IndustryCompaniesPage({ params, searchParams }: Co
       <div className="mt-2">
         <DataTable
           caption={copy.industry.companyCaption}
-          columns={COMPANY_COLUMNS}
+          columns={companyColumns(refYear)}
           rows={page.rows}
           rowKey={(row) => row.shortCode}
           sort={{ key: state.sort, dir: state.dir }}

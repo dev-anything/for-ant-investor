@@ -82,6 +82,12 @@ export const copy = {
       code: '종목코드',
       market: '시장',
       marketCap: '시가총액',
+      // 아래는 종목 화면·스크리너에서 쓰는 문구와 같은 말이다 (2026-11-28 사용자 지시)
+      price: '주가',
+      per: 'PER',
+      pbr: 'PBR',
+      revenue: '매출액',
+      operatingIncome: '영업이익',
     },
     // 시가총액 기준 한 줄 (PRD 4장 F-15). 기준일은 행의 bas_dt
     marketCapBasis: (basDt: string) => `시가총액은 보통주 기준, 주가 ${basDt} 기준`,

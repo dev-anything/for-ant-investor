@@ -5,6 +5,7 @@ import {
   compareToIndustry,
   groupIndustryTree,
   groupTopCompanies,
+  mapIndustryCompanyRow,
   topCompaniesFor,
 } from '@/lib/industry';
 
@@ -184,5 +185,78 @@ describe('attachTopCompanies', () => {
     const before = JSON.stringify(sections);
     attachTopCompanies(sections, grouped);
     expect(JSON.stringify(sections)).toBe(before);
+  });
+});
+
+describe('mapIndustryCompanyRow (업종 회사 목록 행, 2026-11-28 열 추가)', () => {
+  const base = {
+    total_count: 42,
+    srtn_cd: 'A005930',
+    short_code: '005930',
+    itms_nm: '삼성전자',
+    mrkt_ctg: 'KOSPI',
+    acc_mt: '12',
+    mrkt_tot_amt: 500000000000000,
+    bas_dt: '2026-11-16',
+  };
+
+  it('주가·PER·PBR·최신 연도 매출액·영업이익·금융회사 여부를 camelCase로 읽는다', () => {
+    const { total, row } = mapIndustryCompanyRow({
+      ...base,
+      clpr: 85000,
+      per: 21.5,
+      pbr: 2.4,
+      fiscal_year: 2025,
+      revenue: 300000000000000,
+      operating_income: 33000000000000,
+      is_financial: false,
+    });
+    expect(total).toBe(42);
+    expect(row).toEqual({
+      shortCode: '005930',
+      name: '삼성전자',
+      market: 'KOSPI',
+      accMt: '12',
+      marketCap: 500000000000000,
+      basDt: '2026-11-16',
+      price: 85000,
+      per: 21.5,
+      pbr: 2.4,
+      fiscalYear: 2025,
+      revenue: 300000000000000,
+      operatingIncome: 33000000000000,
+      isFinancial: false,
+    });
+  });
+
+  it('값이 없는 열은 0이 아니라 null이다', () => {
+    const { row } = mapIndustryCompanyRow({
+      ...base,
+      clpr: null,
+      per: null,
+      pbr: null,
+      fiscal_year: null,
+      revenue: null,
+      operating_income: null,
+      is_financial: null,
+    });
+    expect(row.price).toBeNull();
+    expect(row.per).toBeNull();
+    expect(row.pbr).toBeNull();
+    expect(row.fiscalYear).toBeNull();
+    expect(row.revenue).toBeNull();
+    expect(row.operatingIncome).toBeNull();
+    expect(row.isFinancial).toBeNull();
+  });
+
+  it('금융회사는 isFinancial이 true로 읽힌다', () => {
+    const { row } = mapIndustryCompanyRow({ ...base, is_financial: true });
+    expect(row.isFinancial).toBe(true);
+  });
+
+  it('필수 열이 없으면 모양 오류를 던진다', () => {
+    expect(() => mapIndustryCompanyRow(null)).toThrow(/industry_companies/);
+    expect(() => mapIndustryCompanyRow({ ...base, total_count: undefined })).toThrow(/total_count/);
+    expect(() => mapIndustryCompanyRow({ ...base, short_code: 12345 })).toThrow(/short_code/);
   });
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_LIST_STATE,
   DEFAULT_SCREENER_STATE,
+  INDUSTRY_COMPANY_SORTS,
   INDUSTRY_METRIC_SORTS,
   isDivisionCode,
   listHref,
@@ -267,5 +268,35 @@ describe('업종 목록 URL 상태 (FS 6-6, F-08)', () => {
     expect(isDivisionCode('abc')).toBe(false);
     expect(isDivisionCode('2')).toBe(false);
     expect(isDivisionCode('264')).toBe(false);
+  });
+});
+
+describe('업종 회사 목록 정렬 키 (2026-11-28 표 열 추가)', () => {
+  it('새 열 per·pbr·revenue·operating_income을 정렬 키로 받는다', () => {
+    expect(INDUSTRY_COMPANY_SORTS).toEqual([
+      'name',
+      'market_cap',
+      'per',
+      'pbr',
+      'revenue',
+      'operating_income',
+    ]);
+    for (const sort of INDUSTRY_COMPANY_SORTS) {
+      expect(parseListParams(raw(`sort=${sort}&dir=desc`), INDUSTRY_COMPANY_SORTS).sort).toBe(sort);
+    }
+  });
+
+  it('가격 열은 정렬 키가 아니라서 name으로 바로잡는다', () => {
+    expect(parseListParams(raw('sort=price'), INDUSTRY_COMPANY_SORTS).sort).toBe('name');
+  });
+
+  it('지표 목록 정렬 키는 회사 목록 정렬 키와 다르다', () => {
+    expect(parseListParams(raw('sort=per'), INDUSTRY_METRIC_SORTS).sort).toBe('name');
+    expect(parseListParams(raw('sort=debt_ratio'), INDUSTRY_COMPANY_SORTS).sort).toBe('name');
+  });
+
+  it('새 정렬 키로 쿼리를 만들고 다시 읽으면 같은 상태다 (왕복)', () => {
+    const state: ListState = { sort: 'operating_income', dir: 'desc', page: 2, size: 20 };
+    expect(parseListParams(raw(toListQuery(state)), INDUSTRY_COMPANY_SORTS)).toEqual(state);
   });
 });

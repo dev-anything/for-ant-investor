@@ -792,9 +792,16 @@ export type Database = {
         Returns: {
           acc_mt: string
           bas_dt: string
+          clpr: number
+          fiscal_year: number
+          is_financial: boolean
           itms_nm: string
           mrkt_ctg: string
           mrkt_tot_amt: number
+          operating_income: number
+          per: number
+          pbr: number
+          revenue: number
           short_code: string
           srtn_cd: string
           total_count: number

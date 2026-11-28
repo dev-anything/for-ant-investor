@@ -161,3 +161,77 @@ export function attachTopCompanies(
     })),
   }));
 }
+
+// 업종 회사 목록 한 행 (FS 5-4 반환 열). DB 컬럼 snake_case는 여기서 camelCase로 한 번만 바꾼다
+// 주가·PER·PBR·최신 연도 매출액·영업이익은 2026-11-28 사용자 지시로 추가된 열이다.
+export interface IndustryCompanyRow {
+  shortCode: string;
+  name: string;
+  market: string | null;
+  accMt: string | null;
+  marketCap: number | null;
+  basDt: string | null;
+  price: number | null;
+  per: number | null;
+  pbr: number | null;
+  fiscalYear: number | null;
+  revenue: number | null;
+  operatingIncome: number | null;
+  isFinancial: boolean | null;
+}
+
+function recordOf(value: unknown): Record<string, unknown> | null {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return null;
+  return value as Record<string, unknown>;
+}
+
+function textOrNull(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function numberOrNull(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function booleanOrNull(value: unknown): boolean | null {
+  return typeof value === 'boolean' ? value : null;
+}
+
+/**
+ * industry_companies RPC 한 행을 화면용 행으로 바꾼다 (FS 5-4).
+ * total_count는 모든 행에 같은 값이라 첫 행에서 읽는다. 필수 열이 없으면 모양 오류로 막는다.
+ */
+export function mapIndustryCompanyRow(raw: unknown): { total: number; row: IndustryCompanyRow } {
+  const fn = 'industry_companies';
+  const r = recordOf(raw);
+  if (r === null) throw new Error(`${fn} 응답 모양이 다르다 (객체가 아님)`);
+
+  const total = r.total_count;
+  const shortCode = r.short_code;
+  const name = r.itms_nm;
+  if (typeof total !== 'number' || !Number.isFinite(total)) {
+    throw new Error(`${fn} 응답 모양이 다르다 (total_count)`);
+  }
+  if (typeof shortCode !== 'string' || typeof name !== 'string') {
+    throw new Error(`${fn} 응답 모양이 다르다 (short_code·itms_nm)`);
+  }
+
+  return {
+    total,
+    row: {
+      shortCode,
+      name,
+      market: textOrNull(r.mrkt_ctg),
+      accMt: textOrNull(r.acc_mt),
+      marketCap: numberOrNull(r.mrkt_tot_amt),
+      basDt: textOrNull(r.bas_dt),
+      price: numberOrNull(r.clpr),
+      per: numberOrNull(r.per),
+      pbr: numberOrNull(r.pbr),
+      fiscalYear: numberOrNull(r.fiscal_year),
+      revenue: numberOrNull(r.revenue),
+      operatingIncome: numberOrNull(r.operating_income),
+      isFinancial: booleanOrNull(r.is_financial),
+    },
+  };
+}

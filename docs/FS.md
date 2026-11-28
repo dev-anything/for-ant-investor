@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 작성일 | 2026-11-17 |
-| 갱신일 | 2026-11-28 — 9-8 PC 투어 ③→④ 위로 이동 허용 (사용자 결정). 2026-11-28 — F-18 종목 기사 `sort=sim` 확정. 2026-11-28 — **`DESIGN-V2.md` 페이지 세부 수정 반영** (사용자 토론 확정). 5-9 업종별 시가총액 상위 회사 DB 함수 추가(적용 전 사용자 확인), 6-3 `gaugeDots`, 7장 `Tooltip` 위치 계산·`Gauge` 3개년 점, 8-2 `MetricRow` 3줄, 8-3 필터 버튼 너비, 9-1 종목 화면 순서(실적 → 리포트카드, 실적 전체 폭), 9-3 PER·PBR 행 모양, 9-6 종목 기사 검색 조건 비교, 9-7 업종 카드, 9-8 투어 흐름, 9-9 외부 전송 안내 삭제, 11장 19단계. 2026-11-27 — **`DESIGN.md` 3차로 교체** (사용자 확정: 모던 핀테크풍, 포인트 색 보라 `#6D28D9`, 흰 카드, lucide 아이콘, 종목 화면 PC 두 단). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·9-1 PC 배치·9-13 투어 스타일 반영. 2026-11-27 — 화면 디자인 기준을 `DESIGN.md`로 정함 (포인트 색 갈색 한 가지, 라이트 모드만, 빗금 음수 막대 등). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·음수·9-13 투어 스타일 반영. 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
+| 갱신일 | 2026-11-28 — 5-4·9-7 업종 회사 목록 열 추가 (사용자 결정). 2026-11-28 — 9-8 PC 투어 ③→④ 위로 이동 허용 (사용자 결정). 2026-11-28 — F-18 종목 기사 `sort=sim` 확정. 2026-11-28 — **`DESIGN-V2.md` 페이지 세부 수정 반영** (사용자 토론 확정). 5-9 업종별 시가총액 상위 회사 DB 함수 추가(적용 전 사용자 확인), 6-3 `gaugeDots`, 7장 `Tooltip` 위치 계산·`Gauge` 3개년 점, 8-2 `MetricRow` 3줄, 8-3 필터 버튼 너비, 9-1 종목 화면 순서(실적 → 리포트카드, 실적 전체 폭), 9-3 PER·PBR 행 모양, 9-6 종목 기사 검색 조건 비교, 9-7 업종 카드, 9-8 투어 흐름, 9-9 외부 전송 안내 삭제, 11장 19단계. 2026-11-27 — **`DESIGN.md` 3차로 교체** (사용자 확정: 모던 핀테크풍, 포인트 색 보라 `#6D28D9`, 흰 카드, lucide 아이콘, 종목 화면 PC 두 단). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·9-1 PC 배치·9-13 투어 스타일 반영. 2026-11-27 — 화면 디자인 기준을 `DESIGN.md`로 정함 (포인트 색 갈색 한 가지, 라이트 모드만, 빗금 음수 막대 등). 3장 스타일·7장 공통 컴포넌트·8-2 막대 색·음수·9-13 투어 스타일 반영. 2026-11-26 — F-11 로그인을 이메일 + 비밀번호로 변경 (3·6-12·7·9-10·9-11·9-12·10·11·12장). 2026-11-26 — F-05 지표 3개 화면 순서 변경 (매출 증가율 → 영업이익률 → 부채비율, 8-2). 2026-11-23 — R11 사용자 결정 (종목 화면 기사 검색어 `{종목명} {종목코드}`, 짧은 종목명 안내·기사 칸 위 안내 폐지, 재무 없음 문구 마침표). 2026-11-20 — F-17 최근 공시·F-18 경제 기사 추가 (9-1 목록 + 정해진 구현 내용 9-1-1, 1·2·3장·10장 반영); 2026-11-20 — 2차·확장 구현 결정 7개 + 기본안 반영 (1·4·7장, 9-1·9-2, 10장): 업종 목록 링크 방식, F-16 투어 범위, F-10 한도 보호, F-11 트리거, F-12 자동 등록, F-13 수신 거부·배치; 2026-11-20 — **2차·확장 상세 명세 작성** (9장을 8장 깊이로: 2·3·4·5·6·7·10·11·12장에 2차·확장 항목 추가. DB 함수 5-3~5-8, 순수 모듈 6-8~6-14, 화면 9-1~9-13) |
 | 짝 문서 | `docs/PRD.md` — **무엇을** 만드나 (기능 규칙·문구·수용 기준). 이 문서는 **어떻게** 만드나 (구조·화면 구성·컴포넌트·API·DB 함수·상태) |
 | 읽는 법 | 개발 에이전트는 **PRD + FS 두 문서만** 읽는다. 규칙·문구는 여기에 다시 적지 않고 `PRD 4장 F-05`처럼 절 번호로 가리킨다. 두 문서가 어긋나면 **규칙·문구는 PRD, 구현 방식은 FS**가 기준이다 |
 | 범위 | **MVP(F-01·F-02·F-05·F-03·F-07)는 8장, 2차(F-08·F-09·F-14·F-17·F-18·F-15·F-16·F-10)·확장(F-11·F-12·F-13)은 9장**에 같은 깊이로 적는다. 외부 API 응답처럼 **아직 확인하지 않은 것**은 "확인 뒤 정함"으로 남기고 PRD 11장 번호를 단다 |
@@ -308,15 +308,19 @@ PRD 4장 F-07 결과 목록을 DB에서 만든다.
 ### 5-4. (2차) `industry_companies(p_division text, p_sort text, p_dir text, p_page int, p_size int)` — F-15 회사 목록
 
 - 대상: 5-3과 같은 회사 중 `division_code = p_division`.
-- 검증: `p_division` `^[0-9]{2}$`, `p_sort` `name`/`market_cap`, `p_dir`·`p_page`·`p_size`는 5-2와 같다. 어기면 `raise exception`.
+- 검증: `p_division` `^[0-9]{2}$`, `p_sort` `name`/`market_cap`/`per`/`pbr`/`revenue`/`operating_income`, `p_dir`·`p_page`·`p_size`는 5-2와 같다. 어기면 `raise exception`.
+- 마이그레이션: `supabase/migrations/20261128010000_industry_companies_columns.sql` (2026-11-28, 적용 완료·사용자 승인). 반환 열이 바뀌어 `drop function` 뒤 다시 만든다.
 
 | 반환 열 | 설명 |
 | --- | --- |
 | `total_count` | `count(*) over ()` |
 | `srtn_cd`, `short_code`, `itms_nm`, `mrkt_ctg`, `acc_mt` | 종목 |
 | `mrkt_tot_amt`, `bas_dt` | `v_valuation` left join (없으면 null) |
+| `clpr`, `per`, `pbr` | `v_valuation` left join (`clpr bigint`, `per`·`pbr numeric`, 없으면 null) |
+| `fiscal_year`, `revenue`, `operating_income` | `v_company_years` `is_latest` 행 left join (`fiscal_year smallint`, `revenue`·`operating_income bigint`, 없으면 null) |
+| `is_financial` | `company_summary` left join (없으면 null) |
 
-- 정렬: `name` → `itms_nm`, `market_cap` → `mrkt_tot_amt`. **null은 방향과 상관없이 맨 뒤**, 같은 값은 `itms_nm asc`. 페이지는 5-2와 같다.
+- 정렬: `name` → `itms_nm`, `market_cap` → `mrkt_tot_amt`, `per` → `v_valuation.per`, `pbr` → `v_valuation.pbr`, `revenue` → `v_company_years.revenue`, `operating_income` → `v_company_years.operating_income`. **null은 방향과 상관없이 맨 뒤**, 같은 값은 `itms_nm asc, srtn_cd asc`. 페이지는 5-2와 같다.
 
 ### 5-5. (2차) `industry_metrics(p_division text, p_sort text, p_dir text, p_page int, p_size int)` — F-08 지표 비교 목록
 
@@ -1069,7 +1073,7 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 ```
 의약품 제조업 · 이 업종 회사 42개                      지표로 견줘 보기 →
 시가총액은 보통주 기준, 주가 2026-11-16 기준
-종목명▲ | 종목코드 | 시장 | 시가총액
+종목명▲ | 종목코드 | 시장 | 시가총액 | 주가 | PER | PBR | 매출액 | 영업이익
 ```
 
 1. `isDivisionCode` 아니면 `notFound()`. 2. `parseListParams(…, INDUSTRY_COMPANY_SORTS)`. 3. 이름 + RPC 5-4 병렬. 4. 없는 업종·0개 → `notFound()`, 페이지 넘침 → 마지막 페이지로 `redirect` (9-2와 같음).
@@ -1079,6 +1083,9 @@ function getStockNews(name: string, shortCode: string): Promise<NewsResult> // q
 | 종목명 | 링크 + `formatAccMt` | `name` |
 | 종목코드 · 시장 | | — |
 | 시가총액 | `formatMarketCap`, null `-` | `market_cap` |
+| 주가 | `formatWon`(원), null `-` | — |
+| PER · PBR | `formatRatio`, null `-` | `per` / `pbr` |
+| 매출액 · 영업이익 | 최근 연도(`fiscal_year`) 값, `formatAmount` 또는 `-`. 금융회사 매출액 `-` | `revenue` / `operating_income` |
 
 - 기준 표시 `시가총액은 보통주 기준, 주가 {bas_dt} 기준` (행의 `bas_dt` 중 하나, 모두 null이면 줄 생략).
 - "지표로 견줘 보기 →" → `/industries/{division}/compare`.

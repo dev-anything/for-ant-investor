@@ -211,7 +211,15 @@ export function parseSearchQuery(raw: string | null): string | null {
 // --- 업종 목록 (F-08 지표 비교, F-15 회사 목록, FS 6-6 2차) ---
 
 // 업종 회사 목록 정렬 키 (FS 5-4), 지표 목록 정렬 키 (FS 5-5)
-export const INDUSTRY_COMPANY_SORTS: readonly string[] = ['name', 'market_cap'];
+// 회사 목록 표에 주가·PER·PBR·매출액·영업이익 열이 추가됐다 (2026-11-28 사용자 지시). 주가는 정렬하지 않는다.
+export const INDUSTRY_COMPANY_SORTS: readonly string[] = [
+  'name',
+  'market_cap',
+  'per',
+  'pbr',
+  'revenue',
+  'operating_income',
+];
 export const INDUSTRY_METRIC_SORTS: readonly string[] = [
   'name',
   'debt_ratio',
