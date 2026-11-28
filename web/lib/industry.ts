@@ -134,3 +134,30 @@ export function topCompaniesFor(
 ): readonly IndustryTopCompany[] {
   return grouped.get(divisionCode) ?? [];
 }
+
+// 업종 카드 한 중분류. 회사 이름 줄은 시가총액 큰 순서 (DESIGN-V2 3-1)
+export interface IndustryCardDivision extends IndustryDivisionItem {
+  companyNames: string[];
+}
+
+// 업종 카드 한 대분류. divisions만 회사 이름 줄이 붙은 모양으로 바꾼다
+export interface IndustryCardSection extends Omit<IndustrySection, 'divisions'> {
+  divisions: IndustryCardDivision[];
+}
+
+/**
+ * 업종 트리에 상위 회사 결과를 division_code로 붙인다 (FS 9-7, DESIGN-V2 3-1).
+ * 회사가 없으면 빈 배열이라 카드에 회사 줄을 그리지 않는다. 원본은 바꾸지 않는다.
+ */
+export function attachTopCompanies(
+  sections: readonly IndustrySection[],
+  grouped: ReadonlyMap<string, readonly IndustryTopCompany[]>
+): IndustryCardSection[] {
+  return sections.map((section) => ({
+    ...section,
+    divisions: section.divisions.map((division) => ({
+      ...division,
+      companyNames: topCompaniesFor(grouped, division.divisionCode).map((company) => company.name),
+    })),
+  }));
+}

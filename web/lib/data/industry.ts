@@ -197,6 +197,20 @@ export async function getIndustryTopCompanies(
   return groupTopCompanies(rows);
 }
 
+/**
+ * 업종 카드용 상위 회사 (FS 9-7). 5-9가 실패하면 회사 줄만 빼고 카드는 그린다.
+ * 실패를 로그로 남기고 빈 결과를 돌려준다 (조용히 삼키지 않는다).
+ */
+export async function getIndustryTopCompaniesForCards(): Promise<Map<string, IndustryTopCompany[]>> {
+  try {
+    return await getIndustryTopCompanies();
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error('industry_top_companies 실패 (업종 카드 회사 줄 생략):', detail);
+    return new Map();
+  }
+}
+
 /** 중분류 이름 (ksic_classes, level division). 없으면 null → 404 (FS 9-2). */
 export async function getDivisionName(division: string): Promise<string | null> {
   const { data, error } = await db()

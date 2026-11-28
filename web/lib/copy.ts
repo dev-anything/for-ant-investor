@@ -68,8 +68,11 @@ export const copy = {
     listTitle: '업종으로 둘러보기',
     listMeta: '업종으로 둘러보기 · 재무 레이더',
     listIntro: '업종을 누르면 그 업종에 속한 회사를 볼 수 있어. 업종은 한국표준산업분류(제11차) 기준이야.',
-    // 이름 뒤 회사 수 `제조업 (회사 1,203개)`. 쉼표는 화면에서만 붙인다
-    withCount: (name: string, count: number) => `${name} (회사 ${count.toLocaleString('ko-KR')}개)`,
+    // 회사 수 배지 `45개`, 스크린 리더 `45개 회사` (PRD 10장 35번, DESIGN-V2 3-2)
+    countBadge: (count: number) => `${count.toLocaleString('ko-KR')}개`,
+    countBadgeAria: (count: number) => `${count.toLocaleString('ko-KR')}개 회사`,
+    // 중분류 카드 회사 줄: 이름만 ' · '로 잇는다 (PRD 10장 36번, DESIGN-V2 3-1)
+    companyLine: (names: readonly string[]) => names.join(' · '),
     // 회사 목록 제목 `의약품 제조업 · 이 업종 회사 42개` (PRD 4장 F-15)
     companyTitle: (name: string, total: number) => `${name} · 이 업종 회사 ${total.toLocaleString('ko-KR')}개`,
     companyMeta: (name: string) => `${name} 회사 목록 · 재무 레이더`,

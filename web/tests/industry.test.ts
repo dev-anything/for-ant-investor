@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   MIN_INDUSTRY_COUNT,
+  attachTopCompanies,
   compareToIndustry,
   groupIndustryTree,
   groupTopCompanies,
@@ -142,5 +143,46 @@ describe('groupTopCompanies', () => {
     const input = [company('10', 2, '066570', 'LG전자'), company('10', 1, '005930', '삼성전자')];
     groupTopCompanies(input);
     expect(input[0].rank).toBe(2);
+  });
+});
+
+describe('attachTopCompanies', () => {
+  const company = (divisionCode: string, rank: number, name: string) => ({
+    divisionCode,
+    rank,
+    shortCode: '005930',
+    name,
+  });
+
+  const sections = [
+    {
+      sectionCode: 'C',
+      sectionName: '제조업',
+      companyCount: 3,
+      divisions: [
+        { divisionCode: '10', divisionName: '식료품 제조업', companyCount: 2 },
+        { divisionCode: '11', divisionName: '음료 제조업', companyCount: 1 },
+      ],
+    },
+  ];
+
+  it('중분류 코드로 회사 이름을 시가총액 순으로 붙인다', () => {
+    const grouped = groupTopCompanies([company('10', 2, 'LG전자'), company('10', 1, '삼성전자')]);
+    const [card] = attachTopCompanies(sections, grouped);
+    expect(card.divisions[0].companyNames).toEqual(['삼성전자', 'LG전자']);
+    // 회사 결과가 없는 중분류는 빈 이름 줄이다 (카드에 줄을 그리지 않는다)
+    expect(card.divisions[1].companyNames).toEqual([]);
+  });
+
+  it('상위 회사 결과가 없으면 모든 이름 줄이 빈다', () => {
+    const [card] = attachTopCompanies(sections, new Map());
+    expect(card.divisions.every((division) => division.companyNames.length === 0)).toBe(true);
+  });
+
+  it('원본 트리를 바꾸지 않는다', () => {
+    const grouped = groupTopCompanies([company('10', 1, '삼성전자')]);
+    const before = JSON.stringify(sections);
+    attachTopCompanies(sections, grouped);
+    expect(JSON.stringify(sections)).toBe(before);
   });
 });
