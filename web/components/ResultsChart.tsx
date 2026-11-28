@@ -46,8 +46,9 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
   const hatchPastId = `hatch-past-${uid}`;
   const hatchLatestId = `hatch-latest-${uid}`;
 
+  // sr-only 표가 position:absolute라 이 칸을 기준으로 놓이게 한다 (640px 가로 넘침 방지)
   return (
-    <div className="min-w-0">
+    <div className="relative min-w-0">
       <div className="h-[200px] w-full">
         <ResponsiveContainer width="100%" height={CHART_HEIGHT_PX}>
           <BarChart data={bars} margin={{ top: 24, right: 8, bottom: 8, left: 8 }}>
@@ -113,7 +114,8 @@ export function ResultsChart({ metric, bars }: ResultsChartProps) {
           <Tooltip text={copy.results.netIncomeTip} label={copy.results.tipButtonLabel} />
         )}
       </h3>
-      <table className="sr-only">
+      {/* sr-only의 nowrap 때문에 표의 최소 폭이 칸보다 커져 오른쪽으로 넘친다. 줄바꿈을 허용해 넘침을 막는다 */}
+      <table className="sr-only whitespace-normal">
         <caption>{title}</caption>
         <thead>
           <tr>

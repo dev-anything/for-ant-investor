@@ -10,13 +10,11 @@ export default function StockLoading() {
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-4 w-80" />
       </div>
-      {/* DESIGN 5-2: PC는 두 단, 1024px 미만은 DOM 순서대로 한 단 */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3 lg:gap-6">
-        <div className="space-y-4 lg:col-span-2">
-          {/* 리포트카드·실적 그래프 자리 */}
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-64 w-full" />
-        </div>
+      {/* DESIGN-V2 2-1: 실적은 전체 폭 맨 위, 그 아래 리포트카드 | 주가 수준·배당 두 단 */}
+      <Skeleton className="mt-6 h-64 w-full" />
+      <div className="mt-4 grid gap-4 lg:grid-cols-3 lg:gap-6">
+        {/* 리포트카드 자리 */}
+        <Skeleton className="h-64 w-full lg:col-span-2" />
         <div className="space-y-4">
           {/* FS 9-1: 주가 수준·배당 자리 */}
           <Skeleton className="h-40 w-full" />
@@ -24,7 +22,7 @@ export default function StockLoading() {
         </div>
       </div>
       {/* PRD 3-5: 기사·공시는 재무 아래 전체 폭 */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-2 lg:gap-6">
+      <div className="mt-8 grid gap-4 lg:grid-cols-2 lg:gap-6">
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-40 w-full" />
       </div>

@@ -28,12 +28,13 @@ export function DividendCard({
 
       {table.kind === 'table' && (
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
+          {/* S2 Checker가 본 1024px 문제: 오른쪽 단이 좁아 숫자가 붙으므로 칸마다 왼쪽 여백을 준다 */}
+          <table className="w-full text-meta">
             <thead>
               <tr className="border-b border-line">
                 <th scope="col" className="py-2 text-left font-normal" />
                 {table.columns.map((col) => (
-                  <th key={col.year} scope="col" className="py-2 text-right font-semibold tabular-nums text-ink">
+                  <th key={col.year} scope="col" className="py-2 pl-2 text-right font-semibold tabular-nums text-ink">
                     {col.year}년
                   </th>
                 ))}
@@ -85,7 +86,7 @@ export function DividendCard({
 // 칸 하나. 툴팁이 있는 칸(예: "공시 없음")만 버튼을 붙인다
 function DividendTd({ cell }: { cell: DividendCell }) {
   return (
-    <td className="py-3 text-right tabular-nums text-ink">
+    <td className="py-3 pl-2 text-right tabular-nums text-ink">
       {cell.tooltip === null ? (
         cell.text
       ) : (

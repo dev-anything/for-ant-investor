@@ -9,7 +9,7 @@ import type { StockIndustry, StockSummary, YearRow } from '@/lib/data/stock';
 import { copy } from '@/lib/copy';
 import { compareToIndustry, type IndustryCompare } from '@/lib/industry';
 import { topInsights } from '@/lib/insights';
-import { latestValue, metricValues } from '@/lib/report-card';
+import { latestValue, metricValues, shouldShowReportCard } from '@/lib/report-card';
 
 // FS 8-2 ReportCard / PRD 4장 F-05, DESIGN.md 4-1 흰 카드(rounded-lg, p-4 sm:p-6), 5-2.
 // 순서: 금융회사 자본잠식 안내 → 눈여겨볼 변화 → 지표 3개(매출 증가율 → 영업이익률 → 부채비율) → 같은 업종 회사 보기
@@ -23,15 +23,12 @@ export function ReportCard({
   industry: StockIndustry | null;
 }) {
   const displayYears = getDisplayYears(years);
-  // 화면 연도가 없으면 그리지 않는다 (재무 없음 문구는 ResultsCharts가 맡는다, PRD 3-7)
-  if (displayYears.length === 0) return null;
+  // 영역 숨김 판단은 페이지의 두 단 배치와 같아야 하므로 순수 함수로 같이 쓴다 (DESIGN-V2 2-1)
+  if (!shouldShowReportCard(summary, years, industry)) return null;
 
   const { isFinancial, capitalImpairment } = summary;
   const insightItems = topInsights(summary.insights);
   const hasCapitalNotice = capitalImpairment === 'full' || capitalImpairment === 'partial';
-  // 금융회사에서 보여줄 것이 하나도 없으면 제목만 남기지 않도록 영역 전체를 숨긴다.
-  // 업종이 있으면 "같은 업종 회사 보기" 링크가 남으므로 숨기지 않는다 (PRD 4장 F-08, FS 9-2)
-  if (isFinancial && !hasCapitalNotice && insightItems.length === 0 && industry === null) return null;
 
   // 지표별 값은 한 번만 계산해 눈금과 업종 비교에 함께 쓴다
   const growthValues = metricValues(displayYears, 'revenue_growth');

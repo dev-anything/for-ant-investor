@@ -15,7 +15,8 @@ export function HeaderSearch() {
   if (pathname === '/') return null;
 
   return (
-    <div className="flex items-center">
+    // 검색창은 남은 폭을 채우고, 좁아지면 줄어든다 (640~1023px 헤더 넘침 방지)
+    <div className="flex min-w-0 items-center sm:flex-1">
       <button
         type="button"
         aria-label={copy.search.label}
@@ -28,7 +29,7 @@ export function HeaderSearch() {
       <div
         className={`${
           isExpanded ? 'block' : 'hidden'
-        } fixed left-4 right-4 top-16 z-40 rounded-md border border-line bg-white p-3 shadow-[0_8px_24px_rgb(0_0_0/0.08)] sm:static sm:mt-0 sm:block sm:w-[360px] sm:border-0 sm:p-0 sm:shadow-none`}
+        } fixed left-4 right-4 top-16 z-40 min-w-0 rounded-md border border-line bg-white p-3 shadow-[0_8px_24px_rgb(0_0_0/0.08)] sm:static sm:mt-0 sm:block sm:w-full sm:max-w-[360px] sm:border-0 sm:p-0 sm:shadow-none`}
       >
         <SearchBox compact />
       </div>

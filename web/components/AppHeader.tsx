@@ -23,22 +23,22 @@ export function AppHeader() {
         <HeaderSearch />
 
         {/* 오른쪽 그룹: [넓은 화면 nav] [AuthMenu] [좁은 화면 ≡] */}
-        <div className="flex shrink-0 items-center gap-2 sm:gap-6">
-          {/* 넓은 화면(sm 이상) 메뉴 */}
-          <nav aria-label="주요 메뉴" className="hidden items-center gap-4 text-sm sm:flex">
+        <div className="flex shrink-0 items-center gap-2 lg:gap-6">
+          {/* 가로 메뉴는 1024px 이상에서만. 그 아래는 ≡ 접기 메뉴를 쓴다 (헤더 넘침 방지) */}
+          <nav aria-label="주요 메뉴" className="hidden items-center gap-4 text-sm lg:flex">
             <NavLink href="/">{copy.nav.search}</NavLink>
             <NavLink href="/screener">{copy.nav.screener}</NavLink>
             {/* PRD 4장 F-15 (2차). /industries/… 전부에서 켜진다 (isActivePath 접두어 판정) */}
             <NavLink href="/industries">{copy.nav.industry}</NavLink>
           </nav>
 
-          {/* 확장 (F-11): 로그인 메뉴. 쿼리(`?login=`)를 읽으니 Suspense로 감싼다. 640px 이상에서는 AuthMenu와 같은 폭 */}
+          {/* 확장 (F-11): 로그인 메뉴. 쿼리(`?login=`)를 읽으니 Suspense로 감싼다. AuthMenu와 같은 폭을 미리 확보 */}
           <Suspense fallback={<div className="flex h-8 sm:min-w-40" aria-hidden="true" />}>
             <AuthMenu />
           </Suspense>
 
-          {/* 좁은 화면(sm 미만) 접기 메뉴: 흰 팝오버 카드 + 1px line (DESIGN 4-2) */}
-          <details className="relative sm:hidden">
+          {/* 1024px 미만 접기 메뉴: 흰 팝오버 카드 + 1px line (DESIGN 4-2) */}
+          <details className="relative lg:hidden">
             <summary
               aria-label="주요 메뉴"
               className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-md border border-line bg-white text-ink hover:bg-subtle [&::-webkit-details-marker]:hidden"

@@ -6,7 +6,7 @@ import { buildMetricBars, chartMetricsFor, getDisplayYears } from '@/lib/chart-d
 import { copy } from '@/lib/copy';
 import { formatFsDiv, formatYearRange } from '@/lib/format';
 
-// FS 8-2 ResultsCharts, DESIGN.md 5-2 흰 카드(rounded-lg, p-4 sm:p-6), 6-4: 최근 3개년 실적 막대그래프 묶음
+// FS 8-2 ResultsCharts, DESIGN-V2 2-1 흰 카드(rounded-lg, p-4 sm:p-6) 전체 폭, 6-4: 최근 3개년 실적 막대그래프 묶음
 export function ResultsCharts({
   years,
   fsDiv,
@@ -37,9 +37,11 @@ export function ResultsCharts({
           {copy.results.financialNotice}
         </p>
       )}
-      {/* 가로 3개, 좁은 화면은 세로로 쌓는다. data-tour는 읽는 순서 안내가 짚는 자리다 (FS 9-1)
-          sales = 매출액 그래프 하나, profit = 영업이익·순이익 묶음 (두 칸 차지, 금융회사는 세 칸 전부) */}
-      <div className="mt-4 grid gap-6 lg:grid-cols-3">
+      {/* V2 2-1·4장: 640px 이상은 세 그래프를 같은 폭으로 가로로 놓고, 그 미만은 세로로 쌓는다.
+          data-tour는 읽는 순서 안내가 짚는 자리다 (FS 9-1)
+          sales = 매출액 그래프 하나, profit = 영업이익·순이익 묶음 (두 칸 차지, 금융회사는 세 칸 전부)
+          격자와 각 칸에 min-w-0을 줘서 부모 폭을 넘지 않게 한다 (640px 가로 넘침 방지) */}
+      <div className="mt-4 grid min-w-0 gap-6 sm:grid-cols-3">
         {metrics.includes('revenue') && (
           <div data-tour="sales" className="min-w-0">
             <ResultsChart metric="revenue" bars={buildMetricBars(years, 'revenue')} />
@@ -47,7 +49,7 @@ export function ResultsCharts({
         )}
         <div
           data-tour="profit"
-          className={`grid min-w-0 gap-6 lg:grid-cols-2 ${isFinancial ? 'lg:col-span-3' : 'lg:col-span-2'}`}
+          className={`grid min-w-0 gap-6 sm:grid-cols-2 ${isFinancial ? 'sm:col-span-3' : 'sm:col-span-2'}`}
         >
           {metrics
             .filter((metric) => metric !== 'revenue')

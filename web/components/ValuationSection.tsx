@@ -46,9 +46,12 @@ function ValuationItem({ row }: { row: ValuationRow }) {
 
   return (
     <div className="border-t border-line py-4">
-      <h3 className="inline-flex flex-wrap items-center gap-1 text-base font-semibold text-ink">
-        {row.title}
-        <Tooltip text={row.tip} label={copy.reportCard.tipButtonLabel} />
+      {/* 좁은 오른쪽 단에서도 제목이 줄바꿈되어도 ⓘ는 첫 줄 오른쪽에 남는다 (S2 Checker가 본 1024px 문제) */}
+      <h3 className="flex items-start gap-1 text-base font-semibold text-ink">
+        <span className="min-w-0 flex-1">{row.title}</span>
+        <span className="shrink-0">
+          <Tooltip text={row.tip} label={copy.reportCard.tipButtonLabel} />
+        </span>
       </h3>
       {row.value === null || row.valueText === null ? (
         <p className="mt-2 text-sm text-ink-sub">{row.notice}</p>

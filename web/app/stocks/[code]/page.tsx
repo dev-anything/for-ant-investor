@@ -11,6 +11,7 @@ import { StockHeader } from '@/components/StockHeader';
 import { getStockPage } from '@/lib/data/stock';
 import { getDisplayYears } from '@/lib/chart-data';
 import { copy } from '@/lib/copy';
+import { shouldShowReportCard } from '@/lib/report-card';
 
 // FS 3-3: 종목 화면 1시간 캐시
 export const revalidate = 3600;
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: StockPageProps): Promise<Meta
   return { title: copy.meta.stockTitle(page.stock.name, page.stock.shortCode) };
 }
 
-// FS 8-2 status별 화면. ok일 때 본문은 리포트카드(3b) 다음 실적 그래프(2b)
+// FS 8-2 status별 화면. DESIGN-V2 2-1: ok일 때 본문은 실적 → 두 단(리포트 | PER·PBR·배당) → 기사·공시
 export default async function StockPage({ params }: StockPageProps) {
   const { code } = await params;
   const page = await loadStockPage(code);
@@ -59,25 +60,40 @@ export default async function StockPage({ params }: StockPageProps) {
       )}
       {page.status === 'ok' && page.summary && (
         <>
-          {/* DESIGN 5-2: PC는 위쪽 두 단, 1024px 미만은 PRD 3-5 순서대로 한 단.
-              DOM 순서(리포트 → 실적 → PER·PBR → 배당)를 지켜 읽는 순서 안내가 그대로 동작한다 */}
-          <div className="grid gap-4 lg:grid-cols-3 lg:gap-6">
-            <div className="min-w-0 space-y-4 lg:col-span-2">
-              <ReportCard summary={page.summary} years={page.years} industry={page.industry} />
-              <ResultsCharts
-                years={page.years}
-                fsDiv={page.summary.fsDiv}
-                isFinancial={page.summary.isFinancial}
-              />
+          {/* DESIGN-V2 2-1: 실적은 전체 폭 맨 위. DOM 순서(실적 → 리포트 → PER·PBR → 배당 → 기사·공시)가
+              곧 화면 순서이자 읽는 순서다 (2-3, CSS order로 순서를 바꾸지 않는다) */}
+          <ResultsCharts
+            years={page.years}
+            fsDiv={page.summary.fsDiv}
+            isFinancial={page.summary.isFinancial}
+          />
+          {/* 리포트카드가 숨는 금융회사에서는 PER·PBR | 배당 두 칸을 같은 폭으로 놓는다 (DESIGN-V2 2-1) */}
+          {shouldShowReportCard(page.summary, page.years, page.industry) ? (
+            <div className="mt-4 grid gap-4 lg:grid-cols-3 lg:gap-6">
+              <div className="min-w-0 lg:col-span-2">
+                <ReportCard summary={page.summary} years={page.years} industry={page.industry} />
+              </div>
+              <div className="min-w-0 space-y-4">
+                <ValuationSection valuation={page.valuation} industry={page.industry} />
+                <DividendCard
+                  dividends={page.dividends}
+                  displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
+                />
+              </div>
             </div>
-            <div className="min-w-0 space-y-4">
-              <ValuationSection valuation={page.valuation} industry={page.industry} />
-              <DividendCard
-                dividends={page.dividends}
-                displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
-              />
+          ) : (
+            <div className="mt-4 grid gap-4 lg:grid-cols-2 lg:gap-6">
+              <div className="min-w-0">
+                <ValuationSection valuation={page.valuation} industry={page.industry} />
+              </div>
+              <div className="min-w-0">
+                <DividendCard
+                  dividends={page.dividends}
+                  displayYears={getDisplayYears(page.years).map((row) => row.fiscalYear)}
+                />
+              </div>
             </div>
-          </div>
+          )}
           <StockFeedSection name={page.stock.name} shortCode={page.stock.shortCode} corpCode={page.corpCode} />
         </>
       )}
