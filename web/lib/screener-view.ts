@@ -61,40 +61,57 @@ export interface EvidenceSlot {
   sortKey: ScreenerSortKey | null; // 정렬할 수 있으면 키, 아니면 null
 }
 
+/** 근거 값 열 하나: 지표 하나에 3개년 칸을 묶은 것 (DESIGN-V2 S14). */
+export interface EvidenceGroup {
+  id: string; // 같은 열을 두 번 그리지 않도록 만든 고유 키 (열 이름)
+  keys: EvidenceKey[]; // 같은 이름을 가진 근거 키.값을 읽는 키는 첫 것 하나면 된다
+  label: string; // 열 이름 (EVIDENCE_COLUMNS[key].label)
+  indexes: number[]; // 회사 연도 배열의 칸 번호, 오름차순
+  header: string; // "매출 2023~2025년", "부채비율 2025년", 기준 연도 없으면 "부채비율"
+  sortKey: ScreenerSortKey | null;
+}
+
 /**
- * 고른 필터에서 근거 값 열 칸 목록을 만든다 (PRD 4장 F-03: 같은 열은 한 번만).
- * 같은 이름·같은 연도 칸은 한 번만 (예: 매출 Y2·Y3는 필터 1과 12에서 겹친다).
- * 정렬은 Y3 칸에만 붙이고, 허용 정렬 키에 있을 때만 쓴다.
+ * 고른 필터에서 근거 값 열을 만든다 (DESIGN-V2 S14).
+ * 열 이름이 같으면 한 열로 묶고 연도 칸은 합집합으로 오름차순 정렬한다
+ * (예: 필터 1 매출 [0,1,2] + 필터 12 매출 [1,2] → 한 열 [0,1,2]).
+ * 정렬은 최근 연도 칸(index 2)이 들어 있고 허용 키일 때만 붙인다 (FS 5-2).
  */
-export function evidenceSlots(filters: number[], refYear: number | null): EvidenceSlot[] {
+export function evidenceGroups(filters: number[], refYear: number | null): EvidenceGroup[] {
   const allowed = allowedSortKeys(filters);
-  const slots: EvidenceSlot[] = [];
-  const seen = new Set<string>();
   const years = threeYears(refYear);
+  const groups: EvidenceGroup[] = [];
+  const byLabel = new Map<string, EvidenceGroup>();
 
   for (const id of filters) {
-    const keys: EvidenceKey[] = findFilter(id)?.evidence ?? [];
-    for (const key of keys) {
-      const column = EVIDENCE_COLUMNS[key];
-      for (const index of column.indexes) {
-        const dedupeKey = `${column.label}|${index}`;
-        if (seen.has(dedupeKey)) continue;
-        seen.add(dedupeKey);
-
-        const isLastYear = index === YEAR_SPAN - 1;
-        const year = years === null ? null : years[index];
-        const sortable = isLastYear && allowed.includes(column.sortKey);
-        slots.push({
-          id: `${key}-${index}`,
-          key,
-          index,
-          header: year === null ? column.label : `${column.label} ${year}년`,
-          sortKey: sortable ? column.sortKey : null,
-        });
+    for (const key of findFilter(id)?.evidence ?? []) {
+      const { label, indexes } = EVIDENCE_COLUMNS[key];
+      let group = byLabel.get(label);
+      if (group === undefined) {
+        // 같은 이름의 열은 값을 읽는 방식도 같으므로 첫 키로 충분하다
+        group = { id: label, keys: [], label, indexes: [], header: label, sortKey: null };
+        byLabel.set(label, group);
+        groups.push(group);
+      }
+      if (!group.keys.includes(key)) group.keys.push(key);
+      for (const index of indexes) {
+        if (!group.indexes.includes(index)) group.indexes.push(index);
       }
     }
   }
-  return slots;
+
+  for (const group of groups) {
+    group.indexes.sort((a, b) => a - b);
+    if (years !== null && group.indexes.length > 0) {
+      const first = years[group.indexes[0]];
+      const last = years[group.indexes[group.indexes.length - 1]];
+      group.header =
+        group.indexes.length === 1 ? `${group.label} ${first}년` : `${group.label} ${first}~${last}년`;
+    }
+    const sortKey = EVIDENCE_COLUMNS[group.keys[0]].sortKey;
+    group.sortKey = group.indexes.includes(YEAR_SPAN - 1) && allowed.includes(sortKey) ? sortKey : null;
+  }
+  return groups;
 }
 
 /** 칸 값 하나: 화면에 쓸 글자, 그 칸의 실제 연도, 기준 연도와 다른지 (다르면 칸에 작은 연도를 붙인다). */
@@ -126,6 +143,58 @@ export function readEvidenceCell(row: ScreenerRow, slot: EvidenceSlot, refYear: 
     text = value ?? EMPTY_TEXT;
   }
   return { text, actualYear, isOtherYear };
+}
+
+/** 열의 칸 하나를 읽을 때 쓰는 임시 슬롯. 칸 번호만 의미가 있어 제목·정렬 키는 비워 둔다. */
+function cellSlot(key: EvidenceKey, index: number): EvidenceSlot {
+  return { id: `${key}-${index}`, key, index, header: EVIDENCE_COLUMNS[key].label, sortKey: null };
+}
+
+export interface EvidenceGroupValue {
+  text: string; // "518억 → 612억 → 757억 원" (테스트·접근성용)
+  parts: string[]; // 칸마다 단위 떼기를 적용한 값. 화살표는 화면에서 값 사이에 둔다
+  actualRange: string | null; // 회사 연도가 기준 연도와 다르면 "2022~2024년", 같으면 null
+}
+
+/**
+ * 한 열의 연도 칸 값을 화살표로 잇는다 (DESIGN-V2 S14).
+ * 금액·배당은 마지막 값에만 단위를 남기고, 마지막 값이 비었으면(-·없음) 단위를 그대로 둔다.
+ * 비율은 모든 값에 '%'를 그대로 둔다.
+ */
+export function readEvidenceGroup(
+  row: ScreenerRow,
+  group: EvidenceGroup,
+  refYear: number | null
+): EvidenceGroupValue {
+  const key = group.keys[0];
+  const kind = EVIDENCE_KIND[key];
+  const parts: string[] = [];
+  const actualYears: number[] = [];
+
+  for (const index of group.indexes) {
+    const cell = readEvidenceCell(row, cellSlot(key, index), refYear);
+    parts.push(cell.text);
+    if (cell.isOtherYear && cell.actualYear !== null) actualYears.push(cell.actualYear);
+  }
+
+  const last = parts[parts.length - 1] ?? EMPTY_TEXT;
+  if (last !== EMPTY_TEXT && last !== NONE_TEXT && kind !== 'percent') {
+    for (let i = 0; i < parts.length - 1; i++) parts[i] = stripUnit(parts[i], kind);
+  }
+
+  const years = [...new Set(actualYears)].sort((a, b) => a - b);
+  let actualRange: string | null = null;
+  if (years.length === 1) actualRange = `${years[0]}년`;
+  else if (years.length > 1) actualRange = `${years[0]}~${years[years.length - 1]}년`;
+
+  return { text: parts.join(' → '), parts, actualRange };
+}
+
+// 금액은 '억 원'·'조 원'에서, 배당은 '원'에서 단위만 뗀다 (DESIGN-V2 S14)
+function stripUnit(text: string, kind: EvidenceKind): string {
+  if (kind === 'amount' && text.endsWith(' 원')) return text.slice(0, -2);
+  if (kind === 'won' && text.endsWith('원')) return text.slice(0, -1);
+  return text;
 }
 
 // 근거 값 키가 가리키는 연도 값 (금액)
