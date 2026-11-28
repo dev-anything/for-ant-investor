@@ -10,8 +10,9 @@ import { parseMeResponse, type MeState } from '@/lib/auth';
 import { copy } from '@/lib/copy';
 import { getBrowserClient } from '@/lib/supabase/browser';
 
-// 응답 전에는 자리만 두고, 로그인 전·후 글자 폭 차이로 머리가 흔들리지 않게 폭을 고정한다
-const MENU_CLASS = 'flex h-9 min-w-40 items-center justify-end gap-4 text-sm';
+// 응답 전에는 자리만 두고, 로그인 전·후 글자 폭 차이로 머리가 흔들리지 않게 640px 이상에서 폭을 고정한다
+// (640px 미만에서는 최소 폭이 헤더를 넘기지 않게 없앤다)
+const MENU_CLASS = 'flex h-9 items-center justify-end gap-4 text-sm sm:min-w-40';
 
 const LOGGED_OUT: MeState = { loggedIn: false };
 

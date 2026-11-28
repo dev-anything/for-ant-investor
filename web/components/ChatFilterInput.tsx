@@ -78,8 +78,9 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
         <p className="text-sm text-ink">{copy.chat.unavailable}</p>
       ) : (
         <>
-          <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2">
-            <label htmlFor="chat-filter-text" className="text-sm font-semibold text-ink">
+          {/* 640px 미만에서는 라벨을 위 줄로 내리고 입력칸이 가로 폭을 채우게 한다 (360px 넘침 방지) */}
+          <form onSubmit={handleSubmit} className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <label htmlFor="chat-filter-text" className="w-full text-sm font-semibold text-ink sm:w-auto">
               {copy.chat.inputLabel}
             </label>
             <input
@@ -88,18 +89,17 @@ export function ChatFilterInput({ onApply }: ChatFilterInputProps) {
               value={text}
               maxLength={CHAT_MAX_INPUT}
               onChange={(event) => setText(event.target.value)}
-              className="h-12 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm text-ink focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/30"
+              className="h-12 min-w-0 w-full rounded-md border border-line bg-white px-3 text-sm text-ink focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/30 sm:flex-1 sm:w-auto"
             />
             {/* DESIGN.md 6-1: 필터 적용 버튼은 주요 버튼 (보라 채움) */}
             <button
               type="submit"
               disabled={pending || text.trim().length === 0}
-              className="h-11 rounded-md bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:bg-subtle disabled:text-muted"
+              className="h-11 w-full rounded-md bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:bg-subtle disabled:text-muted sm:w-auto"
             >
               {copy.chat.submit}
             </button>
           </form>
-          <p className="mt-1 text-meta text-ink-sub">{copy.chat.externalNotice}</p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
             <span className="text-ink-sub">{copy.chat.examplesLead}</span>

@@ -32,8 +32,8 @@ export function AppHeader() {
             <NavLink href="/industries">{copy.nav.industry}</NavLink>
           </nav>
 
-          {/* 확장 (F-11): 로그인 메뉴. 쿼리(`?login=`)를 읽으니 Suspense로 감싼다. 자리는 AuthMenu와 같은 폭 */}
-          <Suspense fallback={<div className="flex h-8 min-w-40" aria-hidden="true" />}>
+          {/* 확장 (F-11): 로그인 메뉴. 쿼리(`?login=`)를 읽으니 Suspense로 감싼다. 640px 이상에서는 AuthMenu와 같은 폭 */}
+          <Suspense fallback={<div className="flex h-8 sm:min-w-40" aria-hidden="true" />}>
             <AuthMenu />
           </Suspense>
 

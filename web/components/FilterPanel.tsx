@@ -61,13 +61,14 @@ export function FilterPanel({
                 className="h-4 w-4 shrink-0 text-muted transition-transform group-open:rotate-180"
               />
             </summary>
-            <div className="flex flex-wrap gap-2 pb-3">
+            {/* DESIGN-V2 1-2: 칩 하나가 한 줄을 채우고 ⓘ는 오른쪽 고정 폭 자리에 둔다. 글자가 길면 줄바꿈하며 높이가 늘어난다 */}
+            <div className="space-y-2 pb-3">
               {FILTERS.filter((f) => f.group === group).map((filter) => {
                 const isSelected = selected.includes(filter.id);
                 const partner = blockedBy(selected, filter.id);
                 const isBlocked = partner !== null;
                 return (
-                  <span key={filter.id} className="inline-flex items-center gap-1">
+                  <div key={filter.id} className="flex w-full items-start gap-1">
                     <button
                       type="button"
                       aria-pressed={isSelected}
@@ -77,7 +78,7 @@ export function FilterPanel({
                       onMouseLeave={() => onHover(null)}
                       onFocus={() => onHover(isBlocked ? filter.id : null)}
                       onBlur={() => onHover(null)}
-                      className={`inline-flex h-9 items-center rounded-full border px-4 text-sm transition-colors ${
+                      className={`inline-flex min-h-9 min-w-0 flex-1 items-center whitespace-normal break-words rounded-full border px-4 py-1 text-left text-sm transition-colors ${
                         isSelected
                           ? 'border-brand bg-brand-soft font-bold text-brand'
                           : 'border-line bg-white text-ink hover:bg-subtle'
@@ -85,8 +86,10 @@ export function FilterPanel({
                     >
                       {filter.label}
                     </button>
-                    <Tooltip text={filterTooltip(filter, refYear)} label={`${filter.label} 설명 보기`} />
-                  </span>
+                    <span className="flex h-9 w-5 shrink-0 items-center justify-center">
+                      <Tooltip text={filterTooltip(filter, refYear)} label={`${filter.label} 설명 보기`} />
+                    </span>
+                  </div>
                 );
               })}
             </div>
