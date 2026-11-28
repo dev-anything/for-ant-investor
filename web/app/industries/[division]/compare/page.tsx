@@ -64,7 +64,7 @@ function metricColumns(refYear: number | null): DataColumn<IndustryMetricRow>[] 
       sortKey: 'name',
       cell: (row) => (
         <>
-          <Link href={`/stocks/${row.shortCode}`} className="text-ink underline hover:text-ink-sub">
+          <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink hover:text-brand">
             {row.name}
           </Link>
           {formatAccMt(row.accMt) && (

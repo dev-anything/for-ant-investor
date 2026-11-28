@@ -47,7 +47,7 @@ const COMPANY_COLUMNS: DataColumn<IndustryCompanyRow>[] = [
     sortKey: 'name',
     cell: (row) => (
       <>
-        <Link href={`/stocks/${row.shortCode}`} className="text-ink underline hover:text-ink-sub">
+        <Link href={`/stocks/${row.shortCode}`} className="font-medium text-ink hover:text-brand">
           {row.name}
         </Link>
         {formatAccMt(row.accMt) && <span className="ml-2 text-meta text-ink-sub">{formatAccMt(row.accMt)}</span>}
@@ -93,7 +93,7 @@ export default async function IndustryCompaniesPage({ params, searchParams }: Co
         <h1 className="text-2xl font-bold text-ink">{copy.industry.companyTitle(name, page.total)}</h1>
         <Link
           href={`/industries/${division}/compare`}
-          className="text-sm text-ink underline underline-offset-2 hover:text-ink-sub"
+          className="text-sm text-brand font-medium"
         >
           {copy.industry.compareFromList}
         </Link>

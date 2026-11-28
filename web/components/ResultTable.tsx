@@ -31,7 +31,7 @@ export function ResultTable({
       cell: (row) => (
         <Link
           href={`/stocks/${row.shortCode}`}
-          className="font-medium text-ink after:absolute after:inset-0 hover:underline"
+          className="font-medium text-ink after:absolute after:inset-0 hover:text-brand"
         >
           {row.name}
           {formatAccMt(row.accMt) && (

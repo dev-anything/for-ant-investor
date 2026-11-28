@@ -8,7 +8,7 @@ import { checkNewPassword, PASSWORD_MIN_LENGTH } from '@/lib/auth';
 import { updatePassword } from '@/lib/auth-client';
 import { copy } from '@/lib/copy';
 
-const LINK_CLASS = 'text-ink underline underline-offset-2 hover:text-ink-sub';
+const LINK_CLASS = 'text-brand font-medium';
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState('');

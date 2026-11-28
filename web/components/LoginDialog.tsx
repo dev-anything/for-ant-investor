@@ -31,7 +31,7 @@ const MODE_LINKS: Record<Mode, { mode: Mode; label: string }[]> = {
 const TAB_CLASS =
   'rounded-t-md border-b-2 border-transparent px-3 py-2 text-sm text-ink-sub transition-colors hover:border-brand hover:text-brand';
 
-const CLOSE_CLASS = 'text-sm text-ink-sub underline-offset-2 hover:text-ink hover:underline';
+const CLOSE_CLASS = 'text-sm text-ink-sub hover:text-ink';
 
 interface LoginDialogProps {
   onClose: () => void;

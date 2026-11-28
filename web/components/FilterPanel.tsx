@@ -4,11 +4,12 @@ import { ChevronDown } from 'lucide-react';
 
 import { Tooltip } from '@/components/Tooltip';
 import { copy } from '@/lib/copy';
-import { blockedBy, FILTER_GROUPS, FILTERS, findFilter, type FilterGroup } from '@/lib/filters';
+import { blockedBy, FILTER_GROUPS, FILTERS, findFilter, MAX_FILTERS, type FilterGroup } from '@/lib/filters';
 import { filterTooltip } from '@/lib/screener-view';
 
 // FS 8-3 FilterPanel, DESIGN 5-3·6-3: 주제별 묶음은 <details>로 접는다 (기본 펼침).
-// 흐린 버튼은 aria-disabled로 두어 포커스는 가고, 올리거나 누르면 이유 문장을 보여 준다.
+// 흐린 버튼은 aria-disabled로 두어 포커스는 가고, 충돌이면 이유 문장을 보여 준다.
+// 3개를 다 골랐으면 나머지 칩은 클릭을 무시하고, 이미 고른 칩은 눌러서 해제할 수 있게 둔다 (PRD 4장 F-07)
 export function FilterPanel({
   selected,
   refYear,
@@ -24,6 +25,7 @@ export function FilterPanel({
 }) {
   // 모바일 요약의 '고른 조건'과 개수는 이미 화면에 있는 칸 목록 이름·선택 수를 그대로 재사용한다 (새 문구 금지)
   const selectedCount = selected.length;
+  const isFull = selectedCount >= MAX_FILTERS;
 
   const body = (
     <>
@@ -66,17 +68,20 @@ export function FilterPanel({
               {FILTERS.filter((f) => f.group === group).map((filter) => {
                 const isSelected = selected.includes(filter.id);
                 const partner = blockedBy(selected, filter.id);
-                const isBlocked = partner !== null;
+                const isFullBlocked = isFull && !isSelected;
+                const isBlocked = partner !== null || isFullBlocked;
                 return (
                   <div key={filter.id} className="flex w-full items-start gap-1">
                     <button
                       type="button"
                       aria-pressed={isSelected}
                       aria-disabled={isBlocked || undefined}
-                      onClick={() => onToggle(filter.id)}
-                      onMouseEnter={() => onHover(isBlocked ? filter.id : null)}
+                      onClick={() => {
+                        if (!isFullBlocked) onToggle(filter.id);
+                      }}
+                      onMouseEnter={() => onHover(partner !== null ? filter.id : null)}
                       onMouseLeave={() => onHover(null)}
-                      onFocus={() => onHover(isBlocked ? filter.id : null)}
+                      onFocus={() => onHover(partner !== null ? filter.id : null)}
                       onBlur={() => onHover(null)}
                       className={`inline-flex min-h-9 min-w-0 flex-1 items-center whitespace-normal break-words rounded-full border px-4 py-1 text-left text-sm transition-colors ${
                         isSelected

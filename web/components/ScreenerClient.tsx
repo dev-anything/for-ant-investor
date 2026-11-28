@@ -169,7 +169,8 @@ export function ScreenerClient({ initialState, initialResult, initialFailed, ref
           onHover={handleHover}
         />
 
-        <div ref={tableTopRef} className="mt-6 lg:mt-0">
+        {/* 표가 13열로 늘어나도 페이지가 아니라 이 칸 안에서만 가로 스크롤되게 한다 (FS 8-3) */}
+        <div ref={tableTopRef} className="mt-6 min-w-0 lg:mt-0">
           {/* 조회 중 안내는 화면에 보이지 않고 스크린 리더에만 알린다 (PRD 3-1 접근성, FS 8-3) */}
           {hasFilters && (
             <p role="status" className="sr-only">

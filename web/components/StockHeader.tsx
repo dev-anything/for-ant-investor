@@ -28,7 +28,7 @@ export function StockHeader({
       <span className="inline-flex items-center gap-1">
         <Link
           href={`/industries/${stock.divisionCode}`}
-          className="text-ink underline underline-offset-2 hover:text-ink-sub"
+          className="text-brand font-medium"
         >
           {stock.divisionName}
         </Link>

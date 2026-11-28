@@ -29,7 +29,7 @@ export async function DisclosureList({ corpCode }: { corpCode: string | null }) 
                 rel="noopener noreferrer"
                 className="group block"
               >
-                <span className="line-clamp-2 text-base font-medium text-ink group-hover:underline">
+                <span className="line-clamp-2 text-base font-medium text-ink group-hover:text-brand">
                   {item.reportNm}
                 </span>
                 <span className="mt-1 block text-meta text-muted">

@@ -87,7 +87,7 @@ export function ReportCard({
           <p className="border-t border-line pt-4">
             <Link
               href={`/industries/${industry.divisionCode}/compare`}
-              className="text-sm font-medium text-ink underline underline-offset-2 hover:text-ink-sub"
+              className="text-sm text-brand font-medium"
             >
               {copy.industry.compareLink}
             </Link>

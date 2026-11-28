@@ -52,12 +52,12 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
       ) : (
         <nav aria-label={copy.news.pageLabel} className="mt-4 flex justify-center gap-4 text-sm">
           {page > 1 && (
-            <Link href={listHref(NEWS_PATH, pageState(page - 1))} className="text-ink underline hover:text-ink-sub">
+            <Link href={listHref(NEWS_PATH, pageState(page - 1))} className="text-brand font-medium">
               {copy.news.prevPage}
             </Link>
           )}
           {hasMore && (
-            <Link href={listHref(NEWS_PATH, pageState(page + 1))} className="text-ink underline hover:text-ink-sub">
+            <Link href={listHref(NEWS_PATH, pageState(page + 1))} className="text-brand font-medium">
               {copy.news.nextPage}
             </Link>
           )}

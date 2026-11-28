@@ -22,7 +22,7 @@ export function NewsList({ items }: { items: NewsItem[] }) {
                 rel="noopener noreferrer"
                 className="group block"
               >
-                <span className="line-clamp-2 text-base font-medium text-ink group-hover:underline">
+                <span className="line-clamp-2 text-base font-medium text-ink group-hover:text-brand">
                   {item.title}
                 </span>
                 {meta !== '' && <span className="mt-1 block text-meta text-muted">{meta}</span>}
