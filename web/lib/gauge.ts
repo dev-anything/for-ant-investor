@@ -58,6 +58,11 @@ export function gaugePosition(value: number, key: AnyGaugeKey): GaugePosition {
 // 점이 이 거리보다 가까우면 잇는 선을 그리지 않는다.
 const OVERLAP_THRESHOLD_PX = 4;
 
+// DESIGN-V2 2-2-3: 오른쪽 단처럼 눈금이 짧으면 양끝 숫자와 기준선 값이 겹친다.
+// 서버에서는 실제 폭을 못 재서 글자 폭을 근사해 판단한다.
+const END_LABEL_KEEP_OUT_PX = 24;
+const LINE_LABEL_HALF_WIDTH_PX = 24;
+
 export interface GaugeDot {
   year: number;
   value: number;
@@ -95,6 +100,19 @@ export function gaugeLinePct(key: AnyGaugeKey): number | null {
 /** 눈금 끝·기준선 옆에 붙이는 단위 글자 ("%" 또는 "배"). */
 export function gaugeUnitSuffix(key: AnyGaugeKey): string {
   return GAUGE_UNIT[key] === 'multiple' ? '배' : '%';
+}
+
+/**
+ * 기준선 값이 양끝 숫자와 겹쳐 막대 위로 올려야 하는지 판단한다 (DESIGN-V2 2-2-3).
+ * widthPx는 서버에서 근사한 눈금 폭, linePct는 gaugeLinePct 결과다.
+ */
+export function shouldRaiseGaugeLineLabel(linePct: number | null, widthPx: number): boolean {
+  if (linePct === null || widthPx <= 0) return false;
+  const centerPx = (linePct / 100) * widthPx;
+  return (
+    centerPx - LINE_LABEL_HALF_WIDTH_PX < END_LABEL_KEEP_OUT_PX ||
+    centerPx + LINE_LABEL_HALF_WIDTH_PX > widthPx - END_LABEL_KEEP_OUT_PX
+  );
 }
 
 /** 값을 지표 단위에 맞춰 화면 서식으로 바꾼다 (FS 6-1 formatPercent·formatMultiple). */

@@ -111,7 +111,8 @@ export function ReadingTour({ isFinancial }: { isFinancial: boolean }) {
           aria-label={copy.tour.regionLabel}
           className="flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink"
         >
-          <p className="min-w-0 flex-1">{copy.tour.banner}</p>
+          {/* 640px 미만에서는 문장이 한 줄을 쓰고 버튼은 아래 줄로 내려간다 (DESIGN-V2 2-2) */}
+          <p className="min-w-0 basis-full sm:flex-1 sm:basis-auto">{copy.tour.banner}</p>
           {/* DESIGN.md 6-1: 보조 버튼 (subtle 바탕 + ink 글자) */}
           <button
             type="button"

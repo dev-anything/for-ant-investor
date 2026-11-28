@@ -8,6 +8,7 @@ import {
   gaugeLinePct,
   gaugePosition,
   gaugeUnitSuffix,
+  shouldRaiseGaugeLineLabel,
   type AnyGaugeKey,
   type GaugeDot,
 } from '@/lib/gauge';
@@ -59,6 +60,32 @@ describe('gaugeLinePct', () => {
 
   it('PBR 기준선 1배는 눈금 0~5배의 5분의 1 지점이다', () => {
     expect(gaugeLinePct('pbr')).toBeCloseTo(20, 10);
+  });
+});
+
+describe('shouldRaiseGaugeLineLabel', () => {
+  it('기준선이 없으면 값을 올리지 않는다', () => {
+    expect(shouldRaiseGaugeLineLabel(null, 300)).toBe(false);
+  });
+
+  it('가운데에 있는 기준선 값은 아래에 둔다', () => {
+    expect(shouldRaiseGaugeLineLabel(50, 300)).toBe(false);
+    expect(shouldRaiseGaugeLineLabel(20, 300)).toBe(false);
+  });
+
+  it('양끝 숫자와 겹치는 기준선 값은 막대 위로 올린다', () => {
+    expect(shouldRaiseGaugeLineLabel(5, 300)).toBe(true);
+    expect(shouldRaiseGaugeLineLabel(95, 300)).toBe(true);
+  });
+
+  it('같은 위치도 눈금이 넓으면 겹치지 않는다', () => {
+    expect(shouldRaiseGaugeLineLabel(10, 300)).toBe(true);
+    expect(shouldRaiseGaugeLineLabel(10, 720)).toBe(false);
+  });
+
+  it('겹침 경계는 24px다', () => {
+    expect(shouldRaiseGaugeLineLabel(16, 300)).toBe(false);
+    expect(shouldRaiseGaugeLineLabel(15.9, 300)).toBe(true);
   });
 });
 

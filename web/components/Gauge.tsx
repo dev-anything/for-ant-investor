@@ -9,6 +9,7 @@ import {
   gaugeLinePct,
   gaugePosition,
   gaugeUnitSuffix,
+  shouldRaiseGaugeLineLabel,
   type AnyGaugeKey,
 } from '@/lib/gauge';
 
@@ -16,22 +17,27 @@ import {
 // 서버 컴포넌트라 실제 폭을 못 재서 PC(1440) 막대 폭으로 근사.
 // 좁은 화면에서 남는 짧은 선은 점 아래에 가려진다.
 const GAUGE_OVERLAP_WIDTH_PX = 720;
+// DESIGN-V2 2-2-3: PER·PBR이 들어가는 종목 화면 오른쪽 단(약 1/3)의 근사 폭
+const COMPACT_GAUGE_WIDTH_PX = 300;
 
 // points는 화면 연도 순서(오래된 → 최근)다. 값이 없는 연도는 점을 그리지 않고 aria-label에는 남긴다.
 // median은 짧은 회색 선만 그리고 라벨은 MetricRow 3줄째로 옮겼다 (DESIGN-V2 2-2-1).
 // lineTip: 기준선 툴팁 (기준선이 없는 지표는 null이고 기준선 표시도 없다). 단위는 GAUGE_UNIT.
+// compact: 오른쪽 단처럼 좁은 눈금일 때 기준선 값이 양끝 숫자와 겹치면 위로 올린다 (DESIGN-V2 2-2-3).
 export function Gauge({
   gauge,
   name,
   points,
   median,
   lineTip,
+  compact = false,
 }: {
   gauge: AnyGaugeKey;
   name: string;
   points: { year: number; value: number | null }[];
   median?: { value: number; n: number } | null;
   lineTip: string | null;
+  compact?: boolean;
 }) {
   const { min, max, line } = GAUGES[gauge];
   const suffix = gaugeUnitSuffix(gauge);
@@ -41,6 +47,9 @@ export function Gauge({
   const medianText = median ? formatGaugeValue(median.value, gauge) : null;
   const medianPct = median ? gaugePosition(median.value, gauge).pct : null;
   const ariaLabel = gaugeAriaLabel(name, points, gauge, dots, medianText);
+  const hasLineLabel = linePct !== null && line !== null && lineTip !== null;
+  const raiseLineLabel =
+    hasLineLabel && shouldRaiseGaugeLineLabel(linePct, compact ? COMPACT_GAUGE_WIDTH_PX : GAUGE_OVERLAP_WIDTH_PX);
 
   // 점 사이가 4px 이내면 잇는 선을 생략한다 (DESIGN-V2 2-2-1, lib/gauge.ts dotsOverlap).
   const segments = dots.slice(1).flatMap((dot, index) => {
@@ -57,8 +66,24 @@ export function Gauge({
     : 'border-y-[4px] border-y-transparent border-r-[6px] border-r-muted';
   const arrowTransform = pointsRight ? 'translate(-14px, -50%)' : 'translate(8px, -50%)';
 
+  const lineLabel =
+    linePct !== null && line !== null && lineTip !== null ? (
+      <>
+        {`${line}${suffix}`}
+        <Tooltip text={lineTip} label={copy.reportCard.tipButtonLabel} />
+      </>
+    ) : null;
+
   return (
-    <div className="mt-3">
+    <div className={raiseLineLabel ? 'mt-6' : 'mt-3'}>
+      {/* 좁은 눈금에서 기준선 값이 양끝 숫자와 겹치면 막대 위로 올린다 (DESIGN-V2 2-2-3) */}
+      {raiseLineLabel && linePct !== null && (
+        <div className="relative mb-1 h-4 text-meta text-muted">
+          <span className="absolute inline-flex -translate-x-1/2 items-center gap-1 whitespace-nowrap tabular-nums" style={{ left: `${linePct}%` }}>
+            {lineLabel}
+          </span>
+        </div>
+      )}
       {/* DESIGN-V2 2-2-1: 막대 그림만 role="img"로 묶고 연도별 값은 aria-label에 담는다 */}
       <div role="img" aria-label={ariaLabel} className="relative my-3 h-2 rounded-full bg-line">
         {linePct !== null && (
@@ -112,13 +137,12 @@ export function Gauge({
       <div className="relative mt-1 h-6 text-meta text-muted">
         <span className="absolute left-0 top-0 tabular-nums">{`${min}${suffix}`}</span>
         <span className="absolute right-0 top-0 tabular-nums">{`${max}${suffix}`}</span>
-        {linePct !== null && line !== null && lineTip !== null && (
+        {!raiseLineLabel && linePct !== null && lineLabel && (
           <span
             className="absolute top-0 inline-flex -translate-x-1/2 items-center gap-1 whitespace-nowrap tabular-nums"
             style={{ left: `${linePct}%` }}
           >
-            {`${line}${suffix}`}
-            <Tooltip text={lineTip} label={copy.reportCard.tipButtonLabel} />
+            {lineLabel}
           </span>
         )}
       </div>

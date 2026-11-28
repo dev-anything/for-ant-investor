@@ -42,6 +42,11 @@ export function valuationBasisText(valuation: StockValuation): string {
   return copy.valuation.basis(valuation.basDt, valuation.latestYear);
 }
 
+/** PER·PBR 행 3줄째 왼쪽의 기준일·보통주 안내 (DESIGN-V2 2-2-3). */
+export function valuationRowNoteText(valuation: StockValuation): string {
+  return `${valuationBasisText(valuation)} · ${copy.valuation.commonShareNote}`;
+}
+
 /**
  * PER·PBR 두 줄을 만든다. valuation이 null이면 호출하지 않는다 (영역이 "주가 정보가 없어."를 대신 그린다).
  * medians가 null이면 업종 없음이다 (가운데 값 없이 값과 안내만 남는다).

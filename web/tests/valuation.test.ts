@@ -1,6 +1,12 @@
 // 주가 수준 PER·PBR 화면 행 계산 테스트 (PRD 4장 F-09, FS 9-3)
 import { describe, expect, it } from 'vitest';
-import { buildValuationRows, valuationBasisText, type StockValuation, type ValuationMedians } from '@/lib/valuation';
+import {
+  buildValuationRows,
+  valuationBasisText,
+  valuationRowNoteText,
+  type StockValuation,
+  type ValuationMedians,
+} from '@/lib/valuation';
 
 const SAMSUNG: StockValuation = { basDt: '2026-11-16', latestYear: 2025, per: 25.5, pbr: 2.64 };
 const MEDIANS: ValuationMedians = {
@@ -11,6 +17,14 @@ const MEDIANS: ValuationMedians = {
 describe('valuationBasisText', () => {
   it('기준일 두 개(주가 기준일, 순이익·자본 연도)를 한 문장에 담는다', () => {
     expect(valuationBasisText(SAMSUNG)).toBe('주가 2026-11-16 기준 · 순이익·자본 2025년 기준');
+  });
+});
+
+describe('valuationRowNoteText', () => {
+  it('PER·PBR 행 3줄째에 기준일과 보통주 기준을 함께 쓴다', () => {
+    expect(valuationRowNoteText(SAMSUNG)).toBe(
+      '주가 2026-11-16 기준 · 순이익·자본 2025년 기준 · 보통주 시가총액 기준',
+    );
   });
 });
 
